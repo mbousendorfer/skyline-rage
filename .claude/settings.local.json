@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I {} basename {})",
+      "Bash(npx ng:*)",
+      "Bash(find /Users/matthieu.bousendorfer/sources/design/libs/ui-symbol -name *.ts)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d[''''projects''''][''''compose''''], indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d[''''projects''''][''''web''''], indent=2\\)\\)\")",
+      "Bash(python3 -c \":*)",
+      "Bash(mv /tmp/angular.json.new /Users/matthieu.bousendorfer/sources/design/angular.json)",
+      "Bash(node_modules/.bin/ng build:*)",
+      "Bash(node node_modules/@angular/cli/bin/ng.js build compose --configuration development)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\(''''bin'''', {}\\)\\)\")",
+      "Bash(npm install:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4200)",
+      "Bash(find /Users/matthieu.bousendorfer/sources/design/libs/ui-components -type d -name *info* -o -type d -name *alert* -o -type d -name *banner* -o -type d -name *notification*)"
+    ]
+  }
+}
