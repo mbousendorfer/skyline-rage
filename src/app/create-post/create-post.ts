@@ -1,6 +1,7 @@
 import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { SlideToggleComponent } from '@agorapulse/ui-components/slide-toggle';
+import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { ProfilesPanelComponent } from './profiles-panel/profiles-panel';
@@ -11,14 +12,14 @@ import { ComposeStateService } from './compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-create-post',
-    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
+    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TooltipDirective, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
     template: `
         <div class="modal-container">
             <div class="modal-header">
                 <h2 class="modal-title">Create post</h2>
                 <div class="header-actions">
-                    <ap-icon-button symbolId="history" ariaLabel="History" type="flat"></ap-icon-button>
-                    <ap-icon-button symbolId="refresh" ariaLabel="Redo" type="flat"></ap-icon-button>
+                    <ap-icon-button symbolId="history" ariaLabel="History" type="flat" [apTooltip]="'Post history'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                    <ap-icon-button symbolId="refresh" ariaLabel="Redo" type="flat" [apTooltip]="'Redo'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                     <div class="divider"></div>
                     <ap-icon-button symbolId="close" ariaLabel="Close" type="flat" (onClick)="close.emit()"></ap-icon-button>
                 </div>
@@ -32,11 +33,11 @@ import { ComposeStateService } from './compose-state';
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="megaphone" symbolPosition="left" size="small">Advocacy campaign</ap-button>
-                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="ban" symbolPosition="left" size="small">No campaign</ap-button>
-                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="check" symbolPosition="left" size="small">Select approval type</ap-button>
+                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="megaphone" symbolPosition="left" size="small" [apTooltip]="'Link this post to an advocacy campaign'" apTooltipPosition="top" [apTooltipShowDelay]="400">Advocacy campaign</ap-button>
+                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="ban" symbolPosition="left" size="small" [apTooltip]="'Post without campaign attribution'" apTooltipPosition="top" [apTooltipShowDelay]="400">No campaign</ap-button>
+                    <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="check" symbolPosition="left" size="small" [apTooltip]="'Require approval before publishing'" apTooltipPosition="top" [apTooltipShowDelay]="400">Select approval type</ap-button>
                     <div class="footer-divider"></div>
-                    <label class="draft-toggle">
+                    <label class="draft-toggle" [apTooltip]="'Save as draft — post will not be published yet'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                         <ap-slide-toggle [checked]="state.isDraft()" (checkedChange)="state.isDraft.set($event)" size="small"></ap-slide-toggle>
                         <span class="draft-label">Draft</span>
                     </label>

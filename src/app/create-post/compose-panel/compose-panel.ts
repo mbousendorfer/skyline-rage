@@ -3,6 +3,7 @@ import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { SlideToggleComponent } from '@agorapulse/ui-components/slide-toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import {
     ChangeDetectionStrategy, Component, computed, effect,
@@ -15,7 +16,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, SymbolComponent, FormsModule, DecimalPipe],
+    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
     template: `
         <div class="compose-panel">
             <div class="panel-header">Compose your post</div>
@@ -30,53 +31,57 @@ import { ComposeStateService, Customization } from '../compose-state';
                         </div>
                         <span class="section-hint">Shared across all unless customized</span>
                     </div>
-                    <div class="text-editor" [class.focused]="baseTextFocused()">
+                    <div class="text-editor" [class.focused]="baseTextFocused()" [class.expanded]="baseEditorExpanded()">
                         <textarea
                             class="post-textarea"
                             [value]="state.baseText()"
                             (input)="onBaseTextInput($event)"
                             (focus)="baseTextFocused.set(true)"
                             (blur)="baseTextFocused.set(false)"
-                            rows="4"
                             placeholder="What do you want to share?">
                         </textarea>
                         <div class="editor-toolbar">
                             <div class="toolbar-icons">
-                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat"></ap-icon-button>
+                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                             </div>
-                            <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                            <div class="toolbar-right">
+                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                <button class="expand-btn" (click)="baseEditorExpanded.set(!baseEditorExpanded())" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
+                                    <ap-symbol [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                                </button>
+                            </div>
                         </div>
                         <div class="editor-footer">
                             <div class="char-counts">
                                 @if (state.facebookProfiles().length > 0) {
-                                    <span class="char-count" [class.warning]="fbWarning()" [class.danger]="fbDanger()">
+                                    <span class="char-count" [class.warning]="fbWarning()" [class.danger]="fbDanger()" [apTooltip]="'Facebook — ' + (state.fbCharsRemaining() | number) + ' chars remaining (limit 10,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" [color]="fbDanger() ? 'red' : fbWarning() ? 'orange' : 'facebook'"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.linkedinProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.liCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.liCharsRemaining() < 0" [apTooltip]="'LinkedIn — ' + (state.liCharsRemaining() | number) + ' chars remaining (limit 3,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="linkedin" size="xs" [color]="state.liCharsRemaining() < 0 ? 'red' : 'linkedin'"></ap-symbol>
                                         {{ state.liCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.instagramProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.igCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.igCharsRemaining() < 0" [apTooltip]="'Instagram — ' + (state.igCharsRemaining() | number) + ' chars remaining (limit 2,200)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="instagram" size="xs" [color]="state.igCharsRemaining() < 0 ? 'red' : 'instagram'"></ap-symbol>
                                         {{ state.igCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.twitterProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0" [apTooltip]="'X (Twitter) — ' + (state.twitterCharsRemaining() | number) + ' chars remaining (limit 280)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="x-twitter" size="xs" [color]="state.twitterCharsRemaining() < 0 ? 'red' : 'twitter'"></ap-symbol>
                                         {{ state.twitterCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.selectedProfiles().length === 0) {
-                                    <span class="char-count grey">
+                                    <span class="char-count grey" [apTooltip]="'Characters remaining'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" color="basic-grey"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
@@ -104,12 +109,12 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     @if (isLandscape(item)) {
                                         <div class="media-network-issues">
                                             @if (state.facebookProfiles().length > 0) {
-                                                <span class="net-badge warn" title="Facebook will crop this image">
+                                                <span class="net-badge warn" [apTooltip]="'Facebook will crop this image to 1.91:1'" apTooltipPosition="top" [apTooltipShowDelay]="200">
                                                     <ap-symbol symbolId="facebook" size="xs" color="orange"></ap-symbol>
                                                 </span>
                                             }
                                             @if (state.instagramProfiles().length > 0) {
-                                                <span class="net-badge warn" title="Instagram will crop to square">
+                                                <span class="net-badge warn" [apTooltip]="'Instagram will crop this image to square'" apTooltipPosition="top" [apTooltipShowDelay]="200">
                                                     <ap-symbol symbolId="instagram" size="xs" color="orange"></ap-symbol>
                                                 </span>
                                             }
@@ -162,7 +167,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                         </ap-avatar>
                                         <span class="profile-label">{{ profileName(custom.profileId) }}</span>
                                         @if (customHasError(custom.profileId, custom.text)) {
-                                            <ap-symbol symbolId="error" size="xs" color="red" title="This profile has a validation error"></ap-symbol>
+                                            <ap-symbol symbolId="error" size="xs" color="red" [apTooltip]="'Character limit exceeded for this network'" apTooltipPosition="top" [apTooltipShowDelay]="200"></ap-symbol>
                                         }
                                     </div>
                                     <div class="row-gap">
@@ -171,6 +176,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                                             ariaLabel="Reset to base text"
                                             type="flat"
                                             size="small"
+                                            [apTooltip]="'Reset to base post content'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
                                             (onClick)="state.resetCustomization(custom.profileId)">
                                         </ap-icon-button>
                                         <ap-icon-button
@@ -178,6 +186,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                                             ariaLabel="Remove customization"
                                             type="flat"
                                             size="small"
+                                            [apTooltip]="'Remove this override'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
                                             (onClick)="state.removeCustomization(custom.profileId)">
                                         </ap-icon-button>
                                     </div>
@@ -196,11 +207,11 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </textarea>
                                     <div class="editor-toolbar">
                                         <div class="toolbar-icons">
-                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="sparkles" ariaLabel="Writing Assistant" type="flat"></ap-icon-button>
+                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="sparkles" ariaLabel="Writing Assistant" type="flat" [apTooltip]="'Writing Assistant'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                                         </div>
                                     </div>
                                 </div>
@@ -403,6 +414,8 @@ import { ComposeStateService, Customization } from '../compose-state';
             background: var(--ref-color-white); transition: border-color 0.15s, box-shadow 0.15s;
             &.inner { border-radius: 6px; margin: 8px 0; }
             &.focused { border-color: var(--ref-color-electric-blue-60); box-shadow: 0 0 0 3px var(--ref-color-electric-blue-05); }
+            textarea { min-height: 96px; transition: min-height 0.25s ease; }
+            &.expanded textarea { min-height: 280px; }
         }
         .post-textarea {
             width: 100%; padding: 10px 12px; border: none; outline: none; resize: none;
@@ -418,6 +431,13 @@ import { ComposeStateService, Customization } from '../compose-state';
             background: var(--ref-color-white);
         }
         .toolbar-icons { display: flex; }
+        .toolbar-right { display: flex; align-items: center; gap: 4px; }
+        .expand-btn {
+            background: none; border: none; padding: 4px; cursor: pointer;
+            display: flex; align-items: center; border-radius: 4px;
+            opacity: 0.5; transition: opacity 0.15s, background 0.15s;
+            &:hover { opacity: 1; background: var(--ref-color-grey-05); }
+        }
         .writing-assistant-btn {
             ::ng-deep button {
                 background: linear-gradient(white, white) padding-box,
@@ -544,6 +564,7 @@ export class ComposePanelComponent {
     private el = inject(ElementRef);
 
     baseTextFocused = signal(false);
+    baseEditorExpanded = signal(false);
     focusedEditorId = signal<string | null>(null);
     flashingId = signal<string | null>(null);
     mediaExpanded = signal(true);

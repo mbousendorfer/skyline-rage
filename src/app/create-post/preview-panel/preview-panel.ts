@@ -1,6 +1,7 @@
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { InfoboxComponent } from '@agorapulse/ui-components/infobox';
+import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal } from '@angular/core';
 import { ComposeStateService } from '../compose-state';
@@ -18,7 +19,7 @@ interface Validation {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-preview-panel',
-    imports: [AvatarComponent, IconButtonComponent, InfoboxComponent, SymbolComponent],
+    imports: [AvatarComponent, IconButtonComponent, InfoboxComponent, TooltipDirective, SymbolComponent],
     template: `
         <div class="preview-panel">
             <div class="panel-header">Social Media Previews</div>
@@ -32,14 +33,14 @@ interface Validation {
                     </span>
                 }
                 @if (warnCount() > 0) {
-                    <button class="status warn clickable" (click)="scrollToFirstWarning()" title="Jump to first warning">
+                    <button class="status warn clickable" (click)="scrollToFirstWarning()" [apTooltip]="'Jump to first warning'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
                         <ap-symbol symbolId="warning" size="xs" color="orange"></ap-symbol>
                         {{ warnCount() }} warning{{ warnCount() !== 1 ? 's' : '' }}
                         <ap-symbol symbolId="arrow-down" size="xs" color="orange"></ap-symbol>
                     </button>
                 }
                 @if (errCount() > 0) {
-                    <button class="status err clickable" (click)="scrollToFirstError()" title="Jump to first error">
+                    <button class="status err clickable" (click)="scrollToFirstError()" [apTooltip]="'Jump to first error'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
                         <ap-symbol symbolId="error" size="xs" color="red"></ap-symbol>
                         {{ errCount() }} error{{ errCount() !== 1 ? 's' : '' }}
                         <ap-symbol symbolId="arrow-down" size="xs" color="red"></ap-symbol>
@@ -60,7 +61,7 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="fbExpanded.set(!fbExpanded())">
                                 <div class="network-title">
-                                    @if (hasFbErrors()) { <span class="net-error-dot"></span> }
+                                    @if (hasFbErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
                                     <span>Facebook</span>
                                 </div>
@@ -74,7 +75,7 @@ interface Validation {
                                     @for (profile of state.facebookProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
                                             <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
                                                     Customize
                                                 </button>
@@ -133,7 +134,7 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="liExpanded.set(!liExpanded())">
                                 <div class="network-title">
-                                    @if (hasLiErrors()) { <span class="net-error-dot"></span> }
+                                    @if (hasLiErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol>
                                     <span>LinkedIn</span>
                                 </div>
@@ -147,7 +148,7 @@ interface Validation {
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
                                             <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
                                                     Customize
                                                 </button>
@@ -206,7 +207,7 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="igExpanded.set(!igExpanded())">
                                 <div class="network-title">
-                                    @if (hasIgErrors()) { <span class="net-error-dot"></span> }
+                                    @if (hasIgErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
                                     <span>Instagram</span>
                                 </div>
@@ -220,7 +221,7 @@ interface Validation {
                                     @for (profile of state.instagramProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
                                             <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
                                                     Customize
                                                 </button>
@@ -287,7 +288,7 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="xExpanded.set(!xExpanded())">
                                 <div class="network-title">
-                                    @if (hasXErrors()) { <span class="net-error-dot"></span> }
+                                    @if (hasXErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="x-twitter" size="sm" color="twitter"></ap-symbol>
                                     <span>X (Twitter)</span>
                                 </div>
@@ -301,7 +302,7 @@ interface Validation {
                                     @for (profile of state.twitterProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
                                             <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
                                                     Customize
                                                 </button>

@@ -1,5 +1,6 @@
 import { CheckboxComponent } from '@agorapulse/ui-components/checkbox';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +9,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-profiles-panel',
-    imports: [CheckboxComponent, AvatarComponent, SymbolComponent, FormsModule],
+    imports: [CheckboxComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule],
     template: `
         <div class="profiles-panel">
             <div class="panel-header">Social Profiles</div>
@@ -29,7 +30,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
             <div class="profiles-tabs">
                 <button class="tab-btn" [class.active]="activeTab() === 'profiles'" (click)="activeTab.set('profiles')">Profiles</button>
-                <button class="tab-btn" [class.active]="activeTab() === 'queues'" (click)="activeTab.set('queues')">Queues</button>
+                <button class="tab-btn" [class.active]="activeTab() === 'queues'" (click)="activeTab.set('queues')" [apTooltip]="'Post at optimal times using your pre-configured queue schedule'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">Queues</button>
             </div>
 
             @if (activeTab() === 'profiles') {
