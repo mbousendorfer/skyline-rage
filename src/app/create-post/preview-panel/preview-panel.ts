@@ -101,7 +101,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="fb-card" [class.has-error]="fbProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="fb-card" [class.has-error]="fbProfileHasError(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="facebook" [size]="36"></ap-avatar>
                                                     <div class="post-meta">
@@ -192,7 +192,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="li-card" [class.has-error]="liProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="li-card" [class.has-error]="liProfileHasError(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="linkedin" [size]="40"></ap-avatar>
                                                     <div class="post-meta">
@@ -283,7 +283,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="ig-card" [class.has-error]="igProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="ig-card" [class.has-error]="igProfileHasError(profile.id)">
                                                 <div class="ig-header">
                                                     <ap-avatar [username]="profile.name" [size]="32"></ap-avatar>
                                                     <div class="ig-meta">
@@ -382,7 +382,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="x-card" [class.has-error]="xProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="x-card" [class.has-error]="xProfileHasError(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="twitter" [size]="36"></ap-avatar>
                                                     <div class="post-meta">
@@ -460,12 +460,13 @@ interface Validation {
 
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
-            margin-bottom: 4px; scroll-margin-top: 12px; border-radius: 10px;
-            transition: background 0.2s, padding 0.2s;
+            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 10px;
+            transition: background 0.2s, box-shadow 0.2s;
             &.is-customized {
                 background: var(--ref-color-electric-blue-02, #f5f8ff);
+                box-shadow: 0 0 0 2px var(--ref-color-electric-blue-40);
                 padding: 4px;
-                margin: 0 -4px 4px;
+                margin: 0 -4px 8px;
             }
         }
 
@@ -493,12 +494,7 @@ interface Validation {
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: 8px; overflow: hidden; background: var(--ref-color-white);
-            transition: border-color 0.2s, border-top-width 0.2s;
             &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
-            &.is-customized {
-                border-color: var(--ref-color-electric-blue-40);
-                border-top: 3px solid var(--ref-color-electric-blue-100);
-            }
         }
         .x-card { padding-bottom: 10px; }
 
