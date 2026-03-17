@@ -144,135 +144,6 @@ import { ComposeStateService, Customization } from '../compose-state';
                     }
                 </div>
 
-            } @else {
-
-                <!-- ── Customizations ─────────────────────────────────────── -->
-                <div class="section" #customizationsSection>
-                    <div class="collapsible-header" (click)="customizationsExpanded.set(!customizationsExpanded())">
-                        <span class="collapsible-title">
-                            Customizations
-                            @if (state.activeCustomizations().length > 0) {
-                                <span class="section-count">{{ state.activeCustomizations().length }} post(s)</span>
-                            }
-                        </span>
-                        <ap-symbol [symbolId]="customizationsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
-                    </div>
-
-                    @if (customizationsExpanded()) {
-                        @if (state.activeCustomizations().length === 0) {
-                            <p class="empty-hint">
-                                Click <strong>Customize</strong> on any preview card to add a per‑profile override.
-                            </p>
-                        } @else {
-                            <p class="customizations-hint">Each card below overrides the base post for that profile.</p>
-                        }
-
-                        @for (custom of state.activeCustomizations(); track custom.profileId) {
-                            <div
-                                class="custom-card"
-                                [attr.data-custom-id]="custom.profileId"
-                                [class.flash-highlight]="flashingId() === custom.profileId"
-                                [class.has-error]="customHasError(custom.profileId, custom.text)">
-                                <!-- card header -->
-                                <div class="custom-card-header" [style.background]="networkHeaderBg(profileNetwork(custom.profileId))">
-                                    <div class="profile-row">
-                                        <ap-avatar
-                                            [username]="profileName(custom.profileId)"
-                                            [network]="profileNetwork(custom.profileId)"
-                                            [size]="24">
-                                        </ap-avatar>
-                                        <span class="profile-label">{{ profileName(custom.profileId) }}</span>
-                                        @if (customHasError(custom.profileId, custom.text)) {
-                                            <ap-symbol symbolId="error" size="xs" color="red" [apTooltip]="'Character limit exceeded for this network'" apTooltipPosition="top" [apTooltipShowDelay]="200"></ap-symbol>
-                                        }
-                                    </div>
-                                    <div class="row-gap">
-                                        <ap-icon-button
-                                            symbolId="refresh"
-                                            ariaLabel="Reset to base text"
-                                            type="flat"
-                                            size="small"
-                                            [apTooltip]="'Reset to base post content'"
-                                            apTooltipPosition="bottom"
-                                            [apTooltipShowDelay]="400"
-                                            (onClick)="state.resetCustomization(custom.profileId)">
-                                        </ap-icon-button>
-                                        <ap-icon-button
-                                            symbolId="close"
-                                            ariaLabel="Remove customization"
-                                            type="flat"
-                                            size="small"
-                                            [apTooltip]="'Remove this override'"
-                                            apTooltipPosition="bottom"
-                                            [apTooltipShowDelay]="400"
-                                            (onClick)="state.removeCustomization(custom.profileId)">
-                                        </ap-icon-button>
-                                    </div>
-                                </div>
-
-                                <!-- text editor -->
-                                <div class="text-editor inner" [class.focused]="focusedEditorId() === custom.profileId">
-                                    <textarea
-                                        class="post-textarea"
-                                        [value]="custom.text"
-                                        (input)="onCustomTextInput($event, custom.profileId)"
-                                        (focus)="focusedEditorId.set(custom.profileId)"
-                                        (blur)="focusedEditorId.set(null)"
-                                        rows="3"
-                                        [placeholder]="'Customize post for ' + profileName(custom.profileId) + '…'">
-                                    </textarea>
-                                    <div class="editor-toolbar">
-                                        <div class="toolbar-icons">
-                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
-                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
-                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
-                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
-                                            <ap-icon-button symbolId="sparkles" ariaLabel="Writing Assistant" type="flat" [apTooltip]="'Writing Assistant'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- char count -->
-                                <div class="char-counts inner">
-                                    <span class="char-count"
-                                        [class.danger]="custom.text.length > networkCharLimit(profileNetwork(custom.profileId))"
-                                        [class.warning]="isNearLimit(custom.profileId, custom.text)">
-                                        <ap-symbol
-                                            [symbolId]="networkSymbol(profileNetwork(custom.profileId))"
-                                            size="xs"
-                                            [color]="charCountColor(custom.profileId, custom.text)">
-                                        </ap-symbol>
-                                        {{ (networkCharLimit(profileNetwork(custom.profileId)) - custom.text.length) | number }}
-                                    </span>
-                                </div>
-
-                                <!-- first comment toggle -->
-                                <div class="option-row toggle-row">
-                                    <div class="option-info">
-                                        <span class="option-label">First comment</span>
-                                        <span class="option-hint">Publish a first comment with your post</span>
-                                    </div>
-                                    <ap-slide-toggle
-                                        [checked]="custom.firstComment"
-                                        (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)">
-                                    </ap-slide-toggle>
-                                </div>
-                                @if (custom.firstComment) {
-                                    <div class="first-comment-editor">
-                                        <textarea
-                                            class="post-textarea small"
-                                            [value]="custom.firstCommentText"
-                                            (input)="onFirstCommentInput($event, custom.profileId)"
-                                            placeholder="Write your first comment…"
-                                            rows="2">
-                                        </textarea>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    }
-                </div>
-
                 <!-- ── Network options ────────────────────────────────────── -->
                 <div class="section last">
                     <div class="section-header">
@@ -399,6 +270,134 @@ import { ComposeStateService, Customization } from '../compose-state';
 
                     @if (state.selectedProfiles().length === 0) {
                         <p class="empty-hint">Select profiles to see network‑specific options.</p>
+                    }
+                </div>
+
+            } @else {
+                <!-- ── Customizations ─────────────────────────────────────── -->
+                <div class="section" #customizationsSection>
+                    <div class="collapsible-header" (click)="customizationsExpanded.set(!customizationsExpanded())">
+                        <span class="collapsible-title">
+                            Customizations
+                            @if (state.activeCustomizations().length > 0) {
+                                <span class="section-count">{{ state.activeCustomizations().length }} post(s)</span>
+                            }
+                        </span>
+                        <ap-symbol [symbolId]="customizationsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                    </div>
+
+                    @if (customizationsExpanded()) {
+                        @if (state.activeCustomizations().length === 0) {
+                            <p class="empty-hint">
+                                Click <strong>Customize</strong> on any preview card to add a per‑profile override.
+                            </p>
+                        } @else {
+                            <p class="customizations-hint">Each card below overrides the base post for that profile.</p>
+                        }
+
+                        @for (custom of state.activeCustomizations(); track custom.profileId) {
+                            <div
+                                class="custom-card"
+                                [attr.data-custom-id]="custom.profileId"
+                                [class.flash-highlight]="flashingId() === custom.profileId"
+                                [class.has-error]="customHasError(custom.profileId, custom.text)">
+                                <!-- card header -->
+                                <div class="custom-card-header" [style.background]="networkHeaderBg(profileNetwork(custom.profileId))">
+                                    <div class="profile-row">
+                                        <ap-avatar
+                                            [username]="profileName(custom.profileId)"
+                                            [network]="profileNetwork(custom.profileId)"
+                                            [size]="24">
+                                        </ap-avatar>
+                                        <span class="profile-label">{{ profileName(custom.profileId) }}</span>
+                                        @if (customHasError(custom.profileId, custom.text)) {
+                                            <ap-symbol symbolId="error" size="xs" color="red" [apTooltip]="'Character limit exceeded for this network'" apTooltipPosition="top" [apTooltipShowDelay]="200"></ap-symbol>
+                                        }
+                                    </div>
+                                    <div class="row-gap">
+                                        <ap-icon-button
+                                            symbolId="refresh"
+                                            ariaLabel="Reset to base text"
+                                            type="flat"
+                                            size="small"
+                                            [apTooltip]="'Reset to base post content'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
+                                            (onClick)="state.resetCustomization(custom.profileId)">
+                                        </ap-icon-button>
+                                        <ap-icon-button
+                                            symbolId="close"
+                                            ariaLabel="Remove customization"
+                                            type="flat"
+                                            size="small"
+                                            [apTooltip]="'Remove this override'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
+                                            (onClick)="state.removeCustomization(custom.profileId)">
+                                        </ap-icon-button>
+                                    </div>
+                                </div>
+
+                                <!-- text editor -->
+                                <div class="text-editor inner" [class.focused]="focusedEditorId() === custom.profileId">
+                                    <textarea
+                                        class="post-textarea"
+                                        [value]="custom.text"
+                                        (input)="onCustomTextInput($event, custom.profileId)"
+                                        (focus)="focusedEditorId.set(custom.profileId)"
+                                        (blur)="focusedEditorId.set(null)"
+                                        rows="3"
+                                        [placeholder]="'Customize post for ' + profileName(custom.profileId) + '…'">
+                                    </textarea>
+                                    <div class="editor-toolbar">
+                                        <div class="toolbar-icons">
+                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="sparkles" ariaLabel="Writing Assistant" type="flat" [apTooltip]="'Writing Assistant'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- char count -->
+                                <div class="char-counts inner">
+                                    <span class="char-count"
+                                        [class.danger]="custom.text.length > networkCharLimit(profileNetwork(custom.profileId))"
+                                        [class.warning]="isNearLimit(custom.profileId, custom.text)">
+                                        <ap-symbol
+                                            [symbolId]="networkSymbol(profileNetwork(custom.profileId))"
+                                            size="xs"
+                                            [color]="charCountColor(custom.profileId, custom.text)">
+                                        </ap-symbol>
+                                        {{ (networkCharLimit(profileNetwork(custom.profileId)) - custom.text.length) | number }}
+                                    </span>
+                                </div>
+
+                                <!-- first comment toggle -->
+                                <div class="option-row toggle-row">
+                                    <div class="option-info">
+                                        <span class="option-label">First comment</span>
+                                        <span class="option-hint">Publish a first comment with your post</span>
+                                    </div>
+                                    <ap-slide-toggle
+                                        [checked]="custom.firstComment"
+                                        (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)">
+                                    </ap-slide-toggle>
+                                </div>
+                                @if (custom.firstComment) {
+                                    <div class="first-comment-editor">
+                                        <textarea
+                                            class="post-textarea small"
+                                            [value]="custom.firstCommentText"
+                                            (input)="onFirstCommentInput($event, custom.profileId)"
+                                            placeholder="Write your first comment…"
+                                            rows="2">
+                                        </textarea>
+                                    </div>
+                                }
+                            </div>
+                        }
                     }
                 </div>
 
