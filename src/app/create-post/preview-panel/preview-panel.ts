@@ -107,8 +107,23 @@ interface Validation {
                                                     </div>
                                                 </div>
                                                 <div class="post-text">{{ state.getDisplayText(profile.id) }}</div>
-                                                @if (state.hasMedia()) {
-                                                    <div class="post-img"><img [src]="state.mediaItems()[0].url" alt="Post" /></div>
+                                                @if (state.getDisplayMedia(profile.id).length > 0) {
+                                                    <div class="carousel">
+                                                        <div class="carousel-track" [style.transform]="'translateX(-' + getCarouselIndex(profile.id) * 100 + '%)'">
+                                                            @for (img of state.getDisplayMedia(profile.id); track img.id) {
+                                                                <div class="carousel-slide"><img [src]="img.url" alt="Post" /></div>
+                                                            }
+                                                        </div>
+                                                        @if (state.getDisplayMedia(profile.id).length > 1) {
+                                                            <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
+                                                            <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
+                                                            <div class="carousel-dots">
+                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
+                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 }
                                                 <div class="fb-actions">
                                                     <button class="fb-btn"><ap-symbol symbolId="ns-facebook_like" size="sm" color="basic-grey"></ap-symbol> Like</button>
@@ -185,8 +200,23 @@ interface Validation {
                                                         <span class="see-more">… see more</span>
                                                     }
                                                 </div>
-                                                @if (state.hasMedia()) {
-                                                    <div class="post-img"><img [src]="state.mediaItems()[0].url" alt="Post" /></div>
+                                                @if (state.getDisplayMedia(profile.id).length > 0) {
+                                                    <div class="carousel">
+                                                        <div class="carousel-track" [style.transform]="'translateX(-' + getCarouselIndex(profile.id) * 100 + '%)'">
+                                                            @for (img of state.getDisplayMedia(profile.id); track img.id) {
+                                                                <div class="carousel-slide"><img [src]="img.url" alt="Post" /></div>
+                                                            }
+                                                        </div>
+                                                        @if (state.getDisplayMedia(profile.id).length > 1) {
+                                                            <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
+                                                            <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
+                                                            <div class="carousel-dots">
+                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
+                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 }
                                                 <div class="li-actions">
                                                     <button class="li-btn"><ap-symbol symbolId="ns-linkedin_like" size="sm" color="basic-grey"></ap-symbol> Like</button>
@@ -252,8 +282,23 @@ interface Validation {
                                                         <span class="ig-time">Now</span>
                                                     </div>
                                                 </div>
-                                                @if (state.hasMedia()) {
-                                                    <div class="ig-img"><img [src]="state.mediaItems()[0].url" alt="Post" /></div>
+                                                @if (state.getDisplayMedia(profile.id).length > 0) {
+                                                    <div class="carousel ig">
+                                                        <div class="carousel-track" [style.transform]="'translateX(-' + getCarouselIndex(profile.id) * 100 + '%)'">
+                                                            @for (img of state.getDisplayMedia(profile.id); track img.id) {
+                                                                <div class="carousel-slide"><img [src]="img.url" alt="Post" /></div>
+                                                            }
+                                                        </div>
+                                                        @if (state.getDisplayMedia(profile.id).length > 1) {
+                                                            <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
+                                                            <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
+                                                            <div class="carousel-dots">
+                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
+                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 }
                                                 <div class="ig-actions">
                                                     <div class="ig-actions-left">
@@ -433,7 +478,36 @@ interface Validation {
         .post-author { font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
         .post-date { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ref-color-grey-60); margin-top: 2px; }
         .post-text { padding: 2px 12px 10px; font-size: 13px; color: var(--sys-text-color-default); line-height: 1.5; }
-        .post-img img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        /* Carousel */
+        .carousel {
+            position: relative; overflow: hidden;
+            &.ig .carousel-slide img { height: 280px; }
+        }
+        .carousel-track { display: flex; transition: transform 0.3s ease; }
+        .carousel-slide {
+            flex: 0 0 100%;
+            img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        }
+        .carousel-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.45); border: none; border-radius: 50%;
+            width: 28px; height: 28px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s; z-index: 2;
+            &:hover:not(:disabled) { background: rgba(0,0,0,0.65); }
+            &:disabled { opacity: 0.25; cursor: default; }
+            &.prev { left: 8px; }
+            &.next { right: 8px; }
+        }
+        .carousel-dots {
+            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 5px; z-index: 2;
+        }
+        .carousel-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.15s;
+            &.active { background: white; }
+        }
         .see-more { font-size: 12px; color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: 500; }
 
         .fb-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
@@ -463,7 +537,6 @@ interface Validation {
         .ig-meta { display: flex; flex-direction: column; }
         .ig-author { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
         .ig-time { font-size: 11px; color: var(--ref-color-grey-60); }
-        .ig-img img { width: 100%; height: 280px; object-fit: cover; display: block; }
         .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
         .ig-actions-left { display: flex; gap: 12px; }
         .ig-caption { padding: 2px 12px 10px; font-size: 12px; color: var(--sys-text-color-default); line-height: 1.5; }
@@ -478,6 +551,27 @@ export class PreviewPanelComponent {
     liExpanded = signal(true);
     igExpanded = signal(true);
     xExpanded = signal(true);
+
+    // ── Carousel state ───────────────────────────────────────────────────────
+    private carouselIndices = signal<Record<string, number>>({});
+
+    getCarouselIndex(profileId: string): number {
+        return this.carouselIndices()[profileId] ?? 0;
+    }
+
+    setCarouselIndex(profileId: string, idx: number): void {
+        this.carouselIndices.update(m => ({ ...m, [profileId]: idx }));
+    }
+
+    prevSlide(profileId: string): void {
+        const cur = this.getCarouselIndex(profileId);
+        if (cur > 0) this.setCarouselIndex(profileId, cur - 1);
+    }
+
+    nextSlide(profileId: string, total: number): void {
+        const cur = this.getCarouselIndex(profileId);
+        if (cur < total - 1) this.setCarouselIndex(profileId, cur + 1);
+    }
 
     private dismissed = signal(new Set<string>());
 

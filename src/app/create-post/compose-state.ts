@@ -89,6 +89,13 @@ export class ComposeStateService {
         return this.getCustomization(profileId)?.text ?? this.baseText();
     }
 
+    /** Returns per-profile media override if non-empty, otherwise base media. */
+    getDisplayMedia(profileId: string): MediaItem[] {
+        const custom = this.getCustomization(profileId);
+        if (custom && custom.mediaItems.length > 0) return custom.mediaItems;
+        return this.mediaItems();
+    }
+
     /** Open a customization card (create if absent), then focus it. */
     openCustomization(profileId: string): void {
         if (!this.isCustomized(profileId)) {
