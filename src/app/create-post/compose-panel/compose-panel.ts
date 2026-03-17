@@ -19,8 +19,22 @@ import { ComposeStateService, Customization } from '../compose-state';
     imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
     template: `
         <div class="compose-panel">
-            <div class="panel-header">Compose your post</div>
+            <!-- ── Tab navigation ──────────────────────────────────────── -->
+            <div class="compose-tabs">
+                <button class="tab-btn" [class.active]="activeTab() === 'base'" (click)="activeTab.set('base')">
+                    Base post
+                </button>
+                <button class="tab-btn" [class.active]="activeTab() === 'customized'" (click)="activeTab.set('customized')">
+                    Customized posts
+                    @if (state.activeCustomizations().length > 0) {
+                        <span class="tab-badge">{{ state.activeCustomizations().length }}</span>
+                    }
+                </button>
+            </div>
+
             <div class="compose-content" #composeContent>
+            @if (activeTab() === 'base') {
+                <div class="panel-header">Compose your post</div>
 
                 <!-- ── Base post ─────────────────────────────────────────── -->
                 <div class="section">
@@ -129,6 +143,8 @@ import { ComposeStateService, Customization } from '../compose-state';
                         </div>
                     }
                 </div>
+
+            } @else {
 
                 <!-- ── Customizations ─────────────────────────────────────── -->
                 <div class="section" #customizationsSection>
@@ -386,6 +402,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                     }
                 </div>
 
+            } <!-- end @if customized -->
             </div>
         </div>
     `,
@@ -397,11 +414,37 @@ import { ComposeStateService, Customization } from '../compose-state';
             border-right: 1px solid var(--sys-border-color-default);
             overflow: hidden;
         }
-        .panel-header {
-            padding: 10px 16px; font-size: 12px; font-weight: 600;
-            color: var(--sys-text-color-default);
-            border-bottom: 1px solid var(--sys-border-color-default);
+        .compose-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--ref-color-grey-15);
+            padding: 0 16px;
             flex-shrink: 0;
+            background: #F9F9FA;
+        }
+        .tab-btn {
+            background: none; border: none; border-bottom: 2px solid transparent;
+            padding: 12px 4px; margin-right: 20px;
+            font-size: 14px; font-weight: 500;
+            color: var(--sys-text-color-light);
+            cursor: pointer; font-family: 'Averta', sans-serif;
+            transition: color 0.15s, border-color 0.15s;
+            display: flex; align-items: center; gap: 6px;
+            &.active {
+                color: var(--ref-color-electric-blue-100);
+                border-bottom-color: var(--ref-color-electric-blue-100);
+                font-weight: 600;
+            }
+            &:hover:not(.active) { color: var(--sys-text-color-default); }
+        }
+        .tab-badge {
+            font-size: 11px; font-weight: 600;
+            background: var(--ref-color-electric-blue-10);
+            color: var(--ref-color-electric-blue-100);
+            border-radius: 10px; padding: 1px 6px; min-width: 18px; text-align: center;
+        }
+        .panel-header {
+            padding: 12px 0 4px; font-size: 13px; font-weight: 700;
+            color: var(--sys-text-color-default);
         }
         .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; background: #F9F9FA; }
         .section { padding: 12px 0; border-bottom: 1px solid var(--ref-color-grey-10); max-width: 640px; margin: 0 auto; &.last { border-bottom: none; } }
@@ -563,6 +606,7 @@ export class ComposePanelComponent {
     state = inject(ComposeStateService);
     private el = inject(ElementRef);
 
+    activeTab = signal<'base' | 'customized'>('base');
     baseTextFocused = signal(false);
     baseEditorExpanded = signal(false);
     focusedEditorId = signal<string | null>(null);
@@ -582,6 +626,7 @@ export class ComposePanelComponent {
             const targetId = this.state.focusedCustomizationId();
             if (!targetId) return;
 
+            this.activeTab.set('customized');
             this.customizationsExpanded.set(true);
 
             setTimeout(() => {
