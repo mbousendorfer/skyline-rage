@@ -473,7 +473,11 @@ interface Validation {
         .customize-bar {
             display: flex; align-items: center; justify-content: space-between;
             padding: 6px 0;
-            &.is-customized { padding: 6px 4px; }
+            &.is-customized {
+                background: var(--ref-color-electric-blue-10);
+                border-radius: 8px 8px 0 0;
+                padding: 7px 10px;
+            }
         }
         .customize-link {
             display: flex; align-items: center; gap: 4px; background: none; border: none;
@@ -481,11 +485,14 @@ interface Validation {
             font-family: 'Averta', sans-serif; border-radius: 4px; transition: all 0.15s;
             &:hover, &.active { color: var(--ref-color-electric-blue-100); }
             &:hover { background: var(--ref-color-electric-blue-05); }
+            .is-customized & { color: var(--ref-color-electric-blue-100); font-weight: 500; padding-left: 0; }
         }
         .customized-badge {
             display: flex; align-items: center; gap: 4px;
             font-size: 11px; font-weight: 600;
+            background: var(--ref-color-electric-blue-20);
             color: var(--ref-color-electric-blue-100);
+            border-radius: 20px; padding: 2px 8px 2px 6px;
         }
 
         /* Infoboxes */
