@@ -1,0 +1,17 @@
+@use 'ui-theme/assets/style/font-face';
+@use 'ui-theme/assets/style/variables';
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: 'Averta', sans-serif;
+    background: var(--ref-color-white);
+}
+
+* {
+    box-sizing: border-box;
+}
