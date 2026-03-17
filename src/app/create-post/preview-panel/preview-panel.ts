@@ -73,14 +73,17 @@ interface Validation {
                             @if (fbExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.facebookProfiles(); track profile.id) {
-                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
-                                            <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
-                                                    Customize
+                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-tag"><span class="dot"></span> Customized</span>
+                                                    <span class="customized-badge">
+                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
+                                                        Customized
+                                                    </span>
                                                 }
                                             </div>
                                             @for (v of fbValidations(profile.id); track v.key) {
@@ -98,7 +101,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="fb-card" [class.has-error]="fbProfileHasError(profile.id)">
+                                            <div class="fb-card" [class.has-error]="fbProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="facebook" [size]="36"></ap-avatar>
                                                     <div class="post-meta">
@@ -161,14 +164,17 @@ interface Validation {
                             @if (liExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
-                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
-                                            <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
-                                                    Customize
+                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-tag"><span class="dot"></span> Customized</span>
+                                                    <span class="customized-badge">
+                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
+                                                        Customized
+                                                    </span>
                                                 }
                                             </div>
                                             @for (v of liValidations(profile.id); track v.key) {
@@ -186,7 +192,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="li-card" [class.has-error]="liProfileHasError(profile.id)">
+                                            <div class="li-card" [class.has-error]="liProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="linkedin" [size]="40"></ap-avatar>
                                                     <div class="post-meta">
@@ -249,14 +255,17 @@ interface Validation {
                             @if (igExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.instagramProfiles(); track profile.id) {
-                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
-                                            <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
-                                                    Customize
+                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-tag"><span class="dot"></span> Customized</span>
+                                                    <span class="customized-badge">
+                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
+                                                        Customized
+                                                    </span>
                                                 }
                                             </div>
                                             @for (v of igValidations(profile.id); track v.key) {
@@ -274,7 +283,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="ig-card" [class.has-error]="igProfileHasError(profile.id)">
+                                            <div class="ig-card" [class.has-error]="igProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <div class="ig-header">
                                                     <ap-avatar [username]="profile.name" [size]="32"></ap-avatar>
                                                     <div class="ig-meta">
@@ -345,14 +354,17 @@ interface Validation {
                             @if (xExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.twitterProfiles(); track profile.id) {
-                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id">
-                                            <div class="customize-bar">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                        <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
+                                            <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
+                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
                                                     <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
-                                                    Customize
+                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-tag"><span class="dot"></span> Customized</span>
+                                                    <span class="customized-badge">
+                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
+                                                        Customized
+                                                    </span>
                                                 }
                                             </div>
                                             @for (v of xValidations(profile.id); track v.key) {
@@ -370,7 +382,7 @@ interface Validation {
                                                     </div>
                                                 }
                                             }
-                                            <div class="x-card" [class.has-error]="xProfileHasError(profile.id)">
+                                            <div class="x-card" [class.has-error]="xProfileHasError(profile.id)" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <div class="post-header">
                                                     <ap-avatar [username]="profile.name" network="twitter" [size]="36"></ap-avatar>
                                                     <div class="post-meta">
@@ -447,7 +459,15 @@ interface Validation {
         }
 
         .preview-cards { padding: 0 0 16px; }
-        .preview-card-wrapper { margin-bottom: 4px; scroll-margin-top: 12px; }
+        .preview-card-wrapper {
+            margin-bottom: 4px; scroll-margin-top: 12px; border-radius: 10px;
+            transition: background 0.2s, padding 0.2s;
+            &.is-customized {
+                background: var(--ref-color-electric-blue-02, #f5f8ff);
+                padding: 4px;
+                margin: 0 -4px 4px;
+            }
+        }
 
         /* Customize bar */
         .customize-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
@@ -458,8 +478,13 @@ interface Validation {
             &:hover, &.active { color: var(--ref-color-electric-blue-100); }
             &:hover { background: var(--ref-color-electric-blue-05); }
         }
-        .customized-tag { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ref-color-electric-blue-100); }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ref-color-electric-blue-100); display: inline-block; }
+        .customized-badge {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 600;
+            background: var(--ref-color-electric-blue-10);
+            color: var(--ref-color-electric-blue-100);
+            border-radius: 10px; padding: 2px 8px;
+        }
 
         /* Infoboxes */
         .validation-item { margin-bottom: 6px; }
@@ -468,8 +493,12 @@ interface Validation {
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: 8px; overflow: hidden; background: var(--ref-color-white);
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, border-top-width 0.2s;
             &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
+            &.is-customized {
+                border-color: var(--ref-color-electric-blue-40);
+                border-top: 3px solid var(--ref-color-electric-blue-100);
+            }
         }
         .x-card { padding-bottom: 10px; }
 
