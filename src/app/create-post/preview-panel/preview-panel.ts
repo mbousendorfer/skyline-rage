@@ -461,17 +461,19 @@ interface Validation {
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
             margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 10px;
-            transition: background 0.2s, box-shadow 0.2s;
-            &.is-customized {
-                background: var(--ref-color-electric-blue-02, #f5f8ff);
-                box-shadow: 0 0 0 2px var(--ref-color-electric-blue-40);
-                padding: 4px;
-                margin: 0 -4px 8px;
-            }
         }
 
         /* Customize bar */
-        .customize-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+        .customize-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 0;
+            &.is-customized {
+                background: var(--ref-color-electric-blue-05);
+                border-radius: 8px 8px 0 0;
+                padding: 6px 10px;
+                margin: 0 0 -2px;
+            }
+        }
         .customize-link {
             display: flex; align-items: center; gap: 4px; background: none; border: none;
             color: var(--ref-color-grey-60); font-size: 12px; cursor: pointer; padding: 2px 6px 2px 0;
@@ -482,9 +484,7 @@ interface Validation {
         .customized-badge {
             display: flex; align-items: center; gap: 4px;
             font-size: 11px; font-weight: 600;
-            background: var(--ref-color-electric-blue-10);
             color: var(--ref-color-electric-blue-100);
-            border-radius: 10px; padding: 2px 8px;
         }
 
         /* Infoboxes */
