@@ -42,24 +42,27 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                 <div class="groups-list">
                     @for (group of filteredGroups(); track group.id) {
                         <div class="group">
-                            <div class="group-header" (click)="state.toggleGroup(group.id)">
+                            <div class="group-header">
                                 <ap-checkbox
                                     [name]="'group-' + group.id"
                                     [checked]="isGroupChecked(group)"
                                     [indeterminate]="isGroupIndeterminate(group)"
                                     (change)="toggleGroupProfiles(group, $event)">
                                 </ap-checkbox>
-                                <span class="group-name">{{ group.name }}</span>
-                                <ap-symbol
-                                    [symbolId]="group.expanded ? 'chevron-up' : 'chevron-down'"
-                                    size="xs"
-                                    color="basic-grey">
-                                </ap-symbol>
+                                <div class="group-label" (click)="state.toggleGroup(group.id)">
+                                    <ap-symbol symbolId="folder" size="xs" color="basic-grey"></ap-symbol>
+                                    <span class="group-name">{{ group.name }}</span>
+                                    <ap-symbol
+                                        [symbolId]="group.expanded ? 'chevron-up' : 'chevron-down'"
+                                        size="xs"
+                                        color="basic-grey">
+                                    </ap-symbol>
+                                </div>
                             </div>
                             @if (group.expanded) {
                                 <div class="group-profiles">
                                     @for (profile of filterProfiles(group.profiles); track profile.id) {
-                                        <div class="profile-item" (click)="state.toggleProfile(profile.id, !profile.checked)">
+                                        <div class="profile-item" [class.checked]="profile.checked" (click)="state.toggleProfile(profile.id, !profile.checked)">
                                             <ap-checkbox
                                                 [name]="profile.id"
                                                 [checked]="profile.checked"
@@ -81,7 +84,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                     @if (filteredUngrouped().length > 0) {
                         <div class="ungrouped-profiles">
                             @for (profile of filteredUngrouped(); track profile.id) {
-                                <div class="profile-item" (click)="state.toggleProfile(profile.id, !profile.checked)">
+                                <div class="profile-item" [class.checked]="profile.checked" (click)="state.toggleProfile(profile.id, !profile.checked)">
                                     <ap-checkbox
                                         [name]="profile.id"
                                         [checked]="profile.checked"
@@ -150,7 +153,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                 font-size: 12px;
                 color: var(--sys-text-color-default);
                 background: transparent;
-                font-family: 'Open Sans', sans-serif;
+                font-family: 'Averta', sans-serif;
 
                 &::placeholder {
                     color: var(--ref-color-grey-60);
@@ -216,22 +219,31 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         .group-header {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 7px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--sys-text-color-light);
+            gap: 0;
+            padding: 12px 12px 2px 12px;
 
-            &:hover {
-                background: var(--ref-color-grey-05);
-            }
+            &:hover { background: var(--ref-color-grey-05); }
+        }
+
+        .group-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            padding: 5px 0 5px 6px;
+            cursor: pointer;
+            min-width: 0;
 
             .group-name {
                 flex: 1;
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--sys-text-color-default);
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.6px;
+                text-transform: uppercase;
+                color: var(--ref-color-grey-60);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
@@ -245,13 +257,11 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             gap: 7px;
             padding: 5px 12px;
             cursor: pointer;
-            border-radius: 4px;
-            margin: 0 4px;
             transition: background 0.1s;
 
-            &:hover {
-                background: var(--ref-color-grey-05);
-            }
+            &:hover { background: var(--ref-color-grey-05); }
+            &.checked { background: var(--ref-color-electric-blue-02, #f5f8ff); }
+            &.checked:hover { background: var(--ref-color-electric-blue-05); }
         }
 
         .ungrouped-profiles {
@@ -261,7 +271,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .profile-name {
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 400;
             color: var(--sys-text-color-default);
             white-space: nowrap;
             overflow: hidden;

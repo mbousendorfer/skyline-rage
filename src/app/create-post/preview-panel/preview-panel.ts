@@ -26,9 +26,9 @@ interface Validation {
             <!-- Status bar — errors are clickable and scroll to first error -->
             <div class="status-bar">
                 @if (okCount() > 0) {
-                    <span class="status ok">
-                        <ap-symbol symbolId="check-circle" size="xs" color="green"></ap-symbol>
-                        {{ okCount() }} ok
+                    <span class="status ready">
+                        <ap-symbol symbolId="check-circle" size="xs" color="basic-grey"></ap-symbol>
+                        {{ okCount() }} ready
                     </span>
                 }
                 @if (warnCount() > 0) {
@@ -60,11 +60,12 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="fbExpanded.set(!fbExpanded())">
                                 <div class="network-title">
+                                    @if (hasFbErrors()) { <span class="net-error-dot"></span> }
                                     <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
                                     <span>Facebook</span>
                                 </div>
                                 <div class="network-right">
-                                    <span class="posts-count" [class.err-count]="hasFbErrors()">{{ state.facebookProfiles().length }} post(s)</span>
+                                    <span class="posts-count">{{ state.facebookProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="fbExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
                                 </div>
                             </div>
@@ -132,11 +133,12 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="liExpanded.set(!liExpanded())">
                                 <div class="network-title">
+                                    @if (hasLiErrors()) { <span class="net-error-dot"></span> }
                                     <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol>
                                     <span>LinkedIn</span>
                                 </div>
                                 <div class="network-right">
-                                    <span class="posts-count" [class.err-count]="hasLiErrors()">{{ state.linkedinProfiles().length }} post(s)</span>
+                                    <span class="posts-count">{{ state.linkedinProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="liExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
                                 </div>
                             </div>
@@ -204,11 +206,12 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="igExpanded.set(!igExpanded())">
                                 <div class="network-title">
+                                    @if (hasIgErrors()) { <span class="net-error-dot"></span> }
                                     <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
                                     <span>Instagram</span>
                                 </div>
                                 <div class="network-right">
-                                    <span class="posts-count" [class.err-count]="hasIgErrors()">{{ state.instagramProfiles().length }} post(s)</span>
+                                    <span class="posts-count">{{ state.instagramProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="igExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
                                 </div>
                             </div>
@@ -284,11 +287,12 @@ interface Validation {
                         <div class="network-section">
                             <div class="network-header" (click)="xExpanded.set(!xExpanded())">
                                 <div class="network-title">
+                                    @if (hasXErrors()) { <span class="net-error-dot"></span> }
                                     <ap-symbol symbolId="x-twitter" size="sm" color="twitter"></ap-symbol>
                                     <span>X (Twitter)</span>
                                 </div>
                                 <div class="network-right">
-                                    <span class="posts-count" [class.err-count]="hasXErrors()">{{ state.twitterProfiles().length }} post(s)</span>
+                                    <span class="posts-count">{{ state.twitterProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="xExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
                                 </div>
                             </div>
@@ -362,9 +366,9 @@ interface Validation {
         }
         .status {
             display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500;
-            &.ok   { color: var(--ref-color-green-100); }
-            &.warn { color: var(--ref-color-orange-100); }
-            &.err  { color: var(--ref-color-red-100); }
+            &.ready { color: var(--ref-color-grey-60); }
+            &.warn  { color: var(--ref-color-orange-100); }
+            &.err   { color: var(--ref-color-red-100); }
         }
         button.status.clickable {
             background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: 4px;
@@ -391,7 +395,10 @@ interface Validation {
         .network-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
         .network-right { display: flex; align-items: center; gap: 6px; }
         .posts-count { font-size: 11px; color: var(--ref-color-grey-60); }
-        .err-count { color: var(--ref-color-red-100); font-weight: 600; }
+        .net-error-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--ref-color-red-100); flex-shrink: 0;
+        }
 
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper { margin-bottom: 4px; scroll-margin-top: 12px; }

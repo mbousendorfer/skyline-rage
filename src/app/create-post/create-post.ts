@@ -1,15 +1,17 @@
 import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
+import { SlideToggleComponent } from '@agorapulse/ui-components/slide-toggle';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { ProfilesPanelComponent } from './profiles-panel/profiles-panel';
 import { ComposePanelComponent } from './compose-panel/compose-panel';
 import { PreviewPanelComponent } from './preview-panel/preview-panel';
+import { ComposeStateService } from './compose-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-create-post',
-    imports: [ButtonComponent, IconButtonComponent, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
+    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
     template: `
         <div class="modal-container">
             <div class="modal-header">
@@ -33,6 +35,11 @@ import { PreviewPanelComponent } from './preview-panel/preview-panel';
                     <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="megaphone" symbolPosition="left" size="small">Advocacy campaign</ap-button>
                     <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="ban" symbolPosition="left" size="small">No campaign</ap-button>
                     <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="check" symbolPosition="left" size="small">Select approval type</ap-button>
+                    <div class="footer-divider"></div>
+                    <label class="draft-toggle">
+                        <ap-slide-toggle [checked]="state.isDraft()" (checkedChange)="state.isDraft.set($event)" size="small"></ap-slide-toggle>
+                        <span class="draft-label">Draft</span>
+                    </label>
                 </div>
                 <div class="footer-right">
                     <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="calendar" symbolPosition="left" size="small" class="date-time-btn">Date &amp; Time</ap-button>
@@ -67,6 +74,9 @@ import { PreviewPanelComponent } from './preview-panel/preview-panel';
         }
         .footer-left { display: flex; align-items: center; gap: 6px; }
         .footer-right { display: flex; align-items: center; gap: 8px; }
+        .footer-divider { width: 1px; height: 18px; background: var(--sys-border-color-default); margin: 0 2px; }
+        .draft-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .draft-label { font-size: 12px; font-weight: 500; color: var(--sys-text-color-light); }
 
         /* Make Date & Time button connect seamlessly to Schedule */
         .date-time-btn {
@@ -79,4 +89,5 @@ import { PreviewPanelComponent } from './preview-panel/preview-panel';
 })
 export class CreatePostComponent {
     close = output<void>();
+    state = inject(ComposeStateService);
 }
