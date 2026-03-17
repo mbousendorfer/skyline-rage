@@ -61,6 +61,7 @@ export class ComposeStateService {
         'Do you use Figma? It is one of the best tools to create screens. There is also Sketch and Adobe XD but it is not as efficient as Figma. Have you ever used @usertag for your prototypes? They released a web version that is totally free. Quite nice !\n\nFigma has revolutionized the way design teams collaborate. With its real-time multiplayer editing, designers and developers can work side by side without losing context. The component system, auto-layout, and variants have made it the industry standard for UI design.\n\nBut beyond just design, Figma has also introduced prototyping, FigJam for whiteboarding, and now Dev Mode — making it a complete workspace for product teams. Whether you\'re a solo freelancer or part of a 500-person organization, Figma scales beautifully.\n\nHave you made the switch yet? Drop a comment below! 👇 #Design #Figma #UX #ProductDesign #NoCode'
     );
     isDraft = signal(false);
+    activeCampaign = signal<string | null>(null);
 
     // ── Customizations ───────────────────────────────────────────────────────
     /** All per-profile customizations. Pre-seeded with one FB card. */

@@ -3,6 +3,7 @@ import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { SlideToggleComponent } from '@agorapulse/ui-components/slide-toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import {
     ChangeDetectionStrategy, Component, computed, effect,
@@ -15,7 +16,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, SymbolComponent, FormsModule, DecimalPipe],
+    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
     template: `
         <div class="compose-panel">
             <div class="panel-header">Compose your post</div>
@@ -30,61 +31,61 @@ import { ComposeStateService, Customization } from '../compose-state';
                         </div>
                         <span class="section-hint">Shared across all unless customized</span>
                     </div>
-                    <div class="text-editor" [class.focused]="baseTextFocused()">
+                    <div class="text-editor" [class.focused]="baseTextFocused()" [class.expanded]="baseEditorExpanded()">
                         <textarea
                             class="post-textarea"
                             [value]="state.baseText()"
                             (input)="onBaseTextInput($event)"
                             (focus)="baseTextFocused.set(true)"
                             (blur)="baseTextFocused.set(false)"
-                            rows="4"
                             placeholder="What do you want to share?">
                         </textarea>
                         <div class="editor-toolbar">
                             <div class="toolbar-icons">
-                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat"></ap-icon-button>
-                                <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat"></ap-icon-button>
+                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                             </div>
-                            <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                            <div class="toolbar-right">
+                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                <button class="expand-btn" (click)="baseEditorExpanded.set(!baseEditorExpanded())" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
+                                    <ap-symbol [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                                </button>
+                            </div>
                         </div>
                         <div class="editor-footer">
                             <div class="char-counts">
                                 @if (state.facebookProfiles().length > 0) {
-                                    <span class="char-count" [class.warning]="fbWarning()" [class.danger]="fbDanger()">
+                                    <span class="char-count" [class.warning]="fbWarning()" [class.danger]="fbDanger()" [apTooltip]="'Facebook — ' + (state.fbCharsRemaining() | number) + ' chars remaining (limit 10,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" [color]="fbDanger() ? 'red' : fbWarning() ? 'orange' : 'facebook'"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.linkedinProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.liCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.liCharsRemaining() < 0" [apTooltip]="'LinkedIn — ' + (state.liCharsRemaining() | number) + ' chars remaining (limit 3,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="linkedin" size="xs" [color]="state.liCharsRemaining() < 0 ? 'red' : 'linkedin'"></ap-symbol>
                                         {{ state.liCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.instagramProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.igCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.igCharsRemaining() < 0" [apTooltip]="'Instagram — ' + (state.igCharsRemaining() | number) + ' chars remaining (limit 2,200)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="instagram" size="xs" [color]="state.igCharsRemaining() < 0 ? 'red' : 'instagram'"></ap-symbol>
                                         {{ state.igCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.twitterProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0">
+                                    <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0" [apTooltip]="'X (Twitter) — ' + (state.twitterCharsRemaining() | number) + ' chars remaining (limit 280)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="x-twitter" size="xs" [color]="state.twitterCharsRemaining() < 0 ? 'red' : 'twitter'"></ap-symbol>
                                         {{ state.twitterCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.selectedProfiles().length === 0) {
-                                    <span class="char-count grey">
+                                    <span class="char-count grey" [apTooltip]="'Characters remaining'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" color="basic-grey"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
                                 }
-                            </div>
-                            <div class="draft-row">
-                                <span class="draft-label">This is a draft</span>
-                                <ap-slide-toggle [checked]="state.isDraft()" (checkedChange)="state.isDraft.set($event)"></ap-slide-toggle>
                             </div>
                         </div>
                     </div>
@@ -104,6 +105,21 @@ import { ComposeStateService, Customization } from '../compose-state';
                             @for (item of state.mediaItems(); track item.id) {
                                 <div class="media-thumb">
                                     <img [src]="item.url" alt="Media" />
+                                    <!-- Network compatibility indicators -->
+                                    @if (isLandscape(item)) {
+                                        <div class="media-network-issues">
+                                            @if (state.facebookProfiles().length > 0) {
+                                                <span class="net-badge warn" [apTooltip]="'Facebook will crop this image to 1.91:1'" apTooltipPosition="top" [apTooltipShowDelay]="200">
+                                                    <ap-symbol symbolId="facebook" size="xs" color="orange"></ap-symbol>
+                                                </span>
+                                            }
+                                            @if (state.instagramProfiles().length > 0) {
+                                                <span class="net-badge warn" [apTooltip]="'Instagram will crop this image to square'" apTooltipPosition="top" [apTooltipShowDelay]="200">
+                                                    <ap-symbol symbolId="instagram" size="xs" color="orange"></ap-symbol>
+                                                </span>
+                                            }
+                                        </div>
+                                    }
                                     <div class="media-overlay">
                                         <button><ap-symbol symbolId="more" size="xs" color="black"></ap-symbol></button>
                                         <button (click)="removeMedia(item.id)"><ap-symbol symbolId="trash" size="xs" color="red"></ap-symbol></button>
@@ -131,6 +147,8 @@ import { ComposeStateService, Customization } from '../compose-state';
                             <p class="empty-hint">
                                 Click <strong>Customize</strong> on any preview card to add a per‑profile override.
                             </p>
+                        } @else {
+                            <p class="customizations-hint">Each card below overrides the base post for that profile.</p>
                         }
 
                         @for (custom of state.activeCustomizations(); track custom.profileId) {
@@ -140,7 +158,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 [class.flash-highlight]="flashingId() === custom.profileId"
                                 [class.has-error]="customHasError(custom.profileId, custom.text)">
                                 <!-- card header -->
-                                <div class="custom-card-header">
+                                <div class="custom-card-header" [style.background]="networkHeaderBg(profileNetwork(custom.profileId))">
                                     <div class="profile-row">
                                         <ap-avatar
                                             [username]="profileName(custom.profileId)"
@@ -149,7 +167,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                         </ap-avatar>
                                         <span class="profile-label">{{ profileName(custom.profileId) }}</span>
                                         @if (customHasError(custom.profileId, custom.text)) {
-                                            <ap-symbol symbolId="error" size="xs" color="red" title="This profile has a validation error"></ap-symbol>
+                                            <ap-symbol symbolId="error" size="xs" color="red" [apTooltip]="'Character limit exceeded for this network'" apTooltipPosition="top" [apTooltipShowDelay]="200"></ap-symbol>
                                         }
                                     </div>
                                     <div class="row-gap">
@@ -158,6 +176,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                                             ariaLabel="Reset to base text"
                                             type="flat"
                                             size="small"
+                                            [apTooltip]="'Reset to base post content'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
                                             (onClick)="state.resetCustomization(custom.profileId)">
                                         </ap-icon-button>
                                         <ap-icon-button
@@ -165,11 +186,13 @@ import { ComposeStateService, Customization } from '../compose-state';
                                             ariaLabel="Remove customization"
                                             type="flat"
                                             size="small"
+                                            [apTooltip]="'Remove this override'"
+                                            apTooltipPosition="bottom"
+                                            [apTooltipShowDelay]="400"
                                             (onClick)="state.removeCustomization(custom.profileId)">
                                         </ap-icon-button>
                                     </div>
                                 </div>
-                                <p class="override-hint">overrides base content and options</p>
 
                                 <!-- text editor -->
                                 <div class="text-editor inner" [class.focused]="focusedEditorId() === custom.profileId">
@@ -184,20 +207,26 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </textarea>
                                     <div class="editor-toolbar">
                                         <div class="toolbar-icons">
-                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat"></ap-icon-button>
-                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat"></ap-icon-button>
+                                            <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" [apTooltip]="'Add an emoji'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="pin" ariaLabel="Location" type="flat" [apTooltip]="'Tag a location'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="hashtag" ariaLabel="Hashtag" type="flat" [apTooltip]="'Add hashtags'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
+                                            <ap-icon-button symbolId="sparkles" ariaLabel="Writing Assistant" type="flat" [apTooltip]="'Writing Assistant'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                                         </div>
-                                        <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
                                     </div>
                                 </div>
 
                                 <!-- char count -->
                                 <div class="char-counts inner">
-                                    <span class="char-count" [class.danger]="custom.text.length > 10000">
-                                        <ap-symbol [symbolId]="profileNetwork(custom.profileId)" size="xs" [color]="profileNetwork(custom.profileId)"></ap-symbol>
-                                        {{ (10000 - custom.text.length) | number }}
+                                    <span class="char-count"
+                                        [class.danger]="custom.text.length > networkCharLimit(profileNetwork(custom.profileId))"
+                                        [class.warning]="isNearLimit(custom.profileId, custom.text)">
+                                        <ap-symbol
+                                            [symbolId]="networkSymbol(profileNetwork(custom.profileId))"
+                                            size="xs"
+                                            [color]="charCountColor(custom.profileId, custom.text)">
+                                        </ap-symbol>
+                                        {{ (networkCharLimit(profileNetwork(custom.profileId)) - custom.text.length) | number }}
                                     </span>
                                 </div>
 
@@ -237,7 +266,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 
                     @if (state.facebookProfiles().length > 0) {
                         <div class="network-card">
-                            <div class="collapsible-header padded" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
                                 <div class="row-gap">
                                     <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
                                     <span class="network-label">Facebook options</span>
@@ -274,7 +303,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 
                     @if (state.instagramProfiles().length > 0) {
                         <div class="network-card">
-                            <div class="collapsible-header padded" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
                                 <div class="row-gap">
                                     <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
                                     <span class="network-label">Instagram options</span>
@@ -320,7 +349,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 
                     @if (state.linkedinProfiles().length > 0) {
                         <div class="network-card">
-                            <div class="collapsible-header padded" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
                                 <div class="row-gap"><ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol><span class="network-label">LinkedIn options</span></div>
                                 <ap-symbol [symbolId]="liOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
                             </div>
@@ -335,7 +364,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 
                     @if (state.twitterProfiles().length > 0) {
                         <div class="network-card">
-                            <div class="collapsible-header padded" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
                                 <div class="row-gap"><ap-symbol symbolId="x-twitter" size="sm" color="twitter"></ap-symbol><span class="network-label">X (Twitter) options</span></div>
                                 <ap-symbol [symbolId]="xOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
                             </div>
@@ -375,9 +404,9 @@ import { ComposeStateService, Customization } from '../compose-state';
             flex-shrink: 0;
         }
         .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; background: #F9F9FA; }
-        .section { padding: 12px 0; border-bottom: 1px solid var(--ref-color-grey-10); &.last { border-bottom: none; } }
+        .section { padding: 12px 0; border-bottom: 1px solid var(--ref-color-grey-10); max-width: 640px; margin: 0 auto; &.last { border-bottom: none; } }
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .section-title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
+        .section-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--sys-text-color-default); }
         .section-hint { font-size: 11px; color: var(--ref-color-grey-60); }
 
         .text-editor {
@@ -385,6 +414,8 @@ import { ComposeStateService, Customization } from '../compose-state';
             background: var(--ref-color-white); transition: border-color 0.15s, box-shadow 0.15s;
             &.inner { border-radius: 6px; margin: 8px 0; }
             &.focused { border-color: var(--ref-color-electric-blue-60); box-shadow: 0 0 0 3px var(--ref-color-electric-blue-05); }
+            textarea { min-height: 96px; transition: min-height 0.25s ease; }
+            &.expanded textarea { min-height: 280px; }
         }
         .post-textarea {
             width: 100%; padding: 10px 12px; border: none; outline: none; resize: none;
@@ -400,6 +431,13 @@ import { ComposeStateService, Customization } from '../compose-state';
             background: var(--ref-color-white);
         }
         .toolbar-icons { display: flex; }
+        .toolbar-right { display: flex; align-items: center; gap: 4px; }
+        .expand-btn {
+            background: none; border: none; padding: 4px; cursor: pointer;
+            display: flex; align-items: center; border-radius: 4px;
+            opacity: 0.5; transition: opacity 0.15s, background 0.15s;
+            &:hover { opacity: 1; background: var(--ref-color-grey-05); }
+        }
         .writing-assistant-btn {
             ::ng-deep button {
                 background: linear-gradient(white, white) padding-box,
@@ -411,7 +449,7 @@ import { ComposeStateService, Customization } from '../compose-state';
             ::ng-deep ap-symbol svg { color: #6c63ff !important; }
         }
         .editor-footer {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center;
             padding: 6px 12px; border-top: 1px solid var(--ref-color-grey-10);
         }
         .char-counts { display: flex; gap: 12px; &.inner { padding: 4px 12px 8px; } }
@@ -422,15 +460,13 @@ import { ComposeStateService, Customization } from '../compose-state';
             &.warning { color: var(--ref-color-orange-100); }
             &.danger { color: var(--ref-color-red-100); font-weight: 600; }
         }
-        .draft-row { display: flex; align-items: center; gap: 8px; }
-        .draft-label { font-size: 12px; color: var(--sys-text-color-light); }
 
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 4px 0 8px; cursor: pointer; user-select: none;
             &.padded { padding: 10px 12px; }
         }
-        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
+        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--sys-text-color-default); }
         .section-count { font-size: 11px; font-weight: 400; color: var(--ref-color-grey-60); }
 
         .media-grid { display: flex; gap: 8px; flex-wrap: wrap; &.inner { padding: 0 12px 8px; } }
@@ -443,6 +479,13 @@ import { ComposeStateService, Customization } from '../compose-state';
         .media-thumb {
             position: relative; width: 68px; height: 68px; border-radius: 8px; overflow: hidden;
             img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .media-network-issues {
+                position: absolute; bottom: 3px; left: 3px; display: flex; gap: 2px;
+            }
+            .net-badge {
+                width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center;
+                &.warn { background: rgba(255, 247, 237, 0.92); }
+            }
             .media-overlay {
                 position: absolute; top: 2px; right: 2px; display: flex; gap: 2px;
                 opacity: 0; transition: opacity 0.15s;
@@ -451,9 +494,13 @@ import { ComposeStateService, Customization } from '../compose-state';
             &:hover .media-overlay { opacity: 1; }
         }
 
+        /* Customizations section hint */
+        .customizations-hint { font-size: 11px; color: var(--ref-color-grey-60); margin: 0 0 8px; }
+
         /* Customization cards */
         .custom-card {
-            border: 1px solid var(--sys-border-color-default); border-radius: 8px;
+            border: 1px solid var(--sys-border-color-default);
+            border-radius: 8px;
             overflow: hidden; margin-bottom: 10px; background: var(--ref-color-white);
             transition: box-shadow 0.2s, border-color 0.2s;
             &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
@@ -469,11 +516,11 @@ import { ComposeStateService, Customization } from '../compose-state';
             display: flex; align-items: center; justify-content: space-between;
             padding: 8px 12px; background: var(--ref-color-grey-05);
             border-bottom: 1px solid var(--sys-border-color-default);
+            transition: background 0.15s;
         }
         .profile-row { display: flex; align-items: center; gap: 8px; }
-        .profile-label { font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
+        .profile-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
         .row-gap { display: flex; align-items: center; gap: 6px; }
-        .override-hint { font-size: 11px; color: var(--ref-color-grey-60); padding: 4px 12px 0; margin: 0; }
         .inner-pad { padding: 8px 12px 4px; }
 
         .option-row {
@@ -484,7 +531,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         }
         .option-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
         .option-info-row { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .option-label { font-size: 12px; font-weight: 500; color: var(--sys-text-color-default); }
+        .option-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
         .option-hint { font-size: 11px; color: var(--ref-color-grey-60); line-height: 1.4; }
 
         .first-comment-editor {
@@ -496,7 +543,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         .network-hint { font-size: 11px; color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: 1.5; }
         .network-card { border: 1px solid var(--sys-border-color-default); border-radius: 8px; margin-top: 8px; overflow: hidden; background: var(--ref-color-white); }
         .network-card-content { padding: 0 0 8px; }
-        .network-label { font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
+        .network-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
         .field-group {
             padding: 8px 12px 4px;
             .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--sys-text-color-light); margin-bottom: 4px; }
@@ -517,6 +564,7 @@ export class ComposePanelComponent {
     private el = inject(ElementRef);
 
     baseTextFocused = signal(false);
+    baseEditorExpanded = signal(false);
     focusedEditorId = signal<string | null>(null);
     flashingId = signal<string | null>(null);
     mediaExpanded = signal(true);
@@ -530,15 +578,12 @@ export class ComposePanelComponent {
     fbDanger = computed(() => this.state.fbCharsRemaining() < 0);
 
     constructor() {
-        // React when the preview panel requests focus on a customization card
         effect(() => {
             const targetId = this.state.focusedCustomizationId();
             if (!targetId) return;
 
-            // Expand the section first
             this.customizationsExpanded.set(true);
 
-            // Wait for DOM to render the card, then scroll + flash
             setTimeout(() => {
                 const card = this.el.nativeElement.querySelector(`[data-custom-id="${targetId}"]`);
                 if (card) {
@@ -546,7 +591,6 @@ export class ComposePanelComponent {
                     this.flashingId.set(targetId);
                     setTimeout(() => this.flashingId.set(null), 1500);
                 }
-                // Clear the focus request so it can fire again next time
                 this.state.focusedCustomizationId.set(null);
             }, 60);
         });
@@ -560,11 +604,44 @@ export class ComposePanelComponent {
         return this.state.allProfiles().find(p => p.id === profileId)?.network ?? 'facebook';
     }
 
+    networkCharLimit(network: string): number {
+        const limits: Record<string, number> = { facebook: 10000, linkedin: 3000, instagram: 2200, twitter: 280 };
+        return limits[network] ?? 10000;
+    }
+
+    networkSymbol(network: string): string {
+        return network === 'twitter' ? 'x-twitter' : network;
+    }
+
     /** Returns true if the custom text for this profile exceeds its network's character limit. */
     customHasError(profileId: string, text: string): boolean {
-        const network = this.profileNetwork(profileId);
-        const limits: Record<string, number> = { facebook: 10000, linkedin: 3000, instagram: 2200, twitter: 280 };
-        return text.length > (limits[network] ?? Infinity);
+        return text.length > this.networkCharLimit(this.profileNetwork(profileId));
+    }
+
+    isNearLimit(profileId: string, text: string): boolean {
+        const limit = this.networkCharLimit(this.profileNetwork(profileId));
+        const remaining = limit - text.length;
+        return remaining >= 0 && remaining < limit * 0.1; // within 10% of limit
+    }
+
+    charCountColor(profileId: string, text: string): string {
+        if (this.customHasError(profileId, text)) return 'red';
+        if (this.isNearLimit(profileId, text)) return 'orange';
+        return this.profileNetwork(profileId);
+    }
+
+    isLandscape(item: { width: number; height: number }): boolean {
+        return item.width / item.height > 1.1;
+    }
+
+    networkHeaderBg(network: string): string {
+        const tints: Record<string, string> = {
+            facebook:  'rgba(24,  119, 242, 0.06)',
+            instagram: 'rgba(225,  48,  108, 0.06)',
+            linkedin:  'rgba(10,  102, 194, 0.06)',
+            twitter:   'rgba(0,     0,   0, 0.04)',
+        };
+        return tints[network] ?? 'var(--ref-color-grey-05)';
     }
 
     onBaseTextInput(event: Event): void {
