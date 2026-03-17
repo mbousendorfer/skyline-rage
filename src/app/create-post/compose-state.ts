@@ -19,6 +19,8 @@ export interface Customization {
     text: string;
     firstComment: boolean;
     firstCommentText: string;
+    /** Per-profile media override. Empty = inherit base media. */
+    mediaItems: MediaItem[];
 }
 
 export interface MediaItem {
@@ -66,7 +68,7 @@ export class ComposeStateService {
     // ── Customizations ───────────────────────────────────────────────────────
     /** All per-profile customizations. Pre-seeded with one FB card. */
     customizations = signal<Customization[]>([
-        { profileId: 'ap-fb', text: "J'aime beaucoup cette salle de bain", firstComment: false, firstCommentText: '' },
+        { profileId: 'ap-fb', text: "J'aime beaucoup cette salle de bain", firstComment: false, firstCommentText: '', mediaItems: [] },
     ]);
 
     /**
@@ -92,7 +94,7 @@ export class ComposeStateService {
         if (!this.isCustomized(profileId)) {
             this.customizations.update(list => [
                 ...list,
-                { profileId, text: this.baseText(), firstComment: false, firstCommentText: '' },
+                { profileId, text: this.baseText(), firstComment: false, firstCommentText: '', mediaItems: [] },
             ]);
         }
         this.focusedCustomizationId.set(profileId);
@@ -123,6 +125,18 @@ export class ComposeStateService {
     resetCustomization(profileId: string): void {
         this.customizations.update(list =>
             list.map(c => (c.profileId === profileId ? { ...c, text: this.baseText() } : c))
+        );
+    }
+
+    addCustomizationMedia(profileId: string, item: MediaItem): void {
+        this.customizations.update(list =>
+            list.map(c => c.profileId === profileId ? { ...c, mediaItems: [...c.mediaItems, item] } : c)
+        );
+    }
+
+    removeCustomizationMedia(profileId: string, id: number): void {
+        this.customizations.update(list =>
+            list.map(c => c.profileId === profileId ? { ...c, mediaItems: c.mediaItems.filter(m => m.id !== id) } : c)
         );
     }
 

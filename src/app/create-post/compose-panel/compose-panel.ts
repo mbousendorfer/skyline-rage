@@ -374,6 +374,31 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </span>
                                 </div>
 
+                                <!-- per-profile media override -->
+                                <div class="custom-media-section">
+                                    <div class="custom-media-header">
+                                        <span class="custom-media-label">Media</span>
+                                        @if (custom.mediaItems.length === 0) {
+                                            <span class="custom-media-hint">Using base media</span>
+                                        }
+                                    </div>
+                                    <div class="media-grid">
+                                        <button class="add-media-btn small" (click)="addCustomMedia(custom.profileId)" [apTooltip]="'Override media for this profile'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                            <ap-symbol symbolId="plus" size="xs" color="basic-grey"></ap-symbol>
+                                        </button>
+                                        @for (item of custom.mediaItems; track item.id) {
+                                            <div class="media-thumb small">
+                                                <img [src]="item.url" alt="Media" />
+                                                <div class="media-overlay">
+                                                    <button (click)="state.removeCustomizationMedia(custom.profileId, item.id)">
+                                                        <ap-symbol symbolId="trash" size="xs" color="red"></ap-symbol>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
                                 <!-- first comment toggle -->
                                 <div class="option-row toggle-row">
                                     <div class="option-info">
@@ -599,6 +624,19 @@ import { ComposeStateService, Customization } from '../compose-state';
             }
         }
         .empty-hint { font-size: 12px; color: var(--ref-color-grey-60); margin: 4px 0 0; }
+
+        /* Per-profile media override */
+        .custom-media-section {
+            padding: 8px 12px 10px;
+            border-top: 1px solid var(--ref-color-grey-10);
+        }
+        .custom-media-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+        }
+        .custom-media-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
+        .custom-media-hint { font-size: 11px; color: var(--ref-color-grey-60); }
+        .add-media-btn.small { width: 48px; height: 48px; }
+        .media-thumb.small { width: 48px; height: 48px; border-radius: 6px; }
     `],
 })
 export class ComposePanelComponent {
@@ -714,6 +752,13 @@ export class ComposePanelComponent {
         const idx = this.state.mediaItems().length % this.extraMedia.length;
         const m = this.extraMedia[idx];
         this.state.addMediaItem({ id: Date.now(), ...m });
+    }
+
+    addCustomMedia(profileId: string): void {
+        const custom = this.state.getCustomization(profileId);
+        const idx = (custom?.mediaItems.length ?? 0) % this.extraMedia.length;
+        const m = this.extraMedia[idx];
+        this.state.addCustomizationMedia(profileId, { id: Date.now(), ...m });
     }
 
     removeMedia(id: number): void {
