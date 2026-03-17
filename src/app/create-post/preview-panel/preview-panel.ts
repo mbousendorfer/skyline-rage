@@ -75,8 +75,8 @@ interface Validation {
                                     @for (profile of state.facebookProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
+                                                <button class="customize-link ap-link standalone small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                                    <ap-symbol symbolId="pen" size="xs" color="azure"></ap-symbol>
                                                     {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
@@ -166,8 +166,8 @@ interface Validation {
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
+                                                <button class="customize-link ap-link standalone small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                                    <ap-symbol symbolId="pen" size="xs" color="azure"></ap-symbol>
                                                     {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
@@ -257,8 +257,8 @@ interface Validation {
                                     @for (profile of state.instagramProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
+                                                <button class="customize-link ap-link standalone small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                                    <ap-symbol symbolId="pen" size="xs" color="azure"></ap-symbol>
                                                     {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
@@ -356,8 +356,8 @@ interface Validation {
                                     @for (profile of state.twitterProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" [class.active]="state.isCustomized(profile.id)" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    <ap-symbol symbolId="pen" size="xs" [color]="state.isCustomized(profile.id) ? 'azure' : 'basic-grey'"></ap-symbol>
+                                                <button class="customize-link ap-link standalone small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
+                                                    <ap-symbol symbolId="pen" size="xs" color="azure"></ap-symbol>
                                                     {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
                                                 </button>
                                                 @if (state.isCustomized(profile.id)) {
@@ -480,12 +480,7 @@ interface Validation {
             }
         }
         .customize-link {
-            display: flex; align-items: center; gap: 4px; background: none; border: none;
-            color: var(--ref-color-grey-60); font-size: 12px; cursor: pointer; padding: 2px 6px 2px 0;
-            font-family: 'Averta', sans-serif; border-radius: 4px; transition: all 0.15s;
-            &:hover, &.active { color: var(--ref-color-electric-blue-100); }
-            &:hover { background: var(--ref-color-electric-blue-05); }
-            .is-customized & { color: var(--ref-color-electric-blue-100); font-weight: 500; padding-left: 0; }
+            background: none; border: none; padding: 0; cursor: pointer;
         }
         .customized-badge {
             display: flex; align-items: center; gap: 4px;
