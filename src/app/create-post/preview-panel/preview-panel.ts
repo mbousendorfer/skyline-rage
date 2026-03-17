@@ -461,18 +461,19 @@ interface Validation {
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
             margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 10px;
+            &.is-customized {
+                background: var(--ref-color-electric-blue-05);
+                border-radius: 12px;
+                padding: 0 6px 6px;
+                margin-left: -6px; margin-right: -6px; margin-bottom: 2px;
+            }
         }
 
         /* Customize bar */
         .customize-bar {
             display: flex; align-items: center; justify-content: space-between;
             padding: 6px 0;
-            &.is-customized {
-                background: var(--ref-color-electric-blue-05);
-                border-radius: 8px 8px 0 0;
-                padding: 6px 10px;
-                margin: 0 0 -2px;
-            }
+            &.is-customized { padding: 6px 4px; }
         }
         .customize-link {
             display: flex; align-items: center; gap: 4px; background: none; border: none;
@@ -490,7 +491,7 @@ interface Validation {
         /* Infoboxes */
         .validation-item { margin-bottom: 6px; }
 
-        /* Post cards */
+        /* Post cards — no is-customized styling here, affordance is on the wrapper only */
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: 8px; overflow: hidden; background: var(--ref-color-white);
