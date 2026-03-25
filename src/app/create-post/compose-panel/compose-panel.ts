@@ -18,7 +18,7 @@ import { ComposeStateService, Customization } from '../compose-state';
     selector: 'app-compose-panel',
     imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
     template: `
-        <div class="compose-panel">
+        <div class="compose-panel" [class.is-draft]="state.isDraft()">
             <!-- ── Tab navigation ──────────────────────────────────────── -->
             <div class="compose-tabs">
                 <button class="tab-btn" [class.active]="activeTab() === 'base'" (click)="activeTab.set('base')">
@@ -30,6 +30,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                         <span class="tab-badge">{{ state.activeCustomizations().length }}</span>
                     }
                 </button>
+                @if (state.isDraft()) {
+                    <span class="draft-chip">Draft</span>
+                }
             </div>
 
             <div class="compose-content" #composeContent>
@@ -656,11 +659,23 @@ import { ComposeStateService, Customization } from '../compose-state';
             overflow: hidden;
         }
         .compose-tabs {
-            display: flex;
+            display: flex; align-items: center;
             border-bottom: 1px solid var(--ref-color-grey-15);
             padding: 0 16px;
             flex-shrink: 0;
             background: #F9F9FA;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .compose-panel.is-draft .compose-tabs {
+            background: #FFFBF0;
+            border-bottom-color: #FDE68A;
+        }
+        .draft-chip {
+            margin-left: auto; margin-right: 0;
+            padding: 2px 10px; border-radius: 20px;
+            background: #FEF3C7; color: #92400E;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+            border: 1px solid #FDE68A;
         }
         .tab-btn {
             background: none; border: none; border-bottom: 2px solid transparent;
