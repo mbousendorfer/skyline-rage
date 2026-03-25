@@ -52,22 +52,12 @@ import { ComposeStateService } from './compose-state';
                 <!-- ── Right panel (history / conversation) ── -->
                 @if (rightPanel() !== null) {
                     <div class="right-panel">
-                        @if (rightPanel() === 'conversation') {
-                            <div class="right-panel-header conv-header">
-                                <button class="conv-back-btn" (click)="rightPanel.set(null)">
-                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    Go back to your post
-                                </button>
-                                <h3 class="conv-title">Post conversation</h3>
-                            </div>
-                        } @else {
-                            <div class="right-panel-header">
-                                <span class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : '' }}</span>
-                                <button class="right-panel-close" (click)="rightPanel.set(null)">
-                                    <ap-symbol symbolId="close" size="xs" color="basic-grey"></ap-symbol>
-                                </button>
-                            </div>
-                        }
+                        <div class="right-panel-header">
+                            <span class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : 'Post conversation' }}</span>
+                            <button class="right-panel-close" (click)="rightPanel.set(null)">
+                                <ap-symbol symbolId="close" size="xs" color="basic-grey"></ap-symbol>
+                            </button>
+                        </div>
 
                         @if (rightPanel() === 'history') {
                             <div class="right-panel-body">
@@ -292,6 +282,7 @@ import { ComposeStateService } from './compose-state';
         .right-panel-header.conv-header {
             flex-direction: column; align-items: flex-start; padding: 14px 16px 12px; gap: 8px;
         }
+        /* back btn - kept for potential reuse */
         .conv-back-btn {
             display: flex; align-items: center; gap: 6px; background: none;
             border: 1px solid var(--sys-border-color-default); border-radius: 6px;
