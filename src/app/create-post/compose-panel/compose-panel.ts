@@ -90,7 +90,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 }
                                 @if (state.twitterProfiles().length > 0) {
                                     <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0" [apTooltip]="'X (Twitter) — ' + (state.twitterCharsRemaining() | number) + ' chars remaining (limit 280)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
-                                        <ap-symbol symbolId="x-twitter" size="xs" [color]="state.twitterCharsRemaining() < 0 ? 'red' : 'twitter'"></ap-symbol>
+                                        <ap-symbol symbolId="x-official" size="xs" [color]="state.twitterCharsRemaining() < 0 ? 'red' : 'twitter'"></ap-symbol>
                                         {{ state.twitterCharsRemaining() | number }}
                                     </span>
                                 }
@@ -164,15 +164,11 @@ import { ComposeStateService, Customization } from '../compose-state';
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="net-tabs inner-pad">
-                                        <button class="net-tab" [class.active]="fbPostType()==='post'" (click)="fbPostType.set('post')">
-                                            <ap-symbol symbolId="grid" size="xs"></ap-symbol> Post
-                                        </button>
+                                        <button class="net-tab" [class.active]="fbPostType()==='post'" (click)="fbPostType.set('post')">Post</button>
                                         <button class="net-tab" [class.active]="fbPostType()==='reel'" (click)="fbPostType.set('reel')">
                                             <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
                                         </button>
-                                        <button class="net-tab" [class.active]="fbPostType()==='story'" (click)="fbPostType.set('story')">
-                                            <ap-symbol symbolId="circle--outline" size="xs"></ap-symbol> Story
-                                        </button>
+                                        <button class="net-tab" [class.active]="fbPostType()==='story'" (click)="fbPostType.set('story')">Story</button>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">Video title</label>
@@ -218,15 +214,11 @@ import { ComposeStateService, Customization } from '../compose-state';
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="net-tabs inner-pad">
-                                        <button class="net-tab" [class.active]="igPostType()==='post'" (click)="igPostType.set('post')">
-                                            <ap-symbol symbolId="grid" size="xs"></ap-symbol> Post
-                                        </button>
+                                        <button class="net-tab" [class.active]="igPostType()==='post'" (click)="igPostType.set('post')">Post</button>
                                         <button class="net-tab" [class.active]="igPostType()==='reel'" (click)="igPostType.set('reel')">
                                             <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
                                         </button>
-                                        <button class="net-tab" [class.active]="igPostType()==='story'" (click)="igPostType.set('story')">
-                                            <ap-symbol symbolId="circle--outline" size="xs"></ap-symbol> Story
-                                        </button>
+                                        <button class="net-tab" [class.active]="igPostType()==='story'" (click)="igPostType.set('story')">Story</button>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
@@ -304,7 +296,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                     @if (state.twitterProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="x-twitter" size="sm" color="twitter"></ap-symbol><span class="network-label">X (Twitter) options</span></div>
+                                <div class="row-gap"><ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol><span class="network-label">X (Twitter) options</span></div>
                                 <ap-symbol [symbolId]="xOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (xOptionsExpanded()) {
@@ -326,7 +318,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                     @if (state.tiktokProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="tiktok" size="sm" color="tiktok"></ap-symbol><span class="network-label">TikTok options</span></div>
+                                <div class="row-gap"><ap-symbol symbolId="tiktok-official" size="sm" color="tiktok"></ap-symbol><span class="network-label">TikTok options</span></div>
                                 <ap-symbol [symbolId]="ttOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (ttOptionsExpanded()) {

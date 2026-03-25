@@ -340,7 +340,7 @@ interface Validation {
                             <div class="network-header" (click)="xExpanded.set(!xExpanded())">
                                 <div class="network-title">
                                     @if (hasXErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
-                                    <ap-symbol symbolId="x-twitter" size="sm" color="twitter"></ap-symbol>
+                                    <ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol>
                                     <span>X (Twitter)</span>
                                 </div>
                                 <div class="network-right">
