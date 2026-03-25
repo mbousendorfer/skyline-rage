@@ -28,7 +28,7 @@ interface Validation {
             <div class="status-bar">
                 @if (okCount() > 0) {
                     <span class="status ready">
-                        <ap-symbol symbolId="check-circle" size="xs" color="basic-grey"></ap-symbol>
+                        <ap-symbol symbolId="rounded-check" size="xs" color="basic-grey"></ap-symbol>
                         {{ okCount() }} ready
                     </span>
                 }
@@ -50,7 +50,7 @@ interface Validation {
 
             @if (state.selectedProfiles().length === 0) {
                 <div class="empty-state">
-                    <ap-symbol symbolId="eye" size="lg" color="basic-grey"></ap-symbol>
+                    <ap-symbol symbolId="eye-on" size="lg" color="basic-grey"></ap-symbol>
                     <p>Select profiles to see a preview of your post</p>
                 </div>
             } @else {
@@ -225,8 +225,8 @@ interface Validation {
                                                 <div class="li-actions">
                                                     <button class="li-btn"><ap-symbol symbolId="ns-linkedin_like" size="sm" color="basic-grey"></ap-symbol> Like</button>
                                                     <button class="li-btn"><ap-symbol symbolId="ns-linkedin_comment" size="sm" color="basic-grey"></ap-symbol> Comment</button>
-                                                    <button class="li-btn"><ap-symbol symbolId="ns-linkedin_repost" size="sm" color="basic-grey"></ap-symbol> Repost</button>
-                                                    <button class="li-btn"><ap-symbol symbolId="ns-linkedin_send" size="sm" color="basic-grey"></ap-symbol> Send</button>
+                                                    <button class="li-btn"><ap-symbol symbolId="repost" size="sm" color="basic-grey"></ap-symbol> Repost</button>
+                                                    <button class="li-btn"><ap-symbol symbolId="paper-plane" size="sm" color="basic-grey"></ap-symbol> Send</button>
                                                 </div>
                                             </div>
                                         </div>

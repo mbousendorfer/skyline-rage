@@ -34,9 +34,7 @@ import { ComposeStateService } from './compose-state';
                         apTooltipPosition="bottom"
                         [apTooltipShowDelay]="400"
                         (click)="togglePanel('conversation')">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2.8A.8.8 0 0 1 2.8 2h10.4a.8.8 0 0 1 .8.8v7.6a.8.8 0 0 1-.8.8H5.731L3.2 13.731V11.2H2.8a.8.8 0 0 1-.8-.8V2.8ZM2.8.4A2.4 2.4 0 0 0 .4 2.8v7.6a2.4 2.4 0 0 0 2.4 2.4v2.069a.8.8 0 0 0 1.365.566L7.069 11.2H13.2a2.4 2.4 0 0 0 2.4-2.4V2.8A2.4 2.4 0 0 0 13.2.4H2.8Z" fill="currentColor"/>
-                        </svg>
+                        <ap-symbol symbolId="single-chat-bubble" size="xs"></ap-symbol>
                     </button>
                     <div class="divider"></div>
                     <ap-icon-button symbolId="close" ariaLabel="Close" type="flat" (onClick)="close.emit()"></ap-icon-button>
@@ -96,9 +94,7 @@ import { ComposeStateService } from './compose-state';
                                 </div>
                             } @else {
                                 <div class="conv-empty">
-                                    <svg width="40" height="40" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--ref-color-grey-40)">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2.8A.8.8 0 0 1 2.8 2h10.4a.8.8 0 0 1 .8.8v7.6a.8.8 0 0 1-.8.8H5.731L3.2 13.731V11.2H2.8a.8.8 0 0 1-.8-.8V2.8ZM2.8.4A2.4 2.4 0 0 0 .4 2.8v7.6a2.4 2.4 0 0 0 2.4 2.4v2.069a.8.8 0 0 0 1.365.566L7.069 11.2H13.2a2.4 2.4 0 0 0 2.4-2.4V2.8A2.4 2.4 0 0 0 13.2.4H2.8Z" fill="currentColor"/>
-                                    </svg>
+                                    <ap-symbol symbolId="single-chat-bubble" size="lg" color="basic-grey"></ap-symbol>
                                     <p class="conv-empty-text">No comments yet, be the first to add one</p>
                                     <button class="conv-empty-link">Add a comment</button>
                                 </div>
@@ -110,14 +106,7 @@ import { ComposeStateService } from './compose-state';
                                 </div>
                                 <textarea class="conv-textarea" placeholder="Write a description with text, links..." rows="3"></textarea>
                                 <div class="conv-composer-footer">
-                                    <button class="conv-emoji-btn" style="color: var(--ref-color-grey-40)">
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="8" cy="8" r="7.2" stroke="currentColor" stroke-width="1.6"/>
-                                            <circle cx="5.6" cy="6.4" r="0.8" fill="currentColor"/>
-                                            <circle cx="10.4" cy="6.4" r="0.8" fill="currentColor"/>
-                                            <path d="M5.2 9.6a3.2 3.2 0 0 0 5.6 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                                        </svg>
-                                    </button>
+                                    <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
                                     <button class="conv-send-btn">
                                         {{ convTab() === 'internal' ? 'Send internally' : 'Send externally' }}
                                     </button>
@@ -163,7 +152,7 @@ import { ComposeStateService } from './compose-state';
                         <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="calendar" symbolPosition="left" size="small" class="date-time-btn">Date &amp; Time</ap-button>
                         <ap-button [config]="{ style: 'primary', color: 'orange' }" symbolId="chevron-down" symbolPosition="right" size="small" class="schedule-btn">Schedule</ap-button>
                     } @else {
-                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="floppy-disk" symbolPosition="left" size="small" class="save-draft-btn">Save draft</ap-button>
+                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="bookmark" symbolPosition="left" size="small" class="save-draft-btn">Save draft</ap-button>
                     }
                 </div>
             </div>
