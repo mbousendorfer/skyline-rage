@@ -126,7 +126,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             width: 220px;
             min-width: 220px;
             border-right: 1px solid var(--sys-border-color-default);
-            background: var(--ref-color-white);
+            background: var(--ref-color-grey-bg);
             overflow: hidden;
         }
 

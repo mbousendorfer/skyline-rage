@@ -709,7 +709,7 @@ import { ComposeStateService, Customization } from '../compose-state';
             padding: 12px 0 4px; font-size: 13px; font-weight: 700;
             color: var(--sys-text-color-default);
         }
-        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; background: #F9F9FA; }
+        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; background: var(--ref-color-white); }
         .section { padding: 12px 0; border-bottom: 1px solid var(--ref-color-grey-10); max-width: 640px; margin: 0 auto; &.last { border-bottom: none; } }
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .section-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--sys-text-color-default); }
