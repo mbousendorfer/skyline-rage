@@ -537,27 +537,106 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </div>
                                 </div>
 
-                                <!-- first comment toggle -->
-                                <div class="option-row toggle-row">
-                                    <div class="option-info">
-                                        <span class="option-label">First comment</span>
-                                        <span class="option-hint">Publish a first comment with your post</span>
-                                    </div>
-                                    <ap-slide-toggle
-                                        [checked]="custom.firstComment"
-                                        (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)">
-                                    </ap-slide-toggle>
-                                </div>
-                                @if (custom.firstComment) {
-                                    <div class="first-comment-editor">
-                                        <textarea
-                                            class="post-textarea small"
-                                            [value]="custom.firstCommentText"
-                                            (input)="onFirstCommentInput($event, custom.profileId)"
-                                            placeholder="Write your first comment…"
-                                            rows="2">
-                                        </textarea>
-                                    </div>
+                                <!-- network-specific options -->
+                                @switch (profileNetwork(custom.profileId)) {
+                                    @case ('facebook') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
+                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                        </div>
+                                        @if (custom.firstComment) {
+                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                        }
+                                        <div class="option-row">
+                                            <div class="option-info"><span class="option-label">Boost this post</span><span class="option-hint">Text about what is post boosting</span></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
+                                        </div>
+                                    }
+                                    @case ('instagram') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
+                                            <ap-slide-toggle [checked]="state.igMobileNotif()" (checkedChange)="state.igMobileNotif.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
+                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                        </div>
+                                        @if (custom.firstComment) {
+                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                        }
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
+                                            <ap-slide-toggle [checked]="state.igPulseLink()" (checkedChange)="state.igPulseLink.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row action-row">
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Tag users</ap-button>
+                                        </div>
+                                        <div class="option-row action-row">
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Invite collaborator(s)</ap-button>
+                                        </div>
+                                        <div class="option-row action-row">
+                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
+                                        </div>
+                                    }
+                                    @case ('linkedin') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
+                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                        </div>
+                                        @if (custom.firstComment) {
+                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                        }
+                                        <div class="option-section-title">Target audience settings</div>
+                                        <div class="option-section-desc">Define the audience to display your post to</div>
+                                        <button class="audience-link">Add industry</button>
+                                        <button class="audience-link">Add job function</button>
+                                        <button class="audience-link">Add seniority</button>
+                                    }
+                                    @case ('twitter') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">X (Twitter) card</span><span class="option-hint">Post as an image instead of a X (Twitter) Card</span></div>
+                                            <ap-slide-toggle [checked]="state.xTwitterCard()" (checkedChange)="state.xTwitterCard.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">X (Twitter) Thread</span><span class="option-hint">Publish a thread attached to your post</span></div>
+                                            <ap-slide-toggle [checked]="state.xThread()" (checkedChange)="state.xThread.set($event)"></ap-slide-toggle>
+                                        </div>
+                                    }
+                                    @case ('tiktok') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Allow comments</span></div>
+                                            <ap-slide-toggle [checked]="state.ttAllowComments()" (checkedChange)="state.ttAllowComments.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Allow Duet</span><span class="option-hint">Allows you to post your video side-by-side with another creator's video</span></div>
+                                            <ap-slide-toggle [checked]="state.ttAllowDuet()" (checkedChange)="state.ttAllowDuet.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Allow Stitch</span><span class="option-hint">Allows you to combine another video on TikTok with one you're creating</span></div>
+                                            <ap-slide-toggle [checked]="state.ttAllowStitch()" (checkedChange)="state.ttAllowStitch.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
+                                            <ap-slide-toggle [checked]="state.ttMobileNotif()" (checkedChange)="state.ttMobileNotif.set($event)"></ap-slide-toggle>
+                                        </div>
+                                    }
+                                    @case ('youtube') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
+                                            <ap-slide-toggle [checked]="state.ytEmbeddable()" (checkedChange)="state.ytEmbeddable.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Notify subscribers</span></div>
+                                            <ap-slide-toggle [checked]="state.ytNotifySubscribers()" (checkedChange)="state.ytNotifySubscribers.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Made for kids</span><span class="option-hint">Prevent underage users from watching this video.</span></div>
+                                            <ap-slide-toggle [checked]="state.ytMadeForKids()" (checkedChange)="state.ytMadeForKids.set($event)"></ap-slide-toggle>
+                                        </div>
+                                    }
                                 }
                             </div>
                         }
@@ -903,7 +982,8 @@ export class ComposePanelComponent {
     }
 
     networkSymbol(network: string): string {
-        return network === 'twitter' ? 'x-twitter' : network;
+        const map: Record<string, string> = { twitter: 'x-official', tiktok: 'tiktok-official' };
+        return map[network] ?? network;
     }
 
     /** Returns true if the custom text for this profile exceeds its network's character limit. */
