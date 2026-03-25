@@ -376,9 +376,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </div>
                                     <div class="option-row">
                                         <div class="option-info"><span class="option-label">Privacy status</span></div>
-                                        <div class="net-tabs" style="padding: 0;">
-                                            <button class="net-tab" [class.active]="state.ytPrivacy()==='public'" (click)="state.ytPrivacy.set('public')">Public</button>
-                                            <button class="net-tab" [class.active]="state.ytPrivacy()==='private'" (click)="state.ytPrivacy.set('private')">Private</button>
+                                        <div class="privacy-tabs">
+                                            <button class="privacy-tab" [class.active]="state.ytPrivacy()==='public'" (click)="state.ytPrivacy.set('public')">Public</button>
+                                            <button class="privacy-tab" [class.active]="state.ytPrivacy()==='private'" (click)="state.ytPrivacy.set('private')">Private</button>
                                         </div>
                                     </div>
                                     <div class="field-group">
@@ -784,21 +784,19 @@ import { ComposeStateService, Customization } from '../compose-state';
         .add-media-btn.small { width: 48px; height: 48px; }
         .media-thumb.small { width: 48px; height: 48px; border-radius: 6px; }
 
-        /* Segmented tab control for network options */
-        .net-tabs { display: flex; gap: 0; }
+        /* Tab control for network options (matches main compose-tabs style) */
+        .net-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--ref-color-grey-15); }
         .net-tab {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
-            padding: 5px 8px; border: 1px solid var(--sys-border-color-default); background: none;
-            font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+            padding: 8px 12px; background: none; border: none;
+            border-bottom: 2px solid transparent; margin-bottom: -1px;
+            font-size: 12px; font-weight: 500; color: var(--sys-text-color-light); cursor: pointer;
             font-family: 'Averta', sans-serif; transition: color 0.15s, border-color 0.15s;
-            &:first-child { border-radius: 6px 0 0 6px; }
-            &:last-child  { border-radius: 0 6px 6px 0; }
-            &:not(:first-child) { border-left: none; }
             &.active {
                 color: var(--ref-color-electric-blue-100); font-weight: 600;
-                border-color: var(--ref-color-electric-blue-100);
-                z-index: 1; position: relative;
+                border-bottom-color: var(--ref-color-electric-blue-100);
             }
+            &:hover:not(.active) { color: var(--sys-text-color-default); }
         }
 
         /* LinkedIn audience targeting */
@@ -842,6 +840,17 @@ import { ComposeStateService, Customization } from '../compose-state';
         }
         .required-star { color: var(--ref-color-red-100); }
         .optional-label { color: var(--ref-color-grey-60); font-weight: 400; }
+
+        /* Privacy segmented control (YouTube) */
+        .privacy-tabs { display: flex; }
+        .privacy-tab {
+            padding: 5px 12px; border: 1px solid var(--sys-border-color-default); background: none;
+            font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60); cursor: pointer;
+            font-family: 'Averta', sans-serif; transition: all 0.15s;
+            &:first-child { border-radius: 6px 0 0 6px; }
+            &:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+            &.active { background: var(--ref-color-electric-blue-100); border-color: var(--ref-color-electric-blue-100); color: white; font-weight: 600; }
+        }
     `],
 })
 export class ComposePanelComponent {
