@@ -52,12 +52,22 @@ import { ComposeStateService } from './compose-state';
                 <!-- ── Right panel (history / conversation) ── -->
                 @if (rightPanel() !== null) {
                     <div class="right-panel">
-                        <div class="right-panel-header">
-                            <span class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : 'Conversation' }}</span>
-                            <button class="right-panel-close" (click)="rightPanel.set(null)">
-                                <ap-symbol symbolId="close" size="xs" color="basic-grey"></ap-symbol>
-                            </button>
-                        </div>
+                        @if (rightPanel() === 'conversation') {
+                            <div class="right-panel-header conv-header">
+                                <button class="conv-back-btn" (click)="rightPanel.set(null)">
+                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Go back to your post
+                                </button>
+                                <h3 class="conv-title">Post conversation</h3>
+                            </div>
+                        } @else {
+                            <div class="right-panel-header">
+                                <span class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : '' }}</span>
+                                <button class="right-panel-close" (click)="rightPanel.set(null)">
+                                    <ap-symbol symbolId="close" size="xs" color="basic-grey"></ap-symbol>
+                                </button>
+                            </div>
+                        }
 
                         @if (rightPanel() === 'history') {
                             <div class="right-panel-body">
@@ -77,30 +87,52 @@ import { ComposeStateService } from './compose-state';
                         }
 
                         @if (rightPanel() === 'conversation') {
-                            <div class="right-panel-body">
-                                @for (msg of conversationMessages; track msg.id) {
-                                    <div class="conv-message">
-                                        <div class="conv-avatar">{{ msg.initials }}</div>
-                                        <div class="conv-content">
-                                            <div class="conv-header">
-                                                <span class="conv-author">{{ msg.author }}</span>
-                                                <span class="conv-time">{{ msg.time }}</span>
+                            @if (conversationMessages.length > 0) {
+                                <div class="right-panel-body conv-body">
+                                    @for (msg of conversationMessages; track msg.id) {
+                                        <div class="conv-card">
+                                            <div class="conv-card-header">
+                                                <div class="conv-avatar-wrap">
+                                                    <div class="conv-avatar">{{ msg.initials }}</div>
+                                                    <div class="conv-meta">
+                                                        <span class="conv-author">{{ msg.author }}</span>
+                                                        <span class="conv-time">{{ msg.time }}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="conv-badge">{{ msg.type }}</span>
                                             </div>
                                             <div class="conv-text">{{ msg.text }}</div>
-                                            @if (msg.resolved) {
-                                                <span class="conv-resolved">Resolved</span>
-                                            }
                                         </div>
-                                    </div>
-                                }
-                            </div>
-                            <div class="conv-input-row">
-                                <textarea class="conv-input" placeholder="Add a comment…" rows="2"></textarea>
-                                <button class="conv-send">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                        <path d="M14.4 7.134 2.4 1.134A.8.8 0 0 0 1.334 2.2L3.2 8l-1.866 5.8A.8.8 0 0 0 2.4 14.866l12-6a.8.8 0 0 0 0-1.732Z" fill="currentColor"/>
+                                    }
+                                </div>
+                            } @else {
+                                <div class="conv-empty">
+                                    <svg width="40" height="40" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2.8A.8.8 0 0 1 2.8 2h10.4a.8.8 0 0 1 .8.8v7.6a.8.8 0 0 1-.8.8H5.731L3.2 13.731V11.2H2.8a.8.8 0 0 1-.8-.8V2.8ZM2.8.4A2.4 2.4 0 0 0 .4 2.8v7.6a2.4 2.4 0 0 0 2.4 2.4v2.069a.8.8 0 0 0 1.365.566L7.069 11.2H13.2a2.4 2.4 0 0 0 2.4-2.4V2.8A2.4 2.4 0 0 0 13.2.4H2.8Z" fill="#C0C0C8"/>
                                     </svg>
-                                </button>
+                                    <p class="conv-empty-text">No comments yet, be the first to add one</p>
+                                    <button class="conv-empty-link">Add a comment</button>
+                                </div>
+                            }
+                            <div class="conv-composer">
+                                <div class="conv-composer-tabs">
+                                    <button class="conv-tab" [class.active]="convTab() === 'internal'" (click)="convTab.set('internal')">Internal</button>
+                                    <button class="conv-tab" [class.active]="convTab() === 'external'" (click)="convTab.set('external')">External</button>
+                                </div>
+                                <textarea class="conv-textarea" placeholder="Write a description with text, links..." rows="3"></textarea>
+                                <div class="conv-composer-footer">
+                                    <button class="conv-emoji-btn">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="8" cy="8" r="7.2" stroke="#9CA3AF" stroke-width="1.6"/>
+                                            <circle cx="5.6" cy="6.4" r="0.8" fill="#9CA3AF"/>
+                                            <circle cx="10.4" cy="6.4" r="0.8" fill="#9CA3AF"/>
+                                            <path d="M5.2 9.6a3.2 3.2 0 0 0 5.6 0" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round"/>
+                                        </svg>
+                                    </button>
+                                    <button class="conv-send-btn">
+                                        {{ convTab() === 'internal' ? 'Send internally' : 'Send externally' }}
+                                    </button>
+                                </div>
                             </div>
                         }
                     </div>
@@ -256,42 +288,89 @@ import { ComposeStateService } from './compose-state';
             font-size: 11px; color: var(--sys-text-color-default); line-height: 1.5;
         }
 
-        /* Conversation messages */
-        .conv-message { display: flex; gap: 10px; align-items: flex-start; }
-        .conv-avatar {
-            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-            background: var(--ref-color-grey-10); color: var(--sys-text-color-default);
-            font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+        /* Conversation panel */
+        .right-panel-header.conv-header {
+            flex-direction: column; align-items: flex-start; padding: 14px 16px 12px; gap: 8px;
         }
-        .conv-content { flex: 1; }
-        .conv-header { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
+        .conv-back-btn {
+            display: flex; align-items: center; gap: 6px; background: none;
+            border: 1px solid var(--sys-border-color-default); border-radius: 6px;
+            padding: 5px 10px; font-size: 12px; font-weight: 500; cursor: pointer;
+            color: var(--sys-text-color-default); font-family: 'Averta', sans-serif;
+            transition: background 0.15s;
+            &:hover { background: var(--ref-color-grey-05); }
+        }
+        .conv-title { font-size: 15px; font-weight: 700; color: var(--sys-text-color-default); margin: 0; }
+
+        .conv-body { gap: 8px; }
+        .conv-card {
+            border: 1px solid var(--sys-border-color-default); border-radius: 8px;
+            padding: 10px 12px; background: var(--ref-color-white);
+        }
+        .conv-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .conv-avatar-wrap { display: flex; align-items: center; gap: 8px; }
+        .conv-avatar {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            background: var(--ref-color-electric-blue-10); color: var(--ref-color-electric-blue-100);
+            font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+        }
+        .conv-meta { display: flex; flex-direction: column; gap: 1px; }
         .conv-author { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
         .conv-time { font-size: 11px; color: var(--ref-color-grey-60); }
+        .conv-badge {
+            font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60);
+            background: var(--ref-color-grey-10); border-radius: 20px; padding: 2px 8px;
+        }
         .conv-text { font-size: 12px; color: var(--sys-text-color-default); line-height: 1.5; }
-        .conv-resolved {
-            display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 600;
-            color: var(--ref-color-green-100, #16a34a); background: var(--ref-color-green-05, #f0fdf4);
-            border-radius: 4px; padding: 1px 6px;
+
+        /* Empty state */
+        .conv-empty {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 8px; padding: 24px;
         }
-        .conv-input-row {
-            display: flex; gap: 8px; align-items: flex-end;
-            padding: 10px 14px; border-top: 1px solid var(--sys-border-color-default);
-            flex-shrink: 0;
+        .conv-empty-text { font-size: 13px; color: var(--ref-color-grey-60); text-align: center; margin: 0; line-height: 1.5; }
+        .conv-empty-link {
+            background: none; border: none; cursor: pointer; padding: 0;
+            font-size: 13px; font-weight: 600; font-family: 'Averta', sans-serif;
+            color: var(--comp-link-default-color);
+            text-decoration: underline;
+            &:hover { color: var(--comp-link-hover-color); }
         }
-        .conv-input {
-            flex: 1; padding: 8px 10px; border: 1px solid var(--sys-border-color-default);
-            border-radius: 6px; font-size: 12px; font-family: 'Averta', sans-serif;
-            resize: none; outline: none; background: var(--ref-color-white);
-            color: var(--sys-text-color-default);
+
+        /* Composer */
+        .conv-composer {
+            border: 1px solid var(--sys-border-color-default); border-radius: 8px;
+            margin: 0 14px 14px; flex-shrink: 0; overflow: hidden;
+            &:focus-within { border-color: var(--ref-color-electric-blue-60); }
+        }
+        .conv-composer-tabs { display: flex; border-bottom: 1px solid var(--sys-border-color-default); }
+        .conv-tab {
+            padding: 8px 14px; background: none; border: none; border-bottom: 2px solid transparent;
+            font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Averta', sans-serif;
+            color: var(--sys-text-color-light); margin-bottom: -1px; transition: color 0.15s;
+            &.active { color: var(--sys-text-color-default); font-weight: 600; border-bottom-color: var(--ref-color-orange-100); }
+            &:hover:not(.active) { color: var(--sys-text-color-default); }
+        }
+        .conv-textarea {
+            width: 100%; padding: 10px 12px; border: none; outline: none; resize: none;
+            font-size: 12px; font-family: 'Averta', sans-serif; background: var(--ref-color-white);
+            color: var(--sys-text-color-default); box-sizing: border-box; line-height: 1.5;
             &::placeholder { color: var(--ref-color-grey-60); }
-            &:focus { border-color: var(--ref-color-electric-blue-60); }
         }
-        .conv-send {
-            width: 32px; height: 32px; border-radius: 6px; border: none;
-            background: var(--ref-color-electric-blue-100); color: white;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            flex-shrink: 0; transition: background 0.15s;
-            &:hover { background: var(--ref-color-electric-blue-80); }
+        .conv-composer-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 10px; border-top: 1px solid var(--ref-color-grey-10);
+        }
+        .conv-emoji-btn {
+            background: none; border: none; padding: 4px; cursor: pointer; border-radius: 4px;
+            display: flex; align-items: center;
+            &:hover { background: var(--ref-color-grey-05); }
+        }
+        .conv-send-btn {
+            padding: 6px 14px; background: var(--ref-color-electric-blue-100); color: white;
+            border: none; border-radius: 6px; font-size: 12px; font-weight: 600;
+            font-family: 'Averta', sans-serif; cursor: pointer; transition: background 0.15s;
+            &:hover { background: var(--ref-color-electric-blue-80, #1a6ef5); }
         }
     `],
 })
@@ -300,6 +379,7 @@ export class CreatePostComponent {
     state = inject(ComposeStateService);
 
     rightPanel = signal<'history' | 'conversation' | null>(null);
+    convTab = signal<'internal' | 'external'>('internal');
 
     togglePanel(panel: 'history' | 'conversation'): void {
         this.rightPanel.update(current => current === panel ? null : panel);
@@ -314,8 +394,8 @@ export class CreatePostComponent {
     ];
 
     readonly conversationMessages = [
-        { id: 1, initials: 'SW', author: 'Sarah W.', time: '1 hr ago', text: 'Can you double-check the caption for Instagram? The hashtags might need updating.', resolved: false },
-        { id: 2, initials: 'MB', author: 'Matt B.', time: '45 min ago', text: 'Good point — I\'ll update the hashtags and add a couple more relevant ones.', resolved: false },
-        { id: 3, initials: 'SW', author: 'Sarah W.', time: '30 min ago', text: 'Also the Facebook boost — are we targeting the right audience?', resolved: true },
+        { id: 1, initials: 'SW', author: 'Sarah W.', time: '23 min ago', type: 'Internal', text: 'Can you double-check the caption for Instagram? The hashtags might need updating.' },
+        { id: 2, initials: 'MB', author: 'Matt B.', time: '18 min ago', type: 'Internal', text: 'Good point — I\'ll update the hashtags and add a couple more relevant ones.' },
+        { id: 3, initials: 'SW', author: 'Sarah W.', time: '10 min ago', type: 'External', text: 'Also the Facebook boost — are we targeting the right audience?' },
     ];
 }
