@@ -1,6 +1,7 @@
 {
   "name": "compose-claude",
   "scripts": {
-    "start": "cd ../design && node_modules/.bin/ng serve compose --port 4200"
+    "start": "node_modules/.bin/ng serve",
+    "postinstall": "[ -L node_modules ] || ln -sf ../design/node_modules node_modules"
   }
 }
