@@ -151,6 +151,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                     </div>
                     <p class="network-hint">Defaults applied to all profiles per network. Customize a profile to override individually.</p>
 
+                    <!-- Facebook -->
                     @if (state.facebookProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
@@ -162,17 +163,33 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="inner-pad"><ap-tabs><ap-tab label="Post"></ap-tab><ap-tab label="Reel"></ap-tab><ap-tab label="Story"></ap-tab></ap-tabs></div>
+                                    <div class="net-tabs inner-pad">
+                                        <button class="net-tab" [class.active]="fbPostType()==='post'" (click)="fbPostType.set('post')">
+                                            <ap-symbol symbolId="grid" size="xs"></ap-symbol> Post
+                                        </button>
+                                        <button class="net-tab" [class.active]="fbPostType()==='reel'" (click)="fbPostType.set('reel')">
+                                            <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
+                                        </button>
+                                        <button class="net-tab" [class.active]="fbPostType()==='story'" (click)="fbPostType.set('story')">
+                                            <ap-symbol symbolId="circle--outline" size="xs"></ap-symbol> Story
+                                        </button>
+                                    </div>
                                     <div class="field-group">
                                         <label class="field-label">Video title</label>
-                                        <textarea class="field-textarea" [value]="state.fbVideoTitle()" (input)="state.fbVideoTitle.set(asTextarea($event))" placeholder="Improve your video's distribution with a title." rows="2"></textarea>
-                                    </div>
-                                    <div class="char-counts inner">
-                                        <span class="char-count"><ap-symbol symbolId="facebook" size="xs" color="facebook"></ap-symbol> {{ state.fbCharsRemaining() | number }}</span>
+                                        <div class="field-textarea-wrap">
+                                            <textarea class="field-textarea" [value]="state.fbVideoTitle()" (input)="state.fbVideoTitle.set(asTextarea($event))" placeholder="This is the title of the video" rows="3"></textarea>
+                                            <div class="field-textarea-footer">
+                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
+                                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                            </div>
+                                        </div>
+                                        <div class="char-counts" style="padding: 4px 0 0;">
+                                            <span class="char-count"><ap-symbol symbolId="facebook" size="xs" color="facebook"></ap-symbol> {{ state.fbCharsRemaining() | number }}</span>
+                                        </div>
                                     </div>
                                     <div class="option-row">
                                         <div class="option-info"><span class="option-label">Boost this post</span><span class="option-hint">Text about what is post boosting</span></div>
-                                        <ap-button [config]="{ style: 'stroked', color: 'blue' }" size="small" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
+                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
@@ -188,6 +205,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                         </div>
                     }
 
+                    <!-- Instagram -->
                     @if (state.instagramProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
@@ -199,41 +217,62 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="inner-pad"><ap-tabs><ap-tab label="Post"></ap-tab><ap-tab label="Story"></ap-tab></ap-tabs></div>
+                                    <div class="net-tabs inner-pad">
+                                        <button class="net-tab" [class.active]="igPostType()==='post'" (click)="igPostType.set('post')">
+                                            <ap-symbol symbolId="grid" size="xs"></ap-symbol> Post
+                                        </button>
+                                        <button class="net-tab" [class.active]="igPostType()==='reel'" (click)="igPostType.set('reel')">
+                                            <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
+                                        </button>
+                                        <button class="net-tab" [class.active]="igPostType()==='story'" (click)="igPostType.set('story')">
+                                            <ap-symbol symbolId="circle--outline" size="xs"></ap-symbol> Story
+                                        </button>
+                                    </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
                                         <ap-slide-toggle [checked]="state.igMobileNotif()" (checkedChange)="state.igMobileNotif.set($event)"></ap-slide-toggle>
                                     </div>
-                                    <div class="option-row toggle-row">
-                                        <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                        <ap-slide-toggle [checked]="state.igFirstComment()" (checkedChange)="state.igFirstComment.set($event)"></ap-slide-toggle>
-                                    </div>
-                                    @if (state.igFirstComment()) {
-                                        <div class="first-comment-editor">
-                                            <textarea class="post-textarea small" [value]="state.igFirstCommentText()" (input)="state.igFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                    @if (igPostType() === 'reel') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">Also share to Feed</span></div>
+                                            <ap-slide-toggle [checked]="state.igAlsoShareToFeed()" (checkedChange)="state.igAlsoShareToFeed.set($event)"></ap-slide-toggle>
                                         </div>
                                     }
-                                    <div class="option-row toggle-row">
-                                        <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
-                                        <ap-slide-toggle [checked]="state.igPulseLink()" (checkedChange)="state.igPulseLink.set($event)"></ap-slide-toggle>
-                                    </div>
-                                    <div class="option-row action-row">
-                                        <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
-                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Tag users</ap-button>
-                                    </div>
-                                    <div class="option-row action-row">
-                                        <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
-                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Invite collaborator(s)</ap-button>
-                                    </div>
-                                    <div class="option-row action-row">
-                                        <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
-                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
-                                    </div>
+                                    @if (igPostType() !== 'story') {
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
+                                            <ap-slide-toggle [checked]="state.igFirstComment()" (checkedChange)="state.igFirstComment.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        @if (state.igFirstComment()) {
+                                            <div class="first-comment-editor">
+                                                <textarea class="post-textarea small" [value]="state.igFirstCommentText()" (input)="state.igFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                            </div>
+                                        }
+                                        <div class="option-row toggle-row">
+                                            <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
+                                            <ap-slide-toggle [checked]="state.igPulseLink()" (checkedChange)="state.igPulseLink.set($event)"></ap-slide-toggle>
+                                        </div>
+                                        @if (igPostType() === 'post') {
+                                            <div class="option-row action-row">
+                                                <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
+                                                <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Tag users</ap-button>
+                                            </div>
+                                        }
+                                        <div class="option-row action-row">
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Invite collaborator(s)</ap-button>
+                                        </div>
+                                        <div class="option-row action-row">
+                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
                     }
 
+                    <!-- LinkedIn -->
                     @if (state.linkedinProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
@@ -242,13 +281,26 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (liOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="inner-pad"><ap-tabs><ap-tab label="Post"></ap-tab><ap-tab label="Article"></ap-tab></ap-tabs></div>
-                                    <div class="char-counts inner"><span class="char-count"><ap-symbol symbolId="linkedin" size="xs" color="linkedin"></ap-symbol> {{ (3000 - state.baseText().length) | number }}</span></div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
+                                        <ap-slide-toggle [checked]="state.liFirstComment()" (checkedChange)="state.liFirstComment.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    @if (state.liFirstComment()) {
+                                        <div class="first-comment-editor">
+                                            <textarea class="post-textarea small" [value]="state.liFirstCommentText()" (input)="state.liFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                        </div>
+                                    }
+                                    <div class="option-section-title">Target audience settings</div>
+                                    <div class="option-section-desc">Define the audience to display your post to</div>
+                                    <button class="audience-link">Add industry</button>
+                                    <button class="audience-link">Add job function</button>
+                                    <button class="audience-link">Add seniority</button>
                                 </div>
                             }
                         </div>
                     }
 
+                    <!-- X (Twitter) -->
                     @if (state.twitterProfiles().length > 0) {
                         <div class="network-card">
                             <div class="collapsible-header padded" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
@@ -257,11 +309,105 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (xOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="char-counts inner">
-                                        <span class="char-count" [class.danger]="state.baseText().length > 280">
-                                            <ap-symbol symbolId="x-twitter" size="xs" color="twitter"></ap-symbol>
-                                            {{ 280 - state.baseText().length }}
-                                        </span>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">X (Twitter) card</span><span class="option-hint">Post as an image instead of a X (Twitter) Card</span></div>
+                                        <ap-slide-toggle [checked]="state.xTwitterCard()" (checkedChange)="state.xTwitterCard.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">X (Twitter) Thread</span><span class="option-hint">Publish a thread attached to your post</span></div>
+                                        <ap-slide-toggle [checked]="state.xThread()" (checkedChange)="state.xThread.set($event)"></ap-slide-toggle>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- TikTok -->
+                    @if (state.tiktokProfiles().length > 0) {
+                        <div class="network-card">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
+                                <div class="row-gap"><ap-symbol symbolId="tiktok" size="sm" color="tiktok"></ap-symbol><span class="network-label">TikTok options</span></div>
+                                <ap-symbol [symbolId]="ttOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                            </div>
+                            @if (ttOptionsExpanded()) {
+                                <div class="network-card-content">
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Allow comments</span></div>
+                                        <ap-slide-toggle [checked]="state.ttAllowComments()" (checkedChange)="state.ttAllowComments.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Allow Duet</span><span class="option-hint">Allows you to post your video side-by-side with another creator's video</span></div>
+                                        <ap-slide-toggle [checked]="state.ttAllowDuet()" (checkedChange)="state.ttAllowDuet.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Allow Stitch</span><span class="option-hint">Allows you to combine another video on TikTok with one you're creating</span></div>
+                                        <ap-slide-toggle [checked]="state.ttAllowStitch()" (checkedChange)="state.ttAllowStitch.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
+                                        <ap-slide-toggle [checked]="state.ttMobileNotif()" (checkedChange)="state.ttMobileNotif.set($event)"></ap-slide-toggle>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- YouTube -->
+                    @if (state.youtubeProfiles().length > 0) {
+                        <div class="network-card">
+                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('youtube')" (click)="ytOptionsExpanded.set(!ytOptionsExpanded())">
+                                <div class="row-gap"><ap-symbol symbolId="youtube" size="sm" color="youtube"></ap-symbol><span class="network-label">YouTube options</span></div>
+                                <ap-symbol [symbolId]="ytOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                            </div>
+                            @if (ytOptionsExpanded()) {
+                                <div class="network-card-content">
+                                    <div class="field-group">
+                                        <label class="field-label">Video title <span class="required-star">*</span></label>
+                                        <div class="field-textarea-wrap">
+                                            <textarea class="field-textarea" [value]="state.ytTitle()" (input)="state.ytTitle.set(asTextarea($event))" placeholder="Write a description with text, links..." rows="3"></textarea>
+                                            <div class="field-textarea-footer">
+                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
+                                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                            </div>
+                                        </div>
+                                        <div class="char-counts" style="padding: 4px 0 0;">
+                                            <span class="char-count" [class.danger]="state.ytTitle().length > 280"><ap-symbol symbolId="youtube" size="xs" [color]="state.ytTitle().length > 280 ? 'red' : 'youtube'"></ap-symbol> {{ 280 - state.ytTitle().length }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="option-row">
+                                        <div class="option-info"><span class="option-label">Privacy status</span></div>
+                                        <div class="net-tabs" style="padding: 0;">
+                                            <button class="net-tab" [class.active]="state.ytPrivacy()==='public'" (click)="state.ytPrivacy.set('public')">Public</button>
+                                            <button class="net-tab" [class.active]="state.ytPrivacy()==='private'" (click)="state.ytPrivacy.set('private')">Private</button>
+                                        </div>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">Category</label>
+                                        <select class="field-select"><option value="">Select Category</option></select>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">Playlist</label>
+                                        <select class="field-select"><option value="">Select a playlist</option></select>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">YouTube Video tags <span class="optional-label">(optional)</span></label>
+                                        <input class="field-input" type="text" placeholder="Type your video tags" />
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">License <span class="optional-label">(optional)</span></label>
+                                        <select class="field-select"><option value="">Select a license</option></select>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
+                                        <ap-slide-toggle [checked]="state.ytEmbeddable()" (checkedChange)="state.ytEmbeddable.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Notify subscribers</span></div>
+                                        <ap-slide-toggle [checked]="state.ytNotifySubscribers()" (checkedChange)="state.ytNotifySubscribers.set($event)"></ap-slide-toggle>
+                                    </div>
+                                    <div class="option-row toggle-row">
+                                        <div class="option-info"><span class="option-label">Made for kids</span><span class="option-hint">Prevent underage users from watching this video. This also removes the ability to monetize or promote your video through different ad formats.</span></div>
+                                        <ap-slide-toggle [checked]="state.ytMadeForKids()" (checkedChange)="state.ytMadeForKids.set($event)"></ap-slide-toggle>
                                     </div>
                                 </div>
                             }
@@ -637,6 +783,65 @@ import { ComposeStateService, Customization } from '../compose-state';
         .custom-media-hint { font-size: 11px; color: var(--ref-color-grey-60); }
         .add-media-btn.small { width: 48px; height: 48px; }
         .media-thumb.small { width: 48px; height: 48px; border-radius: 6px; }
+
+        /* Segmented tab control for network options */
+        .net-tabs { display: flex; gap: 0; }
+        .net-tab {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+            padding: 5px 8px; border: 1px solid var(--sys-border-color-default); background: none;
+            font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60); cursor: pointer;
+            font-family: 'Averta', sans-serif; transition: color 0.15s, border-color 0.15s;
+            &:first-child { border-radius: 6px 0 0 6px; }
+            &:last-child  { border-radius: 0 6px 6px 0; }
+            &:not(:first-child) { border-left: none; }
+            &.active {
+                color: var(--ref-color-electric-blue-100); font-weight: 600;
+                border-color: var(--ref-color-electric-blue-100);
+                z-index: 1; position: relative;
+            }
+        }
+
+        /* LinkedIn audience targeting */
+        .option-section-title {
+            padding: 10px 12px 2px; font-size: 11px; font-weight: 700;
+            color: var(--sys-text-color-light); text-transform: uppercase; letter-spacing: 0.04em;
+            border-top: 1px solid var(--ref-color-grey-10);
+        }
+        .option-section-desc { padding: 2px 12px 6px; font-size: 11px; color: var(--ref-color-grey-60); line-height: 1.4; }
+        .audience-link {
+            display: block; width: 100%; background: none; border: none; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 10px 12px; text-align: left; cursor: pointer;
+            color: var(--comp-link-default-color); font-size: 12px; font-weight: 600;
+            font-family: 'Averta', sans-serif;
+            &:hover { color: var(--comp-link-hover-color); }
+        }
+
+        /* Textarea with footer toolbar (Facebook/YouTube video title) */
+        .field-textarea-wrap { position: relative; }
+        .field-textarea-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 4px 6px 4px 2px; border-top: 1px solid var(--ref-color-grey-10);
+            background: var(--ref-color-white);
+        }
+
+        /* Form fields for YouTube */
+        .field-select {
+            width: 100%; padding: 7px 10px; border: 1px solid var(--sys-border-color-default);
+            border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
+            font-family: 'Averta', sans-serif; background: var(--ref-color-white);
+            outline: none; cursor: pointer;
+            &:focus { border-color: var(--ref-color-electric-blue-60); }
+        }
+        .field-input {
+            width: 100%; padding: 7px 10px; border: 1px solid var(--sys-border-color-default);
+            border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
+            font-family: 'Averta', sans-serif; background: var(--ref-color-white);
+            outline: none; box-sizing: border-box;
+            &::placeholder { color: var(--ref-color-grey-60); }
+            &:focus { border-color: var(--ref-color-electric-blue-60); }
+        }
+        .required-star { color: var(--ref-color-red-100); }
+        .optional-label { color: var(--ref-color-grey-60); font-weight: 400; }
     `],
 })
 export class ComposePanelComponent {
@@ -654,6 +859,11 @@ export class ComposePanelComponent {
     igOptionsExpanded = signal(true);
     liOptionsExpanded = signal(true);
     xOptionsExpanded = signal(true);
+    ttOptionsExpanded = signal(true);
+    ytOptionsExpanded = signal(true);
+
+    fbPostType = signal<'post' | 'reel' | 'story'>('post');
+    igPostType = signal<'post' | 'reel' | 'story'>('post');
 
     fbWarning = computed(() => { const r = this.state.fbCharsRemaining(); return r < 1000 && r >= 0; });
     fbDanger = computed(() => this.state.fbCharsRemaining() < 0);
@@ -687,7 +897,7 @@ export class ComposePanelComponent {
     }
 
     networkCharLimit(network: string): number {
-        const limits: Record<string, number> = { facebook: 10000, linkedin: 3000, instagram: 2200, twitter: 280 };
+        const limits: Record<string, number> = { facebook: 10000, linkedin: 3000, instagram: 2200, twitter: 280, youtube: 5000, tiktok: 2200 };
         return limits[network] ?? 10000;
     }
 
@@ -722,6 +932,8 @@ export class ComposePanelComponent {
             instagram: 'rgba(225,  48,  108, 0.06)',
             linkedin:  'rgba(10,  102, 194, 0.06)',
             twitter:   'rgba(0,     0,   0, 0.04)',
+            youtube:   'rgba(255,   0,   0, 0.05)',
+            tiktok:    'rgba(0,     0,   0, 0.04)',
         };
         return tints[network] ?? 'var(--ref-color-grey-05)';
     }

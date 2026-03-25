@@ -3,7 +3,7 @@ import { Injectable, signal, computed } from '@angular/core';
 export interface Profile {
     id: string;
     name: string;
-    network: 'facebook' | 'twitter' | 'instagram' | 'linkedin';
+    network: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok';
     checked: boolean;
 }
 
@@ -156,6 +156,24 @@ export class ComposeStateService {
     igFirstCommentText = signal('');
     igMobileNotif = signal(false);
     igPulseLink = signal(false);
+    igAlsoShareToFeed = signal(true);
+
+    liFirstComment = signal(false);
+    liFirstCommentText = signal('');
+
+    xTwitterCard = signal(false);
+    xThread = signal(false);
+
+    ttAllowComments = signal(true);
+    ttAllowDuet = signal(true);
+    ttAllowStitch = signal(true);
+    ttMobileNotif = signal(false);
+
+    ytTitle = signal('');
+    ytPrivacy = signal<'public' | 'private'>('public');
+    ytEmbeddable = signal(false);
+    ytNotifySubscribers = signal(false);
+    ytMadeForKids = signal(false);
 
     // ── Profiles ────────────────────────────────────────────────────────────
     groups = signal<ProfileGroup[]>([
@@ -194,6 +212,8 @@ export class ComposeStateService {
         { id: 'other-fb', name: 'Other Facebook', network: 'facebook', checked: false },
         { id: 'other-x', name: 'Other X', network: 'twitter', checked: false },
         { id: 'other-ig', name: 'Other Instagram', network: 'instagram', checked: false },
+        { id: 'ap-yt', name: 'Agorapulse YouTube', network: 'youtube', checked: true },
+        { id: 'ap-tt', name: 'Agorapulse TikTok', network: 'tiktok', checked: true },
     ]);
 
     // ── Derived ─────────────────────────────────────────────────────────────
@@ -208,6 +228,8 @@ export class ComposeStateService {
     instagramProfiles = computed(() => this.selectedProfiles().filter(p => p.network === 'instagram'));
     linkedinProfiles = computed(() => this.selectedProfiles().filter(p => p.network === 'linkedin'));
     twitterProfiles = computed(() => this.selectedProfiles().filter(p => p.network === 'twitter'));
+    youtubeProfiles = computed(() => this.selectedProfiles().filter(p => p.network === 'youtube'));
+    tiktokProfiles = computed(() => this.selectedProfiles().filter(p => p.network === 'tiktok'));
 
     allSelected = computed(() => {
         const all = this.allProfiles();
