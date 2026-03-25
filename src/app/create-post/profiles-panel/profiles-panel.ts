@@ -131,7 +131,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .panel-header {
-            padding: 10px 14px;
+            padding: 8px 16px;
             font-size: 12px;
             font-weight: 600;
             color: var(--sys-text-color-default);
@@ -183,7 +183,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
         .tab-btn {
             flex: 1;
-            padding: 5px 10px;
+            padding: 4px 12px;
             border: 1px solid var(--sys-border-color-default);
             border-radius: 4px;
             background: transparent;
@@ -192,7 +192,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             color: var(--sys-text-color-light);
             cursor: pointer;
             transition: all 0.15s;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Averta', sans-serif;
 
             &.active {
                 background: var(--ref-color-electric-blue-05);
@@ -221,7 +221,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             display: flex;
             align-items: center;
             gap: 0;
-            padding: 12px 12px 2px 12px;
+            padding: 12px 12px 4px;
 
             &:hover { background: var(--ref-color-grey-05); }
         }
@@ -231,7 +231,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             align-items: center;
             gap: 6px;
             flex: 1;
-            padding: 5px 0 5px 6px;
+            padding: 4px 0 4px 8px;
             cursor: pointer;
             min-width: 0;
 
@@ -255,8 +255,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         .profile-item {
             display: flex;
             align-items: center;
-            gap: 7px;
-            padding: 5px 12px;
+            gap: 8px;
+            padding: 4px 12px;
             cursor: pointer;
             transition: background 0.1s;
 

@@ -703,7 +703,7 @@ import { ComposeStateService, Customization } from '../compose-state';
             font-size: 11px; font-weight: 600;
             background: var(--ref-color-electric-blue-10);
             color: var(--ref-color-electric-blue-100);
-            border-radius: 10px; padding: 1px 6px; min-width: 18px; text-align: center;
+            border-radius: 10px; padding: 2px 8px; min-width: 18px; text-align: center;
         }
         .panel-header {
             padding: 12px 0 4px; font-size: 13px; font-weight: 700;
@@ -724,7 +724,7 @@ import { ComposeStateService, Customization } from '../compose-state';
             &.expanded textarea { min-height: 280px; }
         }
         .post-textarea {
-            width: 100%; padding: 10px 12px; border: none; outline: none; resize: none;
+            width: 100%; padding: 8px 12px; border: none; outline: none; resize: none;
             font-size: 13px; color: var(--sys-text-color-default);
             font-family: 'Averta', sans-serif; background: transparent; line-height: 1.5;
             box-sizing: border-box;
@@ -786,16 +786,16 @@ import { ComposeStateService, Customization } from '../compose-state';
             position: relative; width: 68px; height: 68px; border-radius: 8px; overflow: hidden;
             img { width: 100%; height: 100%; object-fit: cover; display: block; }
             .media-network-issues {
-                position: absolute; bottom: 3px; left: 3px; display: flex; gap: 2px;
+                position: absolute; bottom: 4px; left: 4px; display: flex; gap: 4px;
             }
             .net-badge {
                 width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center;
                 &.warn { background: rgba(255, 247, 237, 0.92); }
             }
             .media-overlay {
-                position: absolute; top: 2px; right: 2px; display: flex; gap: 2px;
+                position: absolute; top: 4px; right: 4px; display: flex; gap: 4px;
                 opacity: 0; transition: opacity 0.15s;
-                button { width: 22px; height: 22px; border: none; border-radius: 4px; background: rgba(255,255,255,0.92); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+                button { width: 24px; height: 24px; border: none; border-radius: 4px; background: rgba(255,255,255,0.92); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
             }
             &:hover .media-overlay { opacity: 1; }
         }
@@ -807,7 +807,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         .custom-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: 8px;
-            overflow: hidden; margin-bottom: 10px; background: var(--ref-color-white);
+            overflow: hidden; margin-bottom: 8px; background: var(--ref-color-white);
             transition: box-shadow 0.2s, border-color 0.2s;
             &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
         }
@@ -831,7 +831,7 @@ import { ComposeStateService, Customization } from '../compose-state';
 
         .option-row {
             display: flex; align-items: flex-start; justify-content: space-between;
-            padding: 10px 12px; border-top: 1px solid var(--ref-color-grey-10); gap: 12px;
+            padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10); gap: 12px;
             &.toggle-row { align-items: center; }
             &.action-row { align-items: center; }
         }
@@ -901,7 +901,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         .option-section-desc { padding: 2px 12px 6px; font-size: 11px; color: var(--ref-color-grey-60); line-height: 1.4; }
         .audience-link {
             display: block; width: 100%; background: none; border: none; border-top: 1px solid var(--ref-color-grey-10);
-            padding: 10px 12px; text-align: left; cursor: pointer;
+            padding: 8px 12px; text-align: left; cursor: pointer;
             color: var(--comp-link-default-color); font-size: 12px; font-weight: 600;
             font-family: 'Averta', sans-serif;
             &:hover { color: var(--comp-link-hover-color); }
@@ -917,14 +917,14 @@ import { ComposeStateService, Customization } from '../compose-state';
 
         /* Form fields for YouTube */
         .field-select {
-            width: 100%; padding: 7px 10px; border: 1px solid var(--sys-border-color-default);
+            width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
             border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
             font-family: 'Averta', sans-serif; background: var(--ref-color-white);
             outline: none; cursor: pointer;
             &:focus { border-color: var(--ref-color-electric-blue-60); }
         }
         .field-input {
-            width: 100%; padding: 7px 10px; border: 1px solid var(--sys-border-color-default);
+            width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
             border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
             font-family: 'Averta', sans-serif; background: var(--ref-color-white);
             outline: none; box-sizing: border-box;
@@ -937,7 +937,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         /* Privacy segmented control (YouTube) */
         .privacy-tabs { display: flex; }
         .privacy-tab {
-            padding: 5px 12px; border: 1px solid var(--sys-border-color-default); background: none;
+            padding: 4px 12px; border: 1px solid var(--sys-border-color-default); background: none;
             font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60); cursor: pointer;
             font-family: 'Averta', sans-serif; transition: all 0.15s;
             &:first-child { border-radius: 6px 0 0 6px; }

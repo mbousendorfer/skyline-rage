@@ -96,8 +96,8 @@ import { ComposeStateService } from './compose-state';
                                 </div>
                             } @else {
                                 <div class="conv-empty">
-                                    <svg width="40" height="40" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2.8A.8.8 0 0 1 2.8 2h10.4a.8.8 0 0 1 .8.8v7.6a.8.8 0 0 1-.8.8H5.731L3.2 13.731V11.2H2.8a.8.8 0 0 1-.8-.8V2.8ZM2.8.4A2.4 2.4 0 0 0 .4 2.8v7.6a2.4 2.4 0 0 0 2.4 2.4v2.069a.8.8 0 0 0 1.365.566L7.069 11.2H13.2a2.4 2.4 0 0 0 2.4-2.4V2.8A2.4 2.4 0 0 0 13.2.4H2.8Z" fill="#C0C0C8"/>
+                                    <svg width="40" height="40" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--ref-color-grey-40)">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2.8A.8.8 0 0 1 2.8 2h10.4a.8.8 0 0 1 .8.8v7.6a.8.8 0 0 1-.8.8H5.731L3.2 13.731V11.2H2.8a.8.8 0 0 1-.8-.8V2.8ZM2.8.4A2.4 2.4 0 0 0 .4 2.8v7.6a2.4 2.4 0 0 0 2.4 2.4v2.069a.8.8 0 0 0 1.365.566L7.069 11.2H13.2a2.4 2.4 0 0 0 2.4-2.4V2.8A2.4 2.4 0 0 0 13.2.4H2.8Z" fill="currentColor"/>
                                     </svg>
                                     <p class="conv-empty-text">No comments yet, be the first to add one</p>
                                     <button class="conv-empty-link">Add a comment</button>
@@ -110,12 +110,12 @@ import { ComposeStateService } from './compose-state';
                                 </div>
                                 <textarea class="conv-textarea" placeholder="Write a description with text, links..." rows="3"></textarea>
                                 <div class="conv-composer-footer">
-                                    <button class="conv-emoji-btn">
+                                    <button class="conv-emoji-btn" style="color: var(--ref-color-grey-40)">
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="8" cy="8" r="7.2" stroke="#9CA3AF" stroke-width="1.6"/>
-                                            <circle cx="5.6" cy="6.4" r="0.8" fill="#9CA3AF"/>
-                                            <circle cx="10.4" cy="6.4" r="0.8" fill="#9CA3AF"/>
-                                            <path d="M5.2 9.6a3.2 3.2 0 0 0 5.6 0" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round"/>
+                                            <circle cx="8" cy="8" r="7.2" stroke="currentColor" stroke-width="1.6"/>
+                                            <circle cx="5.6" cy="6.4" r="0.8" fill="currentColor"/>
+                                            <circle cx="10.4" cy="6.4" r="0.8" fill="currentColor"/>
+                                            <path d="M5.2 9.6a3.2 3.2 0 0 0 5.6 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                                         </svg>
                                     </button>
                                     <button class="conv-send-btn">
@@ -179,7 +179,7 @@ import { ComposeStateService } from './compose-state';
         }
         .modal-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 16px;
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0; background: var(--ref-color-white);
         }
@@ -207,7 +207,7 @@ import { ComposeStateService } from './compose-state';
         .modal-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
         .modal-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-top: 1px solid var(--sys-border-color-default);
             flex-shrink: 0; background: var(--ref-color-white); gap: 12px;
         }
@@ -250,7 +250,7 @@ import { ComposeStateService } from './compose-state';
         }
 
         /* History entries */
-        .history-entry { display: flex; gap: 10px; align-items: flex-start; }
+        .history-entry { display: flex; gap: 8px; align-items: flex-start; }
         .history-avatar {
             width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
             background: var(--ref-color-electric-blue-10); color: var(--ref-color-electric-blue-100);
@@ -258,7 +258,7 @@ import { ComposeStateService } from './compose-state';
         }
         .history-content { flex: 1; }
         .history-action { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); line-height: 1.4; }
-        .history-meta { font-size: 11px; color: var(--ref-color-grey-60); margin-top: 1px; }
+        .history-meta { font-size: 11px; color: var(--ref-color-grey-60); }
         .history-diff {
             margin-top: 6px; padding: 6px 8px; border-radius: 4px;
             background: var(--ref-color-grey-02); border: 1px solid var(--ref-color-grey-10);

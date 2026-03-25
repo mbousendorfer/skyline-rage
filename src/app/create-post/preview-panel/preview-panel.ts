@@ -408,28 +408,28 @@ interface Validation {
             background: var(--ref-color-grey-bg); overflow: hidden;
         }
         .panel-header {
-            padding: 10px 14px; font-size: 12px; font-weight: 600;
+            padding: 8px 16px; font-size: 12px; font-weight: 600;
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg); flex-shrink: 0;
         }
         .status-bar {
-            display: flex; gap: 14px; padding: 7px 14px; align-items: center;
+            display: flex; gap: 16px; padding: 8px 16px; align-items: center;
             background: var(--ref-color-grey-bg); border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
         .status {
-            display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500;
+            display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500;
             &.ready { color: var(--ref-color-grey-60); }
             &.warn  { color: var(--ref-color-orange-100); }
             &.err   { color: var(--ref-color-red-100); }
         }
         button.status.clickable {
-            background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: 4px;
+            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 4px;
             font-family: 'Averta', sans-serif; font-size: 12px; font-weight: 500;
             transition: background 0.15s;
-            &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-05, #fff5f5); } }
-            &.warn { color: var(--ref-color-orange-100); &:hover { background: #fff7ed; } }
+            &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-05); } }
+            &.warn { color: var(--ref-color-orange-100); &:hover { background: var(--ref-color-orange-10); } }
         }
         .empty-state {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -444,35 +444,35 @@ interface Validation {
         .network-section { width: 100%; max-width: 500px; padding: 16px 16px 0; }
         .network-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 0 10px; cursor: pointer;
+            padding: 0 0 12px; cursor: pointer;
         }
         .network-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
         .network-right { display: flex; align-items: center; gap: 6px; }
         .posts-count { font-size: 11px; color: var(--ref-color-grey-60); }
         .net-error-dot {
-            width: 7px; height: 7px; border-radius: 50%;
+            width: 8px; height: 8px; border-radius: 50%;
             background: var(--ref-color-red-100); flex-shrink: 0;
         }
 
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
-            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 10px;
+            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 8px;
             &.is-customized {
                 background: var(--ref-color-electric-blue-05);
                 border-radius: 12px;
-                padding: 0 6px 6px;
-                margin-left: -6px; margin-right: -6px; margin-bottom: 2px;
+                padding: 0 8px 8px;
+                margin-left: -8px; margin-right: -8px; margin-bottom: 4px;
             }
         }
 
         /* Customize bar */
         .customize-bar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 6px 0;
+            padding: 8px 0;
             &.is-customized {
                 background: var(--ref-color-electric-blue-10);
                 border-radius: 8px 8px 0 0;
-                padding: 7px 10px;
+                padding: 8px 12px;
             }
         }
         .customize-link {
@@ -489,7 +489,7 @@ interface Validation {
             font-size: 11px; font-weight: 600;
             background: var(--ref-color-electric-blue-20);
             color: var(--ref-color-electric-blue-100);
-            border-radius: 20px; padding: 2px 8px 2px 6px;
+            border-radius: 20px; padding: 4px 8px;
         }
 
         /* Infoboxes */
@@ -501,13 +501,13 @@ interface Validation {
             border-radius: 8px; overflow: hidden; background: var(--ref-color-white);
             &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
         }
-        .x-card { padding-bottom: 10px; }
+        .x-card { padding-bottom: 12px; }
 
-        .post-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+        .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .post-meta { flex: 1; }
         .post-author { font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
-        .post-date { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ref-color-grey-60); margin-top: 2px; }
-        .post-text { padding: 2px 12px 10px; font-size: 13px; color: var(--sys-text-color-default); line-height: 1.5; }
+        .post-date { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ref-color-grey-60); }
+        .post-text { padding: 4px 12px 8px; font-size: 13px; color: var(--sys-text-color-default); line-height: 1.5; }
         /* Carousel */
         .carousel {
             position: relative; overflow: hidden;
@@ -531,7 +531,7 @@ interface Validation {
         }
         .carousel-dots {
             position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 5px; z-index: 2;
+            display: flex; gap: 4px; z-index: 2;
         }
         .carousel-dot {
             width: 6px; height: 6px; border-radius: 50%;
@@ -554,7 +554,7 @@ interface Validation {
         }
         .comment-bubble {
             flex: 1; background: var(--ref-color-grey-05); border-radius: 12px;
-            padding: 6px 10px; font-size: 12px; color: var(--sys-text-color-default); line-height: 1.4;
+            padding: 8px 12px; font-size: 12px; color: var(--sys-text-color-default); line-height: 1.4;
         }
         .li-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
         .li-btn {

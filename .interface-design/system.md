@@ -155,6 +155,12 @@ This project uses a deliberate depth system for the Create Post modal:
 
 ---
 
+## Intentional Exceptions
+
+- **Writing Assistant button** (`compose-panel.ts`): Uses `linear-gradient(135deg, #6c63ff, #f7619a)` for its gradient border and `color: #6c63ff`. These are brand colors for the AI feature with no matching design tokens — intentional and approved.
+
+---
+
 ## Violations to Flag
 
 1. Raw hex color not in the palette above
