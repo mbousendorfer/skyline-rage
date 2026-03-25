@@ -411,11 +411,11 @@ interface Validation {
             padding: 10px 14px; font-size: 12px; font-weight: 600;
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
-            background: #F2F3F5; flex-shrink: 0;
+            background: var(--ref-color-grey-bg); flex-shrink: 0;
         }
         .status-bar {
             display: flex; gap: 14px; padding: 7px 14px; align-items: center;
-            background: #F2F3F5; border-bottom: 1px solid var(--sys-border-color-default);
+            background: var(--ref-color-grey-bg); border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
         .status {
@@ -437,7 +437,7 @@ interface Validation {
             p { font-size: 13px; color: var(--ref-color-grey-60); margin: 0; line-height: 1.5; }
         }
         .previews-list {
-            flex: 1; min-height: 0; overflow-y: auto; background: #F2F3F5;
+            flex: 1; min-height: 0; overflow-y: auto; background: var(--ref-color-grey-bg);
             display: flex; flex-direction: column; align-items: center;
             scroll-behavior: smooth;
         }

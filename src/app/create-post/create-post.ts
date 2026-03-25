@@ -266,20 +266,6 @@ import { ComposeStateService } from './compose-state';
         }
 
         /* Conversation panel */
-        .right-panel-header.conv-header {
-            flex-direction: column; align-items: flex-start; padding: 14px 16px 12px; gap: 8px;
-        }
-        /* back btn - kept for potential reuse */
-        .conv-back-btn {
-            display: flex; align-items: center; gap: 6px; background: none;
-            border: 1px solid var(--sys-border-color-default); border-radius: 6px;
-            padding: 5px 10px; font-size: 12px; font-weight: 500; cursor: pointer;
-            color: var(--sys-text-color-default); font-family: 'Averta', sans-serif;
-            transition: background 0.15s;
-            &:hover { background: var(--ref-color-grey-05); }
-        }
-        .conv-title { font-size: 15px; font-weight: 700; color: var(--sys-text-color-default); margin: 0; }
-
         .conv-body { gap: 8px; }
         .conv-card {
             border: 1px solid var(--sys-border-color-default); border-radius: 8px;

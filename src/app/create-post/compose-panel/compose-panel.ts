@@ -655,7 +655,7 @@ import { ComposeStateService, Customization } from '../compose-state';
         :host { display: flex; flex: 1; min-width: 0; min-height: 0; max-width: 50%; }
         .compose-panel {
             display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0;
-            background: #F9F9FA;
+            background: var(--ref-color-white);
             border-right: 1px solid var(--sys-border-color-default);
             overflow: hidden;
         }
@@ -664,7 +664,7 @@ import { ComposeStateService, Customization } from '../compose-state';
             border-bottom: 1px solid var(--ref-color-grey-15);
             padding: 0 16px;
             flex-shrink: 0;
-            background: #F9F9FA;
+            background: var(--ref-color-grey-bg);
             transition: background 0.2s, border-color 0.2s;
         }
         .compose-panel.is-draft .compose-tabs {
