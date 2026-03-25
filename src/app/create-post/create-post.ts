@@ -161,31 +161,9 @@ import { ComposeStateService } from './compose-state';
                 <div class="footer-right">
                     @if (!state.isDraft()) {
                         <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="calendar" symbolPosition="left" size="small" class="date-time-btn">Date &amp; Time</ap-button>
-                        <div class="schedule-group">
-                            <ap-button [config]="{ style: 'primary', color: 'orange' }" size="small" class="schedule-main-btn">Schedule</ap-button>
-                            <div class="schedule-dropdown-wrap">
-                                <button class="schedule-chevron" (click)="dropdownOpen.set(!dropdownOpen())">
-                                    <ap-symbol symbolId="chevron-down" size="xs"></ap-symbol>
-                                </button>
-                                @if (dropdownOpen()) {
-                                    <div class="schedule-dropdown">
-                                        <button class="schedule-dropdown-item" (click)="dropdownOpen.set(false)">
-                                            <ap-symbol symbolId="send" size="xs"></ap-symbol> Schedule
-                                        </button>
-                                        <button class="schedule-dropdown-item" (click)="dropdownOpen.set(false)">
-                                            <ap-symbol symbolId="calendar" size="xs"></ap-symbol> Set date &amp; time
-                                        </button>
-                                        <div class="schedule-dropdown-divider"></div>
-                                        <button class="schedule-dropdown-item draft-item" (click)="state.isDraft.set(true); dropdownOpen.set(false)">
-                                            <ap-symbol symbolId="floppy-disk" size="xs"></ap-symbol> Save as draft
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
+                        <ap-button [config]="{ style: 'primary', color: 'orange' }" symbolId="chevron-down" symbolPosition="right" size="small" class="schedule-btn">Schedule</ap-button>
                     } @else {
                         <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="floppy-disk" symbolPosition="left" size="small" class="save-draft-btn">Save draft</ap-button>
-                        <button class="draft-back-btn" (click)="state.isDraft.set(false)">Back to scheduling</button>
                     }
                 </div>
             </div>
@@ -237,38 +215,10 @@ import { ComposeStateService } from './compose-state';
         .footer-right { display: flex; align-items: center; gap: 8px; }
 
         .date-time-btn {
-            ::ng-deep button { border-radius: 6px !important; }
+            ::ng-deep button { border-radius: 6px 0 0 6px !important; border-right: none !important; }
         }
-        .schedule-group { display: flex; position: relative; }
-        .schedule-main-btn {
-            ::ng-deep button { border-radius: 6px 0 0 6px !important; }
-        }
-        .schedule-chevron {
-            width: 30px; background: var(--ref-color-orange-100); border: none; border-radius: 0 6px 6px 0;
-            border-left: 1px solid rgba(255,255,255,0.25); cursor: pointer; display: flex;
-            align-items: center; justify-content: center; color: white; padding: 0;
-            &:hover { background: #e05a00; }
-        }
-        .schedule-dropdown-wrap { position: relative; }
-        .schedule-dropdown {
-            position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 185px;
-            background: var(--ref-color-white); border: 1px solid var(--sys-border-color-default);
-            border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            overflow: hidden; z-index: 100;
-        }
-        .schedule-dropdown-item {
-            width: 100%; display: flex; align-items: center; gap: 8px; padding: 10px 14px;
-            background: none; border: none; cursor: pointer; font-size: 13px; font-weight: 500;
-            color: var(--sys-text-color-default); font-family: 'Averta', sans-serif; text-align: left;
-            &:hover { background: var(--ref-color-grey-03, #f9f9f9); }
-            &.draft-item { color: var(--ref-color-grey-60); }
-        }
-        .schedule-dropdown-divider { height: 1px; background: var(--sys-border-color-default); margin: 2px 0; }
-        .draft-back-btn {
-            background: none; border: none; font-size: 12px; font-weight: 500; cursor: pointer;
-            color: var(--comp-link-default-color); font-family: 'Averta', sans-serif; padding: 4px 6px;
-            border-radius: 4px;
-            &:hover { text-decoration: underline; }
+        .schedule-btn {
+            ::ng-deep button { border-radius: 0 6px 6px 0 !important; }
         }
 
         /* ── Right panel ── */
@@ -408,7 +358,6 @@ export class CreatePostComponent {
 
     rightPanel = signal<'history' | 'conversation' | null>(null);
     convTab = signal<'internal' | 'external'>('internal');
-    dropdownOpen = signal(false);
 
     togglePanel(panel: 'history' | 'conversation'): void {
         this.rightPanel.update(current => current === panel ? null : panel);

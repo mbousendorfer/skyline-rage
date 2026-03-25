@@ -30,9 +30,10 @@ import { ComposeStateService, Customization } from '../compose-state';
                         <span class="tab-badge">{{ state.activeCustomizations().length }}</span>
                     }
                 </button>
-                @if (state.isDraft()) {
-                    <span class="draft-chip">Draft</span>
-                }
+                <div class="draft-toggle-tab" [class.is-on]="state.isDraft()">
+                    <span class="draft-toggle-label">Draft</span>
+                    <ap-slide-toggle [checked]="state.isDraft()" (checkedChange)="state.isDraft.set($event)" size="small"></ap-slide-toggle>
+                </div>
             </div>
 
             <div class="compose-content" #composeContent>
@@ -670,12 +671,18 @@ import { ComposeStateService, Customization } from '../compose-state';
             background: #FFFBF0;
             border-bottom-color: #FDE68A;
         }
-        .draft-chip {
-            margin-left: auto; margin-right: 0;
-            padding: 2px 10px; border-radius: 20px;
-            background: #FEF3C7; color: #92400E;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-            border: 1px solid #FDE68A;
+        .draft-toggle-tab {
+            margin-left: auto; display: flex; align-items: center; gap: 7px;
+            cursor: pointer; padding: 0 2px 0 8px; border-radius: 20px;
+            transition: background 0.15s;
+        }
+        .draft-toggle-label {
+            font-size: 12px; font-weight: 600;
+            color: var(--sys-text-color-light);
+            transition: color 0.15s;
+        }
+        .draft-toggle-tab.is-on .draft-toggle-label {
+            color: #92400E;
         }
         .tab-btn {
             background: none; border: none; border-bottom: 2px solid transparent;
