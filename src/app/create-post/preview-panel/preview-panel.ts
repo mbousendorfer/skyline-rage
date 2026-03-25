@@ -405,7 +405,7 @@ interface Validation {
         .preview-panel {
             display: flex; flex-direction: column;
             flex: 1; min-height: 0; min-width: 0;
-            background: var(--ref-color-grey-05); overflow: hidden;
+            background: var(--ref-color-grey-bg); overflow: hidden;
         }
         .panel-header {
             padding: 10px 14px; font-size: 12px; font-weight: 600;
