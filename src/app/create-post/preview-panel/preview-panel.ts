@@ -1,4 +1,5 @@
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { InfoboxComponent } from '@agorapulse/ui-components/infobox';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
@@ -19,7 +20,7 @@ interface Validation {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-preview-panel',
-    imports: [AvatarComponent, IconButtonComponent, InfoboxComponent, TooltipDirective, SymbolComponent],
+    imports: [AvatarComponent, ButtonComponent, IconButtonComponent, InfoboxComponent, TooltipDirective, SymbolComponent],
     template: `
         <div class="preview-panel">
             <div class="panel-header">Social Media Previews</div>
@@ -75,9 +76,7 @@ interface Validation {
                                     @for (profile of state.facebookProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
-                                                </button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <span class="customized-badge">
                                                         <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
@@ -165,9 +164,7 @@ interface Validation {
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
-                                                </button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <span class="customized-badge">
                                                         <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
@@ -255,9 +252,7 @@ interface Validation {
                                     @for (profile of state.instagramProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
-                                                </button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <span class="customized-badge">
                                                         <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
@@ -353,9 +348,7 @@ interface Validation {
                                     @for (profile of state.twitterProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <button class="customize-link" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">
-                                                    {{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}
-                                                </button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <span class="customized-badge">
                                                         <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
@@ -408,7 +401,7 @@ interface Validation {
             background: var(--ref-color-grey-bg); overflow: hidden;
         }
         .panel-header {
-            padding: 8px 16px; font-size: 12px; font-weight: 600;
+            padding: 8px 16px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold);
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg); flex-shrink: 0;
@@ -419,22 +412,22 @@ interface Validation {
             flex-shrink: 0;
         }
         .status {
-            display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500;
+            display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-regular);
             &.ready { color: var(--ref-color-grey-60); }
             &.warn  { color: var(--ref-color-orange-100); }
             &.err   { color: var(--ref-color-red-100); }
         }
         button.status.clickable {
-            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 4px;
-            font-family: 'Averta', sans-serif; font-size: 12px; font-weight: 500;
+            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--ref-radius-sm);
+            font-family: var(--ref-font-family); font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
             transition: background 0.15s;
-            &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-05); } }
+            &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-10); } }
             &.warn { color: var(--ref-color-orange-100); &:hover { background: var(--ref-color-orange-10); } }
         }
         .empty-state {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 12px; padding: 24px; text-align: center;
-            p { font-size: 13px; color: var(--ref-color-grey-60); margin: 0; line-height: 1.5; }
+            p { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0; line-height: var(--ref-font-line-height-xs); }
         }
         .previews-list {
             flex: 1; min-height: 0; overflow-y: auto; background: var(--ref-color-grey-bg);
@@ -446,9 +439,9 @@ interface Validation {
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 0 12px; cursor: pointer;
         }
-        .network-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
+        .network-title { display: flex; align-items: center; gap: 8px; font-size: var(--ref-font-size-md); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
         .network-right { display: flex; align-items: center; gap: 6px; }
-        .posts-count { font-size: 11px; color: var(--ref-color-grey-60); }
+        .posts-count { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
         .net-error-dot {
             width: 8px; height: 8px; border-radius: 50%;
             background: var(--ref-color-red-100); flex-shrink: 0;
@@ -456,7 +449,7 @@ interface Validation {
 
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
-            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: 8px;
+            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: var(--ref-radius-md);
             &.is-customized {
                 background: var(--ref-color-electric-blue-05);
                 border-radius: 12px;
@@ -475,21 +468,12 @@ interface Validation {
                 padding: 8px 12px;
             }
         }
-        .customize-link {
-            background: none; border: none; padding: 0; cursor: pointer;
-            font-family: var(--comp-link-standalone-small-text-style-font-family);
-            font-size: var(--comp-link-standalone-small-text-style-size);
-            font-weight: var(--comp-link-standalone-small-text-style-font-weight);
-            line-height: var(--comp-link-standalone-small-text-style-line-height);
-            color: var(--comp-link-default-color);
-            &:hover { color: var(--comp-link-hover-color); }
-        }
         .customized-badge {
             display: flex; align-items: center; gap: 4px;
-            font-size: 11px; font-weight: 600;
+            font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
             background: var(--ref-color-electric-blue-20);
             color: var(--ref-color-electric-blue-100);
-            border-radius: 20px; padding: 4px 8px;
+            border-radius: var(--ref-radius-full); padding: 4px 8px;
         }
 
         /* Infoboxes */
@@ -498,16 +482,16 @@ interface Validation {
         /* Post cards — no is-customized styling here, affordance is on the wrapper only */
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
-            border-radius: 8px; overflow: hidden; background: var(--ref-color-white);
-            &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
+            border-radius: var(--ref-radius-md); overflow: hidden; background: var(--ref-color-white);
+            &.has-error { border-color: var(--ref-color-red-60); }
         }
         .x-card { padding-bottom: 12px; }
 
         .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .post-meta { flex: 1; }
-        .post-author { font-size: 13px; font-weight: 600; color: var(--sys-text-color-default); }
-        .post-date { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ref-color-grey-60); }
-        .post-text { padding: 4px 12px 8px; font-size: 13px; color: var(--sys-text-color-default); line-height: 1.5; }
+        .post-author { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .post-date { display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
+        .post-text { padding: 4px 12px 8px; font-size: var(--ref-font-size-sm); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-sm); }
         /* Carousel */
         .carousel {
             position: relative; overflow: hidden;
@@ -538,39 +522,39 @@ interface Validation {
             background: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.15s;
             &.active { background: white; }
         }
-        .see-more { font-size: 12px; color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: 500; }
+        .see-more { font-size: var(--ref-font-size-xs); color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: var(--ref-font-weight-bold); }
 
         .fb-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
         .fb-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
             padding: 8px; background: none; border: none; border-radius: 6px;
-            font-size: 12px; color: var(--sys-text-color-light); cursor: pointer; font-family: 'Averta', sans-serif;
+            font-size: var(--ref-font-size-xs); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
             &:hover { background: var(--ref-color-grey-05); }
         }
         .first-comment-preview {
             display: flex; align-items: flex-start; gap: 8px;
             padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10);
-            background: var(--ref-color-grey-02, #fafafa);
+            background: var(--ref-color-grey-bg);
         }
         .comment-bubble {
             flex: 1; background: var(--ref-color-grey-05); border-radius: 12px;
-            padding: 8px 12px; font-size: 12px; color: var(--sys-text-color-default); line-height: 1.4;
+            padding: 8px 12px; font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-xs);
         }
         .li-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
         .li-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
             padding: 8px 4px; background: none; border: none; border-radius: 6px;
-            font-size: 11px; color: var(--sys-text-color-light); cursor: pointer; font-family: 'Averta', sans-serif;
+            font-size: var(--ref-font-size-xs); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
             &:hover { background: var(--ref-color-grey-05); }
         }
         .ig-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .ig-meta { display: flex; flex-direction: column; }
-        .ig-author { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
-        .ig-time { font-size: 11px; color: var(--ref-color-grey-60); }
+        .ig-author { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .ig-time { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
         .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
         .ig-actions-left { display: flex; gap: 12px; }
-        .ig-caption { padding: 2px 12px 10px; font-size: 12px; color: var(--sys-text-color-default); line-height: 1.5; }
-        .ig-first-comment { padding: 6px 12px 10px; font-size: 12px; color: var(--ref-color-grey-60); border-top: 1px solid var(--ref-color-grey-10); }
+        .ig-caption { padding: 2px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-xs); }
+        .ig-first-comment { padding: 6px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); border-top: 1px solid var(--ref-color-grey-10); }
     `],
 })
 export class PreviewPanelComponent {

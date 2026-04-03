@@ -1,5 +1,7 @@
 import { CheckboxComponent } from '@agorapulse/ui-components/checkbox';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
+import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -9,7 +11,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-profiles-panel',
-    imports: [CheckboxComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule],
+    imports: [CheckboxComponent, AvatarComponent, IconButtonComponent, TabsComponent, TabComponent, TooltipDirective, SymbolComponent, FormsModule],
     template: `
         <div class="profiles-panel">
             <div class="panel-header">Social Profiles</div>
@@ -22,16 +24,16 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                     [(ngModel)]="searchQuery"
                     (ngModelChange)="onSearch($event)" />
                 @if (searchQuery()) {
-                    <button class="clear-search" (click)="clearSearch()">
-                        <ap-symbol symbolId="close" size="xs" color="basic-grey"></ap-symbol>
-                    </button>
+                    <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Clear search" (onClick)="clearSearch()"></ap-icon-button>
                 }
             </div>
 
-            <div class="profiles-tabs">
-                <button class="tab-btn" [class.active]="activeTab() === 'profiles'" (click)="activeTab.set('profiles')">Profiles</button>
-                <button class="tab-btn" [class.active]="activeTab() === 'queues'" (click)="activeTab.set('queues')" [apTooltip]="'Post at optimal times using your pre-configured queue schedule'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">Queues</button>
-            </div>
+            <ap-tabs class="profiles-tabs"
+                [selectedIndex]="activeTab() === 'profiles' ? 0 : 1"
+                (tabChange)="activeTab.set($event.index === 0 ? 'profiles' : 'queues')">
+                <ap-tab label="Profiles"></ap-tab>
+                <ap-tab label="Queues" [apTooltip]="'Post at optimal times using your pre-configured queue schedule'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-tab>
+            </ap-tabs>
 
             @if (activeTab() === 'profiles') {
                 <div class="select-all">
@@ -132,8 +134,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
         .panel-header {
             padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: var(--ref-font-size-sm);
+            font-weight: var(--ref-font-weight-bold);
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
@@ -151,10 +153,10 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                 flex: 1;
                 border: none;
                 outline: none;
-                font-size: 12px;
+                font-size: var(--ref-font-size-xs);
                 color: var(--sys-text-color-default);
                 background: transparent;
-                font-family: 'Averta', sans-serif;
+                font-family: var(--ref-font-family);
 
                 &::placeholder {
                     color: var(--ref-color-grey-60);
@@ -162,47 +164,12 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             }
         }
 
-        .clear-search {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            opacity: 0.6;
-            &:hover { opacity: 1; }
-        }
 
         .profiles-tabs {
-            display: flex;
-            padding: 8px 12px;
-            gap: 4px;
+            display: block;
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 4px 12px;
-            border: 1px solid var(--sys-border-color-default);
-            border-radius: 4px;
-            background: transparent;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--sys-text-color-light);
-            cursor: pointer;
-            transition: all 0.15s;
-            font-family: 'Averta', sans-serif;
-
-            &.active {
-                background: var(--ref-color-electric-blue-05);
-                border-color: var(--ref-color-electric-blue-40);
-                color: var(--ref-color-electric-blue-100);
-            }
-
-            &:hover:not(.active) {
-                background: var(--ref-color-grey-05);
-            }
+            ::ng-deep > div > div:last-child { display: none !important; }
         }
 
         .select-all {
@@ -237,8 +204,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
             .group-name {
                 flex: 1;
-                font-size: 10px;
-                font-weight: 700;
+                font-size: var(--ref-font-size-xs);
+                font-weight: var(--ref-font-weight-bold);
                 letter-spacing: 0.6px;
                 text-transform: uppercase;
                 color: var(--ref-color-grey-60);
@@ -261,8 +228,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             transition: background 0.1s;
 
             &:hover { background: var(--ref-color-grey-05); }
-            &.checked { background: var(--ref-color-electric-blue-02, #f5f8ff); }
-            &.checked:hover { background: var(--ref-color-electric-blue-05); }
+            &.checked { background: var(--ref-color-electric-blue-10); }
+            &.checked:hover { background: var(--ref-color-electric-blue-10); }
         }
 
         .ungrouped-profiles {
@@ -272,8 +239,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .profile-name {
-            font-size: 13px;
-            font-weight: 400;
+            font-size: var(--ref-font-size-sm);
+            font-weight: var(--ref-font-weight-regular);
             color: var(--sys-text-color-default);
             white-space: nowrap;
             overflow: hidden;
@@ -288,9 +255,9 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .selected-count {
-            font-size: 11px;
+            font-size: var(--ref-font-size-xs);
             color: var(--ref-color-electric-blue-100);
-            font-weight: 500;
+            font-weight: var(--ref-font-weight-regular);
         }
 
         .queues-empty {
@@ -301,7 +268,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             justify-content: center;
             gap: 8px;
             color: var(--ref-color-grey-60);
-            font-size: 12px;
+            font-size: var(--ref-font-size-xs);
         }
     `],
 })

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "compose",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["start"],
+      "runtimeExecutable": "/opt/homebrew/Cellar/node@22/22.22.2/bin/node",
+      "runtimeArgs": ["node_modules/.bin/ng", "serve"],
       "port": 4200
     }
   ]

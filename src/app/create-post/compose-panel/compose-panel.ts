@@ -1,38 +1,39 @@
 import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
-import { SlideToggleComponent } from '@agorapulse/ui-components/slide-toggle';
+import { ToggleComponent } from '@agorapulse/ui-components/toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import {
     ChangeDetectionStrategy, Component, computed, effect,
-    ElementRef, inject, signal,
+    ElementRef, inject, signal, ViewChild,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ComposeStateService, Customization } from '../compose-state';
+import { ComposeStateService, Customization, MediaItem } from '../compose-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, SlideToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
+    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
     template: `
         <div class="compose-panel" [class.is-draft]="state.isDraft()">
+            <!-- Hidden file inputs for upload sources -->
+            <input #fileInput type="file" accept="image/*,video/*" multiple style="display:none" (change)="onFilesSelected($event)">
+            <input #replaceInput type="file" accept="image/*,video/*" style="display:none" (change)="onReplaceSelected($event)">
+
             <!-- ── Tab navigation ──────────────────────────────────────── -->
             <div class="compose-tabs">
-                <button class="tab-btn" [class.active]="activeTab() === 'base'" (click)="activeTab.set('base')">
-                    Base post
-                </button>
-                <button class="tab-btn" [class.active]="activeTab() === 'customized'" (click)="activeTab.set('customized')">
-                    Customized posts
-                    @if (state.activeCustomizations().length > 0) {
-                        <span class="tab-badge">{{ state.activeCustomizations().length }}</span>
-                    }
-                </button>
+                <ap-tabs class="compose-tab-nav"
+                    [selectedIndex]="activeTab() === 'base' ? 0 : 1"
+                    (tabChange)="activeTab.set($event.index === 0 ? 'base' : 'customized')">
+                    <ap-tab label="Base post"></ap-tab>
+                    <ap-tab label="Customized posts" [counter]="state.activeCustomizations().length"></ap-tab>
+                </ap-tabs>
                 <div class="draft-toggle-tab" [class.is-on]="state.isDraft()">
                     <span class="draft-toggle-label">Draft</span>
-                    <ap-slide-toggle [checked]="state.isDraft()" (checkedChange)="state.isDraft.set($event)" size="small"></ap-slide-toggle>
+                    <ap-toggle name="isDraft" [checked]="state.isDraft()" (change)="state.isDraft.set($event)"></ap-toggle>
                 </div>
             </div>
 
@@ -66,10 +67,8 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                             </div>
                             <div class="toolbar-right">
-                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
-                                <button class="expand-btn" (click)="baseEditorExpanded.set(!baseEditorExpanded())" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
-                                    <ap-symbol [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
-                                </button>
+                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                <ap-icon-button type="flat" [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" [ariaLabel]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400" (onClick)="baseEditorExpanded.set(!baseEditorExpanded())"></ap-icon-button>
                             </div>
                         </div>
                         <div class="editor-footer">
@@ -112,38 +111,77 @@ import { ComposeStateService, Customization } from '../compose-state';
                 <!-- ── Media ─────────────────────────────────────────────── -->
                 <div class="section">
                     <div class="collapsible-header" (click)="mediaExpanded.set(!mediaExpanded())">
-                        <span class="collapsible-title">Media</span>
+                        <span class="collapsible-title">
+                            Media
+                            @if (!mediaExpanded() && state.mediaItems().length > 0) {
+                                <span class="section-count">({{ state.mediaItems().length }})</span>
+                            }
+                        </span>
                         <ap-symbol [symbolId]="mediaExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
                     </div>
                     @if (mediaExpanded()) {
-                        <div class="media-grid">
-                            <button class="add-media-btn" (click)="addMedia()">
-                                <ap-symbol symbolId="plus" size="sm" color="basic-grey"></ap-symbol>
-                            </button>
-                            @for (item of state.mediaItems(); track item.id) {
-                                <div class="media-thumb">
-                                    <img [src]="item.url" alt="Media" />
-                                    <!-- Network compatibility indicators -->
-                                    @if (isLandscape(item)) {
-                                        <div class="media-network-issues">
-                                            @if (state.facebookProfiles().length > 0) {
-                                                <span class="net-badge warn" [apTooltip]="'Facebook will crop this image to 1.91:1'" apTooltipPosition="top" [apTooltipShowDelay]="200">
-                                                    <ap-symbol symbolId="facebook" size="xs" color="orange"></ap-symbol>
-                                                </span>
-                                            }
-                                            @if (state.instagramProfiles().length > 0) {
-                                                <span class="net-badge warn" [apTooltip]="'Instagram will crop this image to square'" apTooltipPosition="top" [apTooltipShowDelay]="200">
-                                                    <ap-symbol symbolId="instagram" size="xs" color="orange"></ap-symbol>
-                                                </span>
-                                            }
-                                        </div>
-                                    }
-                                    <div class="media-overlay">
-                                        <button><ap-symbol symbolId="more" size="xs" color="black"></ap-symbol></button>
-                                        <button (click)="removeMedia(item.id)"><ap-symbol symbolId="trash" size="xs" color="red"></ap-symbol></button>
-                                    </div>
+                        <div class="media-drop-zone"
+                             [class.drag-over]="isDraggingOver()"
+                             (dragover)="onDragOver($event)"
+                             (dragleave)="onDragLeave($event)"
+                             (drop)="onDrop($event)">
+                            @if (isDraggingOver()) {
+                                <div class="drop-overlay">
+                                    <ap-symbol symbolId="upload" size="md" color="basic-grey"></ap-symbol>
+                                    <span>Drop files here</span>
                                 </div>
                             }
+                            <div class="media-grid">
+                                <!-- Upload source picker -->
+                                <div class="add-media-wrap">
+                                    <button class="add-media-btn" (click)="toggleUploadPicker()">
+                                        <ap-symbol symbolId="plus" size="sm" color="basic-grey"></ap-symbol>
+                                    </button>
+                                    @if (showUploadPicker()) {
+                                        <div class="upload-picker">
+                                            <button class="upload-option" (click)="pickFromComputer()">
+                                                <ap-symbol symbolId="image" size="xs" color="basic-grey"></ap-symbol>
+                                                From computer
+                                            </button>
+                                            <button class="upload-option" (click)="openLibrary()">
+                                                <ap-symbol symbolId="folder" size="xs" color="basic-grey"></ap-symbol>
+                                                From Library
+                                            </button>
+                                            <button class="upload-option" [class.disabled]="!googleDriveConnected" (click)="openGoogleDrive()">
+                                                <ap-symbol symbolId="image" size="xs" color="basic-grey"></ap-symbol>
+                                                Google Drive
+                                                @if (!googleDriveConnected) {
+                                                    <span class="upload-option-suffix">Connect</span>
+                                                }
+                                            </button>
+                                            <button class="upload-option" [class.disabled]="!canvaConnected" (click)="openCanva()">
+                                                <ap-symbol symbolId="pen" size="xs" color="basic-grey"></ap-symbol>
+                                                Design with Canva
+                                                @if (!canvaConnected) {
+                                                    <span class="upload-option-suffix">Connect</span>
+                                                }
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                                @for (item of state.mediaItems(); track item.id) {
+                                    <div class="media-thumb">
+                                        <img [src]="item.url" alt="Media" />
+                                        <div class="media-overlay">
+                                            <div class="media-menu-wrap">
+                                                <ap-icon-button class="media-overlay-btn" type="flat" size="small" symbolId="more" ariaLabel="Media options" (onClick)="toggleMediaMenu(item.id)"></ap-icon-button>
+                                                @if (mediaMenuOpenId() === item.id) {
+                                                    <div class="media-menu">
+                                                        <ap-button class="media-menu-item" [config]="{style:'ghost',color:'grey'}" size="small" (click)="replaceMedia(item.id)">Replace</ap-button>
+                                                        <ap-button class="media-menu-item" [config]="{style:'ghost',color:'red'}" size="small" (click)="removeMedia(item.id)">Remove</ap-button>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <ap-icon-button class="media-overlay-btn" type="flat" size="small" symbolId="trash" ariaLabel="Remove media" (onClick)="removeMedia(item.id)"></ap-icon-button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                 </div>
@@ -167,20 +205,18 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="net-tabs inner-pad">
-                                        <button class="net-tab" [class.active]="fbPostType()==='post'" (click)="fbPostType.set('post')">Post</button>
-                                        <button class="net-tab" [class.active]="fbPostType()==='reel'" (click)="fbPostType.set('reel')">
-                                            <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
-                                        </button>
-                                        <button class="net-tab" [class.active]="fbPostType()==='story'" (click)="fbPostType.set('story')">Story</button>
-                                    </div>
+                                    <ap-tabs [selectedIndex]="fbTabIndex()" (tabChange)="setFbPostType($event.index)">
+                                        <ap-tab label="Post"></ap-tab>
+                                        <ap-tab label="Reel" symbolId="video"></ap-tab>
+                                        <ap-tab label="Story"></ap-tab>
+                                    </ap-tabs>
                                     <div class="field-group">
                                         <label class="field-label">Video title</label>
                                         <div class="field-textarea-wrap">
                                             <textarea class="field-textarea" [value]="state.fbVideoTitle()" (input)="state.fbVideoTitle.set(asTextarea($event))" placeholder="This is the title of the video" rows="3"></textarea>
                                             <div class="field-textarea-footer">
                                                 <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
-                                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
                                             </div>
                                         </div>
                                         <div class="char-counts" style="padding: 4px 0 0;">
@@ -193,7 +229,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                        <ap-slide-toggle [checked]="state.fbFirstComment()" (checkedChange)="state.fbFirstComment.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="fbFirstComment" [checked]="state.fbFirstComment()" (change)="state.fbFirstComment.set($event)"></ap-toggle>
                                     </div>
                                     @if (state.fbFirstComment()) {
                                         <div class="first-comment-editor">
@@ -217,27 +253,25 @@ import { ComposeStateService, Customization } from '../compose-state';
                             </div>
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <div class="net-tabs inner-pad">
-                                        <button class="net-tab" [class.active]="igPostType()==='post'" (click)="igPostType.set('post')">Post</button>
-                                        <button class="net-tab" [class.active]="igPostType()==='reel'" (click)="igPostType.set('reel')">
-                                            <ap-symbol symbolId="video" size="xs"></ap-symbol> Reel
-                                        </button>
-                                        <button class="net-tab" [class.active]="igPostType()==='story'" (click)="igPostType.set('story')">Story</button>
-                                    </div>
+                                    <ap-tabs [selectedIndex]="igTabIndex()" (tabChange)="setIgPostType($event.index)">
+                                        <ap-tab label="Post"></ap-tab>
+                                        <ap-tab label="Reel" symbolId="video"></ap-tab>
+                                        <ap-tab label="Story"></ap-tab>
+                                    </ap-tabs>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
-                                        <ap-slide-toggle [checked]="state.igMobileNotif()" (checkedChange)="state.igMobileNotif.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="igMobileNotif" [checked]="state.igMobileNotif()" (change)="state.igMobileNotif.set($event)"></ap-toggle>
                                     </div>
                                     @if (igPostType() === 'reel') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Also share to Feed</span></div>
-                                            <ap-slide-toggle [checked]="state.igAlsoShareToFeed()" (checkedChange)="state.igAlsoShareToFeed.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="igAlsoShareToFeed" [checked]="state.igAlsoShareToFeed()" (change)="state.igAlsoShareToFeed.set($event)"></ap-toggle>
                                         </div>
                                     }
                                     @if (igPostType() !== 'story') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                            <ap-slide-toggle [checked]="state.igFirstComment()" (checkedChange)="state.igFirstComment.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="igFirstComment" [checked]="state.igFirstComment()" (change)="state.igFirstComment.set($event)"></ap-toggle>
                                         </div>
                                         @if (state.igFirstComment()) {
                                             <div class="first-comment-editor">
@@ -246,7 +280,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                         }
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
-                                            <ap-slide-toggle [checked]="state.igPulseLink()" (checkedChange)="state.igPulseLink.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="igPulseLink" [checked]="state.igPulseLink()" (change)="state.igPulseLink.set($event)"></ap-toggle>
                                         </div>
                                         @if (igPostType() === 'post') {
                                             <div class="option-row action-row">
@@ -279,7 +313,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                        <ap-slide-toggle [checked]="state.liFirstComment()" (checkedChange)="state.liFirstComment.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="liFirstComment" [checked]="state.liFirstComment()" (change)="state.liFirstComment.set($event)"></ap-toggle>
                                     </div>
                                     @if (state.liFirstComment()) {
                                         <div class="first-comment-editor">
@@ -288,9 +322,9 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     }
                                     <div class="option-section-title">Target audience settings</div>
                                     <div class="option-section-desc">Define the audience to display your post to</div>
-                                    <button class="audience-link">Add industry</button>
-                                    <button class="audience-link">Add job function</button>
-                                    <button class="audience-link">Add seniority</button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add industry</ap-button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add job function</ap-button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
                                 </div>
                             }
                         </div>
@@ -307,11 +341,11 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">X (Twitter) card</span><span class="option-hint">Post as an image instead of a X (Twitter) Card</span></div>
-                                        <ap-slide-toggle [checked]="state.xTwitterCard()" (checkedChange)="state.xTwitterCard.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="xTwitterCard" [checked]="state.xTwitterCard()" (change)="state.xTwitterCard.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">X (Twitter) Thread</span><span class="option-hint">Publish a thread attached to your post</span></div>
-                                        <ap-slide-toggle [checked]="state.xThread()" (checkedChange)="state.xThread.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="xThread" [checked]="state.xThread()" (change)="state.xThread.set($event)"></ap-toggle>
                                     </div>
                                 </div>
                             }
@@ -329,19 +363,19 @@ import { ComposeStateService, Customization } from '../compose-state';
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Allow comments</span></div>
-                                        <ap-slide-toggle [checked]="state.ttAllowComments()" (checkedChange)="state.ttAllowComments.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ttAllowComments" [checked]="state.ttAllowComments()" (change)="state.ttAllowComments.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Allow Duet</span><span class="option-hint">Allows you to post your video side-by-side with another creator's video</span></div>
-                                        <ap-slide-toggle [checked]="state.ttAllowDuet()" (checkedChange)="state.ttAllowDuet.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ttAllowDuet" [checked]="state.ttAllowDuet()" (change)="state.ttAllowDuet.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Allow Stitch</span><span class="option-hint">Allows you to combine another video on TikTok with one you're creating</span></div>
-                                        <ap-slide-toggle [checked]="state.ttAllowStitch()" (checkedChange)="state.ttAllowStitch.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ttAllowStitch" [checked]="state.ttAllowStitch()" (change)="state.ttAllowStitch.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
-                                        <ap-slide-toggle [checked]="state.ttMobileNotif()" (checkedChange)="state.ttMobileNotif.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ttMobileNotif" [checked]="state.ttMobileNotif()" (change)="state.ttMobileNotif.set($event)"></ap-toggle>
                                     </div>
                                 </div>
                             }
@@ -363,7 +397,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                             <textarea class="field-textarea" [value]="state.ytTitle()" (input)="state.ytTitle.set(asTextarea($event))" placeholder="Write a description with text, links..." rows="3"></textarea>
                                             <div class="field-textarea-footer">
                                                 <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
-                                                <ap-button class="writing-assistant-btn" [config]="{ style: 'stroked', color: 'blue' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
                                             </div>
                                         </div>
                                         <div class="char-counts" style="padding: 4px 0 0;">
@@ -373,8 +407,8 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     <div class="option-row">
                                         <div class="option-info"><span class="option-label">Privacy status</span></div>
                                         <div class="privacy-tabs">
-                                            <button class="privacy-tab" [class.active]="state.ytPrivacy()==='public'" (click)="state.ytPrivacy.set('public')">Public</button>
-                                            <button class="privacy-tab" [class.active]="state.ytPrivacy()==='private'" (click)="state.ytPrivacy.set('private')">Private</button>
+                                            <ap-button class="privacy-btn-left" [config]="state.ytPrivacy()==='public' ? {style:'primary',color:'blue'} : {style:'stroked',color:'grey'}" size="small" (click)="state.ytPrivacy.set('public')">Public</ap-button>
+                                            <ap-button class="privacy-btn-right" [config]="state.ytPrivacy()==='private' ? {style:'primary',color:'blue'} : {style:'stroked',color:'grey'}" size="small" (click)="state.ytPrivacy.set('private')">Private</ap-button>
                                         </div>
                                     </div>
                                     <div class="field-group">
@@ -395,15 +429,15 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
-                                        <ap-slide-toggle [checked]="state.ytEmbeddable()" (checkedChange)="state.ytEmbeddable.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ytEmbeddable" [checked]="state.ytEmbeddable()" (change)="state.ytEmbeddable.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Notify subscribers</span></div>
-                                        <ap-slide-toggle [checked]="state.ytNotifySubscribers()" (checkedChange)="state.ytNotifySubscribers.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ytNotifySubscribers" [checked]="state.ytNotifySubscribers()" (change)="state.ytNotifySubscribers.set($event)"></ap-toggle>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Made for kids</span><span class="option-hint">Prevent underage users from watching this video. This also removes the ability to monetize or promote your video through different ad formats.</span></div>
-                                        <ap-slide-toggle [checked]="state.ytMadeForKids()" (checkedChange)="state.ytMadeForKids.set($event)"></ap-slide-toggle>
+                                        <ap-toggle name="ytMadeForKids" [checked]="state.ytMadeForKids()" (change)="state.ytMadeForKids.set($event)"></ap-toggle>
                                     </div>
                                 </div>
                             }
@@ -546,7 +580,7 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     @case ('facebook') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                            <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
                                             <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
@@ -559,18 +593,18 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     @case ('instagram') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
-                                            <ap-slide-toggle [checked]="state.igMobileNotif()" (checkedChange)="state.igMobileNotif.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="igMobileNotif" [checked]="state.igMobileNotif()" (change)="state.igMobileNotif.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                            <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
                                             <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
                                         }
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
-                                            <ap-slide-toggle [checked]="state.igPulseLink()" (checkedChange)="state.igPulseLink.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="igPulseLink" [checked]="state.igPulseLink()" (change)="state.igPulseLink.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
@@ -588,57 +622,57 @@ import { ComposeStateService, Customization } from '../compose-state';
                                     @case ('linkedin') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
-                                            <ap-slide-toggle [checked]="custom.firstComment" (checkedChange)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-slide-toggle>
+                                            <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
                                             <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
                                         }
                                         <div class="option-section-title">Target audience settings</div>
                                         <div class="option-section-desc">Define the audience to display your post to</div>
-                                        <button class="audience-link">Add industry</button>
-                                        <button class="audience-link">Add job function</button>
-                                        <button class="audience-link">Add seniority</button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add industry</ap-button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add job function</ap-button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
                                     }
                                     @case ('twitter') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">X (Twitter) card</span><span class="option-hint">Post as an image instead of a X (Twitter) Card</span></div>
-                                            <ap-slide-toggle [checked]="state.xTwitterCard()" (checkedChange)="state.xTwitterCard.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="xTwitterCard" [checked]="state.xTwitterCard()" (change)="state.xTwitterCard.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">X (Twitter) Thread</span><span class="option-hint">Publish a thread attached to your post</span></div>
-                                            <ap-slide-toggle [checked]="state.xThread()" (checkedChange)="state.xThread.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="xThread" [checked]="state.xThread()" (change)="state.xThread.set($event)"></ap-toggle>
                                         </div>
                                     }
                                     @case ('tiktok') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Allow comments</span></div>
-                                            <ap-slide-toggle [checked]="state.ttAllowComments()" (checkedChange)="state.ttAllowComments.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ttAllowComments" [checked]="state.ttAllowComments()" (change)="state.ttAllowComments.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Allow Duet</span><span class="option-hint">Allows you to post your video side-by-side with another creator's video</span></div>
-                                            <ap-slide-toggle [checked]="state.ttAllowDuet()" (checkedChange)="state.ttAllowDuet.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ttAllowDuet" [checked]="state.ttAllowDuet()" (change)="state.ttAllowDuet.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Allow Stitch</span><span class="option-hint">Allows you to combine another video on TikTok with one you're creating</span></div>
-                                            <ap-slide-toggle [checked]="state.ttAllowStitch()" (checkedChange)="state.ttAllowStitch.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ttAllowStitch" [checked]="state.ttAllowStitch()" (change)="state.ttAllowStitch.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
-                                            <ap-slide-toggle [checked]="state.ttMobileNotif()" (checkedChange)="state.ttMobileNotif.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ttMobileNotif" [checked]="state.ttMobileNotif()" (change)="state.ttMobileNotif.set($event)"></ap-toggle>
                                         </div>
                                     }
                                     @case ('youtube') {
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
-                                            <ap-slide-toggle [checked]="state.ytEmbeddable()" (checkedChange)="state.ytEmbeddable.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ytEmbeddable" [checked]="state.ytEmbeddable()" (change)="state.ytEmbeddable.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Notify subscribers</span></div>
-                                            <ap-slide-toggle [checked]="state.ytNotifySubscribers()" (checkedChange)="state.ytNotifySubscribers.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ytNotifySubscribers" [checked]="state.ytNotifySubscribers()" (change)="state.ytNotifySubscribers.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">Made for kids</span><span class="option-hint">Prevent underage users from watching this video.</span></div>
-                                            <ap-slide-toggle [checked]="state.ytMadeForKids()" (checkedChange)="state.ytMadeForKids.set($event)"></ap-slide-toggle>
+                                            <ap-toggle name="ytMadeForKids" [checked]="state.ytMadeForKids()" (change)="state.ytMadeForKids.set($event)"></ap-toggle>
                                         </div>
                                     }
                                 }
@@ -661,62 +695,45 @@ import { ComposeStateService, Customization } from '../compose-state';
         }
         .compose-tabs {
             display: flex; align-items: center;
-            border-bottom: 1px solid var(--ref-color-grey-15);
-            padding: 0 16px;
+            border-bottom: 1px solid var(--ref-color-grey-20);
             flex-shrink: 0;
             background: var(--ref-color-grey-bg);
             transition: background 0.2s, border-color 0.2s;
         }
         .compose-panel.is-draft .compose-tabs {
-            background: #FFFBF0;
-            border-bottom-color: #FDE68A;
+            background: var(--ref-color-yellow-10);
+            border-bottom-color: var(--ref-color-yellow-40);
+        }
+        .compose-tab-nav {
+            flex: 1; min-width: 0;
+            ::ng-deep .ap-tabs__content { display: none; }
+            ::ng-deep .ap-tabs__nav { border-bottom: none; }
         }
         .draft-toggle-tab {
-            margin-left: auto; display: flex; align-items: center; gap: 7px;
-            cursor: pointer; padding: 0 2px 0 8px; border-radius: 20px;
+            flex-shrink: 0; margin-left: auto; display: flex; align-items: center; gap: 7px;
+            cursor: pointer; padding: 0 16px 0 8px; border-radius: 20px;
             transition: background 0.15s;
         }
         .draft-toggle-label {
-            font-size: 12px; font-weight: 600;
+            font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
             color: var(--sys-text-color-light);
             transition: color 0.15s;
         }
         .draft-toggle-tab.is-on .draft-toggle-label {
-            color: #92400E;
-        }
-        .tab-btn {
-            background: none; border: none; border-bottom: 2px solid transparent;
-            padding: 12px 4px; margin-right: 20px;
-            font-size: 14px; font-weight: 500;
-            color: var(--sys-text-color-light);
-            cursor: pointer; font-family: 'Averta', sans-serif;
-            transition: color 0.15s, border-color 0.15s;
-            display: flex; align-items: center; gap: 6px;
-            &.active {
-                color: var(--ref-color-electric-blue-100);
-                border-bottom-color: var(--ref-color-electric-blue-100);
-                font-weight: 600;
-            }
-            &:hover:not(.active) { color: var(--sys-text-color-default); }
-        }
-        .tab-badge {
-            font-size: 11px; font-weight: 600;
-            background: var(--ref-color-electric-blue-10);
-            color: var(--ref-color-electric-blue-100);
-            border-radius: 10px; padding: 2px 8px; min-width: 18px; text-align: center;
+            color: var(--ref-color-yellow-150);
         }
         .panel-header {
-            padding: 12px 0 4px; font-size: 13px; font-weight: 700;
+            padding: 16px 0 12px; font-size: var(--ref-font-size-md); font-weight: var(--ref-font-weight-bold);
             color: var(--sys-text-color-default);
         }
-        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 20px; background: var(--ref-color-white); }
-        .section { padding: 12px 0; border-bottom: 1px solid var(--ref-color-grey-10); max-width: 640px; margin: 0 auto; &.last { border-bottom: none; } }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .section-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--sys-text-color-default); }
-        .section-hint { font-size: 11px; color: var(--ref-color-grey-60); }
+        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 24px; background: var(--ref-color-white); }
+        .section { padding: 16px 0; max-width: 640px; margin: 0 auto; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+        .section-title { display: flex; align-items: center; gap: 6px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .section-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
 
         .text-editor {
-            border: 1px solid var(--sys-border-color-default); border-radius: 8px; overflow: hidden;
+            border: 1px solid var(--sys-border-color-default); border-radius: var(--ref-radius-md); overflow: hidden;
             background: var(--ref-color-white); transition: border-color 0.15s, box-shadow 0.15s;
             &.inner { border-radius: 6px; margin: 8px 0; }
             &.focused { border-color: var(--ref-color-electric-blue-60); box-shadow: 0 0 0 3px var(--ref-color-electric-blue-05); }
@@ -725,10 +742,10 @@ import { ComposeStateService, Customization } from '../compose-state';
         }
         .post-textarea {
             width: 100%; padding: 8px 12px; border: none; outline: none; resize: none;
-            font-size: 13px; color: var(--sys-text-color-default);
-            font-family: 'Averta', sans-serif; background: transparent; line-height: 1.5;
+            font-size: var(--ref-font-size-sm); color: var(--sys-text-color-default);
+            font-family: var(--ref-font-family); background: transparent; line-height: var(--ref-font-line-height-sm);
             box-sizing: border-box;
-            &.small { padding: 8px 12px; font-size: 12px; }
+            &.small { padding: 8px 12px; font-size: var(--ref-font-size-xs); }
             &::placeholder { color: var(--ref-color-grey-60); }
         }
         .editor-toolbar {
@@ -738,78 +755,111 @@ import { ComposeStateService, Customization } from '../compose-state';
         }
         .toolbar-icons { display: flex; }
         .toolbar-right { display: flex; align-items: center; gap: 4px; }
-        .expand-btn {
-            background: none; border: none; padding: 4px; cursor: pointer;
-            display: flex; align-items: center; border-radius: 4px;
-            opacity: 0.5; transition: opacity 0.15s, background 0.15s;
-            &:hover { opacity: 1; background: var(--ref-color-grey-05); }
-        }
-        .writing-assistant-btn {
-            ::ng-deep button {
-                background: linear-gradient(white, white) padding-box,
-                            linear-gradient(135deg, #6c63ff 0%, #f7619a 100%) border-box !important;
-                border: 1.5px solid transparent !important;
-                color: #6c63ff !important;
-                font-weight: 600 !important;
-            }
-            ::ng-deep ap-symbol svg { color: #6c63ff !important; }
-        }
         .editor-footer {
             display: flex; align-items: center;
-            padding: 6px 12px; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10);
+            background: var(--ref-color-grey-05);
         }
         .char-counts { display: flex; gap: 12px; &.inner { padding: 4px 12px 8px; } }
         .char-count {
-            display: flex; align-items: center; gap: 4px; font-size: 12px;
+            display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs);
             color: var(--ref-color-electric-blue-100);
             &.grey { color: var(--ref-color-grey-60); }
             &.warning { color: var(--ref-color-orange-100); }
-            &.danger { color: var(--ref-color-red-100); font-weight: 600; }
+            &.danger { color: var(--ref-color-red-100); font-weight: var(--ref-font-weight-bold); }
         }
 
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 0 8px; cursor: pointer; user-select: none;
-            &.padded { padding: 10px 12px; }
+            padding: 8px 0 12px; cursor: pointer; user-select: none;
+            &.padded { padding: 12px; }
         }
-        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--sys-text-color-default); }
-        .section-count { font-size: 11px; font-weight: 400; color: var(--ref-color-grey-60); }
+        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .section-count { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-regular); color: var(--ref-color-grey-60); }
 
         .media-grid { display: flex; gap: 8px; flex-wrap: wrap; &.inner { padding: 0 12px 8px; } }
         .add-media-btn {
-            width: 68px; height: 68px; border: 2px dashed var(--ref-color-grey-40);
-            border-radius: 8px; background: transparent; cursor: pointer;
+            width: 96px; height: 96px; border: 2px dashed var(--ref-color-grey-40);
+            border-radius: var(--ref-radius-md); background: transparent; cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
             &:hover { background: var(--ref-color-grey-05); border-color: var(--ref-color-electric-blue-60); }
         }
         .media-thumb {
-            position: relative; width: 68px; height: 68px; border-radius: 8px; overflow: hidden;
+            position: relative; width: 96px; height: 96px; border-radius: var(--ref-radius-md); overflow: hidden;
             img { width: 100%; height: 100%; object-fit: cover; display: block; }
-            .media-network-issues {
-                position: absolute; bottom: 4px; left: 4px; display: flex; gap: 4px;
-            }
-            .net-badge {
-                width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center;
-                &.warn { background: rgba(255, 247, 237, 0.92); }
-            }
             .media-overlay {
                 position: absolute; top: 4px; right: 4px; display: flex; gap: 4px;
                 opacity: 0; transition: opacity 0.15s;
-                button { width: 24px; height: 24px; border: none; border-radius: 4px; background: rgba(255,255,255,0.92); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+            }
+            .media-overlay-btn {
+                ::ng-deep button { width: 24px; min-width: 24px; height: 24px; min-height: 24px; padding: 0; border-radius: var(--ref-radius-sm); background: rgba(255,255,255,0.92) !important; }
             }
             &:hover .media-overlay { opacity: 1; }
         }
 
+        /* Upload source picker popover */
+        .add-media-wrap { position: relative; }
+        .upload-picker {
+            position: absolute; top: calc(100% + 4px); left: 0; z-index: 100;
+            background: var(--ref-color-white); border: 1px solid var(--sys-border-color-default);
+            border-radius: var(--ref-radius-md); box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            padding: 4px; min-width: 180px;
+        }
+        .upload-option {
+            display: flex; align-items: center; gap: 8px; width: 100%;
+            background: none; border: none; border-radius: var(--ref-radius-md);
+            padding: 8px 12px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-regular);
+            color: var(--sys-text-color-default); cursor: pointer;
+            font-family: var(--ref-font-family); text-align: left;
+            transition: background 0.15s;
+            &:hover:not(.disabled) { background: var(--ref-color-grey-05); }
+            &.disabled { opacity: 0.5; cursor: not-allowed; }
+        }
+        .upload-option-suffix {
+            margin-left: auto; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
+            color: var(--ref-color-electric-blue-100);
+        }
+
+        /* Drag & drop zone */
+        .media-drop-zone {
+            position: relative; border-radius: 8px;
+            transition: background 0.15s, border-color 0.15s;
+            &.drag-over {
+                background: var(--ref-color-electric-blue-05);
+                outline: 2px dashed var(--ref-color-electric-blue-60);
+            }
+        }
+        .drop-overlay {
+            position: absolute; inset: 0; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 8px; background: var(--ref-color-electric-blue-05);
+            border-radius: 8px; pointer-events: none;
+            font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--ref-color-electric-blue-100);
+        }
+
+        /* Per-thumb ⋯ menu */
+        .media-menu-wrap { position: relative; }
+        .media-menu {
+            position: absolute; top: calc(100% + 4px); right: 0; z-index: 110;
+            background: var(--ref-color-white); border: 1px solid var(--sys-border-color-default);
+            border-radius: var(--ref-radius-md); box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            padding: 4px; min-width: 120px;
+        }
+        .media-menu-item {
+            display: block; width: 100%;
+            ::ng-deep button { justify-content: flex-start !important; width: 100%; border-radius: var(--ref-radius-md); }
+        }
+
         /* Customizations section hint */
-        .customizations-hint { font-size: 11px; color: var(--ref-color-grey-60); margin: 0 0 8px; }
+        .customizations-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0 0 8px; }
 
         /* Customization cards */
         .custom-card {
             border: 1px solid var(--sys-border-color-default);
-            border-radius: 8px;
+            border-radius: var(--ref-radius-md);
             overflow: hidden; margin-bottom: 8px; background: var(--ref-color-white);
             transition: box-shadow 0.2s, border-color 0.2s;
-            &.has-error { border-color: var(--ref-color-red-40, #fca5a5); }
+            &.has-error { border-color: var(--ref-color-red-60); }
         }
         @keyframes flashHighlight {
             0%   { box-shadow: 0 0 0 3px var(--ref-color-electric-blue-40); border-color: var(--ref-color-electric-blue-60); }
@@ -825,44 +875,44 @@ import { ComposeStateService, Customization } from '../compose-state';
             transition: background 0.15s;
         }
         .profile-row { display: flex; align-items: center; gap: 8px; }
-        .profile-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
+        .profile-label { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
         .row-gap { display: flex; align-items: center; gap: 6px; }
-        .inner-pad { padding: 8px 12px 4px; }
+        .inner-pad { padding: 8px 12px; }
 
         .option-row {
             display: flex; align-items: flex-start; justify-content: space-between;
-            padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10); gap: 12px;
+            padding: 12px; border-top: 1px solid var(--ref-color-grey-10); gap: 12px;
             &.toggle-row { align-items: center; }
             &.action-row { align-items: center; }
         }
         .option-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
         .option-info-row { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .option-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
-        .option-hint { font-size: 11px; color: var(--ref-color-grey-60); line-height: 1.4; }
+        .option-label { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .option-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); line-height: var(--ref-font-line-height-xs); }
 
         .first-comment-editor {
             padding: 8px 12px 12px;
             border-top: 1px solid var(--ref-color-grey-10);
-            background: var(--ref-color-grey-02, #fafafa);
+            background: var(--ref-color-grey-bg);
         }
 
-        .network-hint { font-size: 11px; color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: 1.5; }
-        .network-card { border: 1px solid var(--sys-border-color-default); border-radius: 8px; margin-top: 8px; overflow: hidden; background: var(--ref-color-white); }
-        .network-card-content { padding: 0 0 8px; }
-        .network-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
+        .network-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: var(--ref-font-line-height-xs); }
+        .network-card { border: 1px solid var(--sys-border-color-default); border-radius: var(--ref-radius-md); margin-top: 12px; overflow: hidden; background: var(--ref-color-white); }
+        .network-card-content { padding: 0 0 12px; }
+        .network-label { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
         .field-group {
-            padding: 8px 12px 4px;
-            .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--sys-text-color-light); margin-bottom: 4px; }
+            padding: 12px;
+            .field-label { display: block; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-light); margin-bottom: 4px; }
             .field-textarea {
                 width: 100%; padding: 8px 10px; border: 1px solid var(--sys-border-color-default);
-                border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
-                font-family: 'Averta', sans-serif; resize: none; outline: none;
+                border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
+                font-family: var(--ref-font-family); resize: none; outline: none;
                 background: var(--ref-color-white); box-sizing: border-box;
                 &::placeholder { color: var(--ref-color-grey-60); }
                 &:focus { border-color: var(--ref-color-electric-blue-60); }
             }
         }
-        .empty-hint { font-size: 12px; color: var(--ref-color-grey-60); margin: 4px 0 0; }
+        .empty-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 4px 0 0; }
 
         /* Per-profile media override */
         .custom-media-section {
@@ -872,39 +922,26 @@ import { ComposeStateService, Customization } from '../compose-state';
         .custom-media-header {
             display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
         }
-        .custom-media-label { font-size: 12px; font-weight: 600; color: var(--sys-text-color-default); }
-        .custom-media-hint { font-size: 11px; color: var(--ref-color-grey-60); }
+        .custom-media-label { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .custom-media-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
         .add-media-btn.small { width: 48px; height: 48px; }
         .media-thumb.small { width: 48px; height: 48px; border-radius: 6px; }
 
-        /* Tab control for network options (matches main compose-tabs style) */
-        .net-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--ref-color-grey-15); }
-        .net-tab {
-            display: flex; align-items: center; justify-content: center; gap: 4px;
-            padding: 8px 12px; background: none; border: none;
-            border-bottom: 2px solid transparent; margin-bottom: -1px;
-            font-size: 12px; font-weight: 500; color: var(--sys-text-color-light); cursor: pointer;
-            font-family: 'Averta', sans-serif; transition: color 0.15s, border-color 0.15s;
-            &.active {
-                color: var(--ref-color-electric-blue-100); font-weight: 600;
-                border-bottom-color: var(--ref-color-electric-blue-100);
-            }
-            &:hover:not(.active) { color: var(--sys-text-color-default); }
-        }
+        /* ap-tabs inside network cards — collapse empty content area */
+        .network-card-content ap-tabs { display: block; }
+        .network-card-content ap-tabs ::ng-deep > div > div:last-child { display: none !important; }
 
         /* LinkedIn audience targeting */
         .option-section-title {
-            padding: 10px 12px 2px; font-size: 11px; font-weight: 700;
+            padding: 10px 12px 2px; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
             color: var(--sys-text-color-light); text-transform: uppercase; letter-spacing: 0.04em;
             border-top: 1px solid var(--ref-color-grey-10);
         }
-        .option-section-desc { padding: 2px 12px 6px; font-size: 11px; color: var(--ref-color-grey-60); line-height: 1.4; }
-        .audience-link {
-            display: block; width: 100%; background: none; border: none; border-top: 1px solid var(--ref-color-grey-10);
-            padding: 8px 12px; text-align: left; cursor: pointer;
-            color: var(--comp-link-default-color); font-size: 12px; font-weight: 600;
-            font-family: 'Averta', sans-serif;
-            &:hover { color: var(--comp-link-hover-color); }
+        .option-section-desc { padding: 2px 12px 6px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); line-height: var(--ref-font-line-height-xs); }
+        .audience-btn {
+            display: block;
+            border-top: 1px solid var(--ref-color-grey-10);
+            ::ng-deep button { justify-content: flex-start !important; padding-left: 12px; width: 100%; }
         }
 
         /* Textarea with footer toolbar (Facebook/YouTube video title) */
@@ -918,44 +955,46 @@ import { ComposeStateService, Customization } from '../compose-state';
         /* Form fields for YouTube */
         .field-select {
             width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
-            border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
-            font-family: 'Averta', sans-serif; background: var(--ref-color-white);
+            border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
+            font-family: var(--ref-font-family); background: var(--ref-color-white);
             outline: none; cursor: pointer;
             &:focus { border-color: var(--ref-color-electric-blue-60); }
         }
         .field-input {
             width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
-            border-radius: 6px; font-size: 12px; color: var(--sys-text-color-default);
-            font-family: 'Averta', sans-serif; background: var(--ref-color-white);
+            border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
+            font-family: var(--ref-font-family); background: var(--ref-color-white);
             outline: none; box-sizing: border-box;
             &::placeholder { color: var(--ref-color-grey-60); }
             &:focus { border-color: var(--ref-color-electric-blue-60); }
         }
         .required-star { color: var(--ref-color-red-100); }
-        .optional-label { color: var(--ref-color-grey-60); font-weight: 400; }
+        .optional-label { color: var(--ref-color-grey-60); font-weight: var(--ref-font-weight-regular); }
 
-        /* Privacy segmented control (YouTube) */
+        /* Privacy button group (YouTube) */
         .privacy-tabs { display: flex; }
-        .privacy-tab {
-            padding: 4px 12px; border: 1px solid var(--sys-border-color-default); background: none;
-            font-size: 11px; font-weight: 500; color: var(--ref-color-grey-60); cursor: pointer;
-            font-family: 'Averta', sans-serif; transition: all 0.15s;
-            &:first-child { border-radius: 6px 0 0 6px; }
-            &:last-child { border-radius: 0 6px 6px 0; border-left: none; }
-            &.active { background: var(--ref-color-electric-blue-100); border-color: var(--ref-color-electric-blue-100); color: white; font-weight: 600; }
-        }
+        .privacy-btn-left ::ng-deep button { border-radius: var(--comp-button-border-radius) 0 0 var(--comp-button-border-radius) !important; border-right: none !important; }
+        .privacy-btn-right ::ng-deep button { border-radius: 0 var(--comp-button-border-radius) var(--comp-button-border-radius) 0 !important; }
     `],
 })
 export class ComposePanelComponent {
     state = inject(ComposeStateService);
     private el = inject(ElementRef);
+    @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
+    @ViewChild('replaceInput') private replaceInput!: ElementRef<HTMLInputElement>;
 
     activeTab = signal<'base' | 'customized'>('base');
     baseTextFocused = signal(false);
     baseEditorExpanded = signal(false);
     focusedEditorId = signal<string | null>(null);
     flashingId = signal<string | null>(null);
-    mediaExpanded = signal(true);
+    mediaExpanded = signal(this.state.mediaItems().length === 0);
+    isDraggingOver = signal(false);
+    showUploadPicker = signal(false);
+    mediaMenuOpenId = signal<number | null>(null);
+    replaceTargetId = signal<number | null>(null);
+    readonly googleDriveConnected = false;
+    readonly canvaConnected = false;
     customizationsExpanded = signal(true);
     fbOptionsExpanded = signal(true);
     igOptionsExpanded = signal(true);
@@ -966,6 +1005,11 @@ export class ComposePanelComponent {
 
     fbPostType = signal<'post' | 'reel' | 'story'>('post');
     igPostType = signal<'post' | 'reel' | 'story'>('post');
+    fbTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.fbPostType()));
+    igTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.igPostType()));
+
+    setFbPostType(i: number): void { this.fbPostType.set((['post', 'reel', 'story'] as const)[i]); }
+    setIgPostType(i: number): void { this.igPostType.set((['post', 'reel', 'story'] as const)[i]); }
 
     fbWarning = computed(() => { const r = this.state.fbCharsRemaining(); return r < 1000 && r >= 0; });
     fbDanger = computed(() => this.state.fbCharsRemaining() < 0);
@@ -1063,12 +1107,6 @@ export class ComposePanelComponent {
         { url: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=120&h=120&fit=crop', width: 4000, height: 2667, type: 'image' as const },
     ];
 
-    addMedia(): void {
-        const idx = this.state.mediaItems().length % this.extraMedia.length;
-        const m = this.extraMedia[idx];
-        this.state.addMediaItem({ id: Date.now(), ...m });
-    }
-
     addCustomMedia(profileId: string): void {
         const custom = this.state.getCustomization(profileId);
         const idx = (custom?.mediaItems.length ?? 0) % this.extraMedia.length;
@@ -1078,5 +1116,93 @@ export class ComposePanelComponent {
 
     removeMedia(id: number): void {
         this.state.removeMediaItem(id);
+        this.mediaMenuOpenId.set(null);
+    }
+
+    toggleUploadPicker(): void {
+        this.showUploadPicker.update(v => !v);
+    }
+
+    pickFromComputer(): void {
+        this.showUploadPicker.set(false);
+        this.fileInput.nativeElement.click();
+    }
+
+    openLibrary(): void {
+        this.showUploadPicker.set(false);
+        // Library picker integration — stub
+    }
+
+    openGoogleDrive(): void {
+        if (!this.googleDriveConnected) return;
+        this.showUploadPicker.set(false);
+    }
+
+    openCanva(): void {
+        if (!this.canvaConnected) return;
+        this.showUploadPicker.set(false);
+    }
+
+    onFilesSelected(event: Event): void {
+        const files = (event.target as HTMLInputElement).files;
+        if (!files) return;
+        Array.from(files).forEach(f => this.processFile(f));
+        (event.target as HTMLInputElement).value = '';
+        this.mediaExpanded.set(true);
+    }
+
+    onReplaceSelected(event: Event): void {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        const targetId = this.replaceTargetId();
+        if (!file || targetId === null) return;
+        this.state.removeMediaItem(targetId);
+        this.processFile(file);
+        this.replaceTargetId.set(null);
+        (event.target as HTMLInputElement).value = '';
+    }
+
+    private processFile(file: File): void {
+        const url = URL.createObjectURL(file);
+        const type: 'image' | 'video' = file.type.startsWith('video') ? 'video' : 'image';
+        if (type === 'image') {
+            const img = new Image();
+            img.onload = () => {
+                this.state.addMediaItem({ id: Date.now(), url, type, width: img.naturalWidth, height: img.naturalHeight });
+            };
+            img.src = url;
+        } else {
+            this.state.addMediaItem({ id: Date.now(), url, type, width: 1920, height: 1080 });
+        }
+    }
+
+    toggleMediaMenu(id: number): void {
+        this.mediaMenuOpenId.update(v => v === id ? null : id);
+    }
+
+    replaceMedia(id: number): void {
+        this.replaceTargetId.set(id);
+        this.mediaMenuOpenId.set(null);
+        this.replaceInput.nativeElement.click();
+    }
+
+    onDragOver(event: DragEvent): void {
+        event.preventDefault();
+        this.isDraggingOver.set(true);
+    }
+
+    onDragLeave(event: DragEvent): void {
+        this.isDraggingOver.set(false);
+    }
+
+    onDrop(event: DragEvent): void {
+        event.preventDefault();
+        this.isDraggingOver.set(false);
+        this.showUploadPicker.set(false);
+        const files = event.dataTransfer?.files;
+        if (!files) return;
+        Array.from(files)
+            .filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'))
+            .forEach(f => this.processFile(f));
+        this.mediaExpanded.set(true);
     }
 }
