@@ -7,11 +7,24 @@ import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import {
     ChangeDetectionStrategy, Component, computed, effect,
-    ElementRef, inject, signal, ViewChild,
+    ElementRef, HostListener, inject, signal, ViewChild,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ComposeStateService, Customization, MediaItem } from '../compose-state';
+import { ComposeStateService, Collaborator, Customization, MediaItem } from '../compose-state';
+
+interface TaggedUser { id: string; x: number; y: number; username: string; }
+
+interface CollabUser { handle: string; name: string; avatar: string; }
+
+const COLLAB_MOCK_USERS: CollabUser[] = [
+    { handle: '@sophie.martin',     name: 'Sophie Martin',  avatar: 'https://i.pravatar.cc/40?img=1' },
+    { handle: '@lucas.photography', name: 'Lucas Bernard',  avatar: 'https://i.pravatar.cc/40?img=2' },
+    { handle: '@marie.creates',     name: 'Marie Dupont',   avatar: 'https://i.pravatar.cc/40?img=3' },
+    { handle: '@julien.traveler',   name: 'Julien Moreau',  avatar: 'https://i.pravatar.cc/40?img=4' },
+    { handle: '@camille.studio',    name: 'Camille Leroy',  avatar: 'https://i.pravatar.cc/40?img=5' },
+    { handle: '@theo.visuals',      name: 'Théo Petit',     avatar: 'https://i.pravatar.cc/40?img=6' },
+];
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -285,12 +298,12 @@ import { ComposeStateService, Customization, MediaItem } from '../compose-state'
                                         @if (igPostType() === 'post') {
                                             <div class="option-row action-row">
                                                 <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
-                                                <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Tag users</ap-button>
+                                                <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                             </div>
                                         }
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Invite collaborator(s)</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
@@ -608,11 +621,11 @@ import { ComposeStateService, Customization, MediaItem } from '../compose-state'
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Tag users</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left">Invite collaborator(s)</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
@@ -684,6 +697,119 @@ import { ComposeStateService, Customization, MediaItem } from '../compose-state'
             } <!-- end @if customized -->
             </div>
         </div>
+
+        @if (tagModalOpen()) {
+            <div class="tag-modal-overlay" (click)="closeTagModal()">
+                <div class="tag-modal" (click)="$event.stopPropagation()">
+                    <div class="tag-modal-header">
+                        <span class="tag-modal-title">Tag users</span>
+                        <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Close" (onClick)="closeTagModal()"></ap-icon-button>
+                    </div>
+
+                    <div class="tag-modal-image-area" (click)="onTagImageClick($event)">
+                        @if (tagModalImage()) {
+                            <img class="tag-modal-img" [src]="tagModalImage()!.url" alt="Post image" />
+                        } @else {
+                            <div class="tag-modal-no-image">No image available — add an image to the post first</div>
+                        }
+
+                        @for (tag of tagModalTags(); track tag.id) {
+                            <div class="tag-pin" [style.left.%]="tag.x" [style.top.%]="tag.y">
+                                <div class="tag-pin-dot"></div>
+                                <div class="tag-pin-badge">
+                                    <span>&#64;{{ tag.username }}</span>
+                                    <button class="tag-pin-remove" (click)="$event.stopPropagation(); removeTag(tag.id)">×</button>
+                                </div>
+                            </div>
+                        }
+
+                        @if (pendingPin()) {
+                            <div class="tag-pin pending" [style.left.%]="pendingPin()!.x" [style.top.%]="pendingPin()!.y" (click)="$event.stopPropagation()">
+                                <div class="tag-pin-dot"></div>
+                                <div class="tag-autocomplete">
+                                    <input class="tag-autocomplete-input" type="text" placeholder="Search username…"
+                                        [value]="tagSearchQuery()"
+                                        (input)="tagSearchQuery.set(asTextarea($event))"
+                                        autofocus />
+                                    @if (tagSuggestions().length > 0) {
+                                        <div class="tag-autocomplete-list">
+                                            @for (s of tagSuggestions(); track s) {
+                                                <div class="tag-autocomplete-item" (click)="selectTagSuggestion(s)">&#64;{{ s }}</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="tag-modal-footer">
+                        <ap-button [config]="{ style: 'ghost', color: 'grey' }" (click)="closeTagModal()">Cancel</ap-button>
+                        <ap-button [config]="{ style: 'primary', color: 'orange' }" (click)="saveTagModal()">Save tags</ap-button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (collabModalOpen()) {
+            <div class="collab-modal-overlay" (click)="closeCollabModal()">
+                <div class="collab-modal" (click)="$event.stopPropagation()">
+                    <div class="collab-modal-header">
+                        <div class="collab-modal-titles">
+                            <span class="collab-modal-title">Invite Collaborators</span>
+                            <span class="collab-modal-subtitle">Up to 3 collaborators can be invited to this post</span>
+                        </div>
+                        <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Close" (onClick)="closeCollabModal()"></ap-icon-button>
+                    </div>
+                    <div class="collab-modal-body">
+                        @if (collabPending().length < 3) {
+                            <div class="collab-search-container">
+                                <div class="collab-search-wrap">
+                                    <ap-symbol symbolId="search" size="xs" color="basic-grey"></ap-symbol>
+                                    <input
+                                        class="collab-search-input"
+                                        type="text"
+                                        placeholder="Search Instagram accounts…"
+                                        [value]="collabSearchQuery()"
+                                        (input)="collabSearchQuery.set(asTextarea($event))"
+                                        autofocus />
+                                </div>
+                                @if (collabSuggestions().length > 0) {
+                                    <div class="collab-dropdown">
+                                        @for (user of collabSuggestions(); track user.handle) {
+                                            <div class="collab-dropdown-item" (click)="selectCollaborator(user)">
+                                                <img class="collab-avatar-lg" [src]="user.avatar" [alt]="user.name" />
+                                                <div class="collab-user-info">
+                                                    <span class="collab-user-name">{{ user.name }}</span>
+                                                    <span class="collab-user-handle">{{ user.handle }}</span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <div class="collab-max-reached">Maximum of 3 collaborators reached</div>
+                        }
+                        @if (collabPending().length > 0) {
+                            <div class="collab-chips">
+                                @for (user of collabPending(); track user.handle) {
+                                    <div class="collab-chip">
+                                        <img class="collab-avatar-sm" [src]="user.avatar" [alt]="user.name" />
+                                        <span class="collab-chip-handle">{{ user.handle }}</span>
+                                        <button class="collab-chip-remove" (click)="removeCollaborator(user.handle)">×</button>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="collab-modal-footer">
+                        <ap-button [config]="{ style: 'ghost', color: 'grey' }" (click)="closeCollabModal()">Cancel</ap-button>
+                        <ap-button [config]="{ style: 'primary', color: 'orange' }" (click)="confirmCollabModal()">Confirm</ap-button>
+                    </div>
+                </div>
+            </div>
+        }
     `,
     styles: [`
         :host { display: flex; flex: 1; min-width: 0; min-height: 0; max-width: 50%; }
@@ -975,6 +1101,242 @@ import { ComposeStateService, Customization, MediaItem } from '../compose-state'
         .privacy-tabs { display: flex; }
         .privacy-btn-left ::ng-deep button { border-radius: var(--comp-button-border-radius) 0 0 var(--comp-button-border-radius) !important; border-right: none !important; }
         .privacy-btn-right ::ng-deep button { border-radius: 0 var(--comp-button-border-radius) var(--comp-button-border-radius) 0 !important; }
+
+        /* Tag Modal */
+        .tag-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tag-modal {
+            background: var(--ref-color-white);
+            border-radius: var(--ref-radius-xl);
+            width: 520px; max-width: 90vw;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        }
+        .tag-modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+            border-bottom: 1px solid var(--sys-border-color-default);
+            flex-shrink: 0;
+        }
+        .tag-modal-title {
+            font-size: var(--ref-font-size-md);
+            font-weight: var(--ref-font-weight-bold);
+            line-height: var(--ref-font-line-height-lg);
+            color: var(--sys-text-color-default);
+        }
+        .tag-modal-image-area {
+            position: relative;
+            cursor: crosshair;
+            background: var(--ref-color-grey-10);
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+        .tag-modal-img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+        .tag-modal-no-image {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; color: var(--ref-color-grey-60);
+            font-size: var(--ref-font-size-sm);
+            text-align: center; padding: var(--ref-spacing-md);
+        }
+        .tag-pin {
+            position: absolute; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center; gap: var(--ref-spacing-xxxs);
+            z-index: 10; pointer-events: none;
+        }
+        .tag-pin-dot {
+            width: var(--ref-spacing-xs); height: var(--ref-spacing-xs);
+            border-radius: var(--ref-radius-full);
+            background: #ffffff;
+            border: 2px solid var(--ref-color-grey-100);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .tag-pin-badge {
+            display: flex; align-items: center; gap: var(--ref-spacing-xxxs);
+            background: rgba(0,0,0,0.7);
+            color: #ffffff;
+            font-size: var(--ref-font-size-xs);
+            line-height: var(--ref-font-line-height-xs);
+            padding: 2px 6px;
+            border-radius: var(--ref-radius-sm);
+            pointer-events: all; white-space: nowrap;
+        }
+        .tag-pin-remove {
+            background: none; border: none; color: #ffffff;
+            cursor: pointer; padding: 0; font-size: var(--ref-font-size-sm);
+            line-height: var(--ref-font-line-height-sm);
+        }
+        .tag-autocomplete {
+            pointer-events: all;
+            display: flex; flex-direction: column;
+            background: var(--ref-color-white);
+            border: 1px solid var(--sys-border-color-default);
+            border-radius: var(--ref-radius-md);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            min-width: 180px;
+        }
+        .tag-autocomplete-input {
+            border: none; outline: none; padding: 6px 10px;
+            font-size: var(--ref-font-size-sm);
+            font-family: var(--ref-font-family);
+            color: var(--sys-text-color-default);
+            background: transparent;
+        }
+        .tag-autocomplete-list { border-top: 1px solid var(--sys-border-color-default); }
+        .tag-autocomplete-item {
+            padding: 6px 10px;
+            font-size: var(--ref-font-size-sm);
+            color: var(--sys-text-color-default);
+            cursor: pointer;
+            &:hover { background: var(--ref-color-grey-05); }
+        }
+        .tag-modal-footer {
+            display: flex; justify-content: flex-end; gap: var(--ref-spacing-xxs);
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+            border-top: 1px solid var(--sys-border-color-default);
+            flex-shrink: 0;
+        }
+
+        /* Invite Collaborators Modal */
+        .collab-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .collab-modal {
+            background: #ffffff;
+            border-radius: var(--ref-radius-xl);
+            width: 480px; max-width: 90vw;
+            display: flex; flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        }
+        .collab-modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+            border-bottom: 1px solid var(--sys-border-color-default);
+            border-radius: var(--ref-radius-xl) var(--ref-radius-xl) 0 0;
+            flex-shrink: 0;
+        }
+        .collab-modal-titles {
+            display: flex; flex-direction: column; gap: var(--ref-spacing-xxxs);
+        }
+        .collab-modal-title {
+            font-size: var(--ref-font-size-md);
+            font-weight: var(--ref-font-weight-bold);
+            line-height: var(--ref-font-line-height-lg);
+            color: var(--sys-text-color-default);
+        }
+        .collab-modal-subtitle {
+            font-size: var(--ref-font-size-xs);
+            line-height: var(--ref-font-line-height-xs);
+            color: var(--ref-color-grey-60);
+        }
+        .collab-modal-body {
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+            display: flex; flex-direction: column; gap: var(--ref-spacing-xxs);
+        }
+        .collab-search-container { position: relative; }
+        .collab-search-wrap {
+            display: flex; align-items: center; gap: var(--ref-spacing-xxs);
+            height: 36px;
+            padding: 0 var(--ref-spacing-xs);
+            border: 1px solid var(--ref-color-grey-20);
+            border-radius: var(--ref-radius-sm);
+            background: #ffffff;
+            &:focus-within { border-color: var(--ref-color-electric-blue-100); outline: 2px solid var(--ref-color-electric-blue-20); }
+        }
+        .collab-search-input {
+            flex: 1; border: none; outline: none;
+            font-size: var(--ref-font-size-sm);
+            line-height: var(--ref-font-line-height-sm);
+            font-family: var(--ref-font-family);
+            color: var(--ref-color-grey-100);
+            background: transparent;
+            &::placeholder { color: var(--ref-color-grey-60); }
+        }
+        .collab-dropdown {
+            position: absolute; top: calc(100% + var(--ref-spacing-xxxs));
+            left: 0; right: 0; z-index: 10;
+            border: 1px solid var(--ref-color-grey-20);
+            border-radius: var(--ref-radius-md);
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .collab-dropdown-item {
+            display: flex; align-items: center; gap: var(--ref-spacing-xxs);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+            cursor: pointer;
+            &:hover { background: var(--ref-color-grey-05); }
+            & + & { border-top: 1px solid var(--ref-color-grey-10); }
+        }
+        .collab-avatar-lg {
+            width: 32px; height: 32px;
+            border-radius: var(--ref-radius-full);
+            object-fit: cover; flex-shrink: 0;
+        }
+        .collab-user-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+        .collab-user-name {
+            font-size: var(--ref-font-size-sm);
+            font-weight: var(--ref-font-weight-bold);
+            line-height: var(--ref-font-line-height-sm);
+            color: var(--ref-color-grey-100);
+        }
+        .collab-user-handle {
+            font-size: var(--ref-font-size-xs);
+            line-height: var(--ref-font-line-height-xs);
+            color: var(--ref-color-grey-60);
+        }
+        .collab-max-reached {
+            font-size: var(--ref-font-size-xs);
+            line-height: var(--ref-font-line-height-xs);
+            color: var(--ref-color-grey-60);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+            background: var(--ref-color-grey-05);
+            border-radius: var(--ref-radius-sm);
+        }
+        .collab-chips {
+            display: flex; flex-wrap: wrap; gap: var(--ref-spacing-xxs);
+        }
+        .collab-chip {
+            display: inline-flex; align-items: center; gap: var(--ref-spacing-xxxs);
+            height: 24px;
+            padding: 0 var(--ref-spacing-xxs);
+            border-radius: var(--ref-radius-full);
+            background: var(--ref-color-grey-10);
+        }
+        .collab-avatar-sm {
+            width: var(--ref-spacing-md); height: var(--ref-spacing-md);
+            border-radius: var(--ref-radius-full);
+            object-fit: cover; flex-shrink: 0;
+        }
+        .collab-chip-handle {
+            font-size: var(--ref-font-size-xs);
+            line-height: var(--ref-font-line-height-xs);
+            color: var(--ref-color-grey-100);
+        }
+        .collab-chip-remove {
+            background: none; border: none; color: var(--ref-color-grey-60);
+            cursor: pointer; padding: 0;
+            font-size: var(--ref-font-size-sm);
+            line-height: var(--ref-font-line-height-sm);
+        }
+        .collab-modal-footer {
+            display: flex; justify-content: flex-end; gap: var(--ref-spacing-xxs);
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+            border-top: 1px solid var(--sys-border-color-default);
+            border-radius: 0 0 var(--ref-radius-xl) var(--ref-radius-xl);
+            flex-shrink: 0;
+        }
     `],
 })
 export class ComposePanelComponent {
@@ -1008,8 +1370,120 @@ export class ComposePanelComponent {
     fbTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.fbPostType()));
     igTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.igPostType()));
 
+    // Tag users modal
+    tagModalOpen = signal(false);
+    tagModalTags = signal<TaggedUser[]>([]);
+    savedTags = signal<TaggedUser[]>([]);
+    pendingPin = signal<{ x: number; y: number } | null>(null);
+    tagSearchQuery = signal('');
+
+    tagUsersLabel = computed(() => {
+        const n = this.savedTags().length;
+        return n > 0 ? `Tag users · ${n}` : 'Tag users';
+    });
+
+    tagModalImage = computed(() =>
+        this.state.mediaItems().find(m => m.type === 'image') ?? null
+    );
+
+    tagSuggestions = computed(() => {
+        const q = this.tagSearchQuery().toLowerCase();
+        const all = ['sarah_design', 'john_marketing', 'alex_creative', 'maya_social', 'lucas_brand'];
+        return q ? all.filter(u => u.includes(q)).slice(0, 5) : all.slice(0, 5);
+    });
+
+    // Invite Collaborators modal
+    collabModalOpen = signal(false);
+    collabSearchQuery = signal('');
+    collabPending = signal<CollabUser[]>([]);
+
+    collabSuggestions = computed(() => {
+        const q = this.collabSearchQuery().toLowerCase();
+        if (!q) return [];
+        const selected = this.collabPending().map(u => u.handle);
+        return COLLAB_MOCK_USERS.filter(u =>
+            (u.handle.toLowerCase().includes(q) || u.name.toLowerCase().includes(q))
+            && !selected.includes(u.handle)
+        ).slice(0, 6);
+    });
+
+    collabLabel = computed(() => {
+        const n = this.state.collaborators().length;
+        return n > 0 ? `Invite Collaborators (${n})` : 'Invite Collaborators';
+    });
+
     setFbPostType(i: number): void { this.fbPostType.set((['post', 'reel', 'story'] as const)[i]); }
     setIgPostType(i: number): void { this.igPostType.set((['post', 'reel', 'story'] as const)[i]); }
+
+    openTagModal(): void {
+        this.tagModalTags.set([...this.savedTags()]);
+        this.pendingPin.set(null);
+        this.tagSearchQuery.set('');
+        this.tagModalOpen.set(true);
+    }
+
+    closeTagModal(): void {
+        this.tagModalOpen.set(false);
+        this.pendingPin.set(null);
+    }
+
+    saveTagModal(): void {
+        this.savedTags.set(this.tagModalTags());
+        this.closeTagModal();
+    }
+
+    onTagImageClick(event: MouseEvent): void {
+        const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        this.pendingPin.set({ x, y });
+        this.tagSearchQuery.set('');
+    }
+
+    selectTagSuggestion(username: string): void {
+        const pin = this.pendingPin();
+        if (!pin) return;
+        const tag: TaggedUser = { id: crypto.randomUUID(), x: pin.x, y: pin.y, username };
+        this.tagModalTags.update(tags => [...tags, tag]);
+        this.pendingPin.set(null);
+        this.tagSearchQuery.set('');
+    }
+
+    removeTag(id: string): void {
+        this.tagModalTags.update(tags => tags.filter(t => t.id !== id));
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscape(): void {
+        if (this.tagModalOpen()) this.closeTagModal();
+        if (this.collabModalOpen()) this.closeCollabModal();
+    }
+
+    openCollabModal(): void {
+        this.collabPending.set([...this.state.collaborators()]);
+        this.collabSearchQuery.set('');
+        this.collabModalOpen.set(true);
+    }
+
+    closeCollabModal(): void {
+        this.collabModalOpen.set(false);
+        this.collabSearchQuery.set('');
+    }
+
+    confirmCollabModal(): void {
+        this.state.collaborators.set(this.collabPending());
+        this.closeCollabModal();
+    }
+
+    selectCollaborator(user: CollabUser): void {
+        if (this.collabPending().length >= 3) return;
+        this.collabPending.update(list => [...list, user]);
+        this.collabSearchQuery.set('');
+    }
+
+    removeCollaborator(handle: string): void {
+        this.collabPending.update(list => list.filter(u => u.handle !== handle));
+    }
 
     fbWarning = computed(() => { const r = this.state.fbCharsRemaining(); return r < 1000 && r >= 0; });
     fbDanger = computed(() => this.state.fbCharsRemaining() < 0);

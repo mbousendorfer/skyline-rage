@@ -309,6 +309,14 @@ interface Validation {
                                                     </div>
                                                     <ap-symbol symbolId="ns-instagram_bookmark" size="md"></ap-symbol>
                                                 </div>
+                                                @if (state.collaborators().length > 0) {
+                                                    <div class="ig-collaborators">
+                                                        <span class="ig-collab-with">With</span>
+                                                        @for (c of state.collaborators(); track c.handle) {
+                                                            <img class="ig-collab-avatar" [src]="c.avatar" [alt]="c.name" [title]="c.handle" />
+                                                        }
+                                                    </div>
+                                                }
                                                 <div class="ig-caption">
                                                     <strong>{{ profile.name }}</strong>
                                                     {{ igCaptionPreview(profile.id) }}
@@ -555,6 +563,9 @@ interface Validation {
         .ig-actions-left { display: flex; gap: 12px; }
         .ig-caption { padding: 2px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-xs); }
         .ig-first-comment { padding: 6px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); border-top: 1px solid var(--ref-color-grey-10); }
+        .ig-collaborators { display: flex; align-items: center; gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs); }
+        .ig-collab-with { font-size: var(--ref-font-size-xs); line-height: var(--ref-font-line-height-xs); color: var(--ref-color-grey-60); }
+        .ig-collab-avatar { width: 28px; height: 28px; border-radius: var(--ref-radius-full); object-fit: cover; border: 2px solid #ffffff; }
     `],
 })
 export class PreviewPanelComponent {

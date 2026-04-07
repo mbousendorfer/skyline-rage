@@ -55,7 +55,15 @@
       "Bash(open:*)",
       "Bash(curl:*)",
       "Bash(command -v node)",
-      "Read(//usr/local/bin/**)"
+      "Read(//usr/local/bin/**)",
+      "Bash(/Users/matthieu.bousendorfer/sources/design/node_modules/.bin/ng build:*)",
+      "Bash(export PATH=$PATH:/opt/homebrew/bin:/usr/local/bin)",
+      "Read(//Users/matthieu.bousendorfer/**)",
+      "Bash(export PATH=\"/Users/matthieu.bousendorfer/Library/Application Support/com.raycast.macos/NodeJS/runtime/22.14.0/bin:$PATH\")",
+      "Bash(node node_modules/.bin/ng build --configuration development)",
+      "Bash(find /Users/matthieu.bousendorfer/sources/compose-claude/node_modules -name *.d.ts)",
+      "Bash(find /Users/matthieu.bousendorfer/sources/design/node_modules/@agorapulse -name *.d.ts)",
+      "Bash(find /Users/matthieu.bousendorfer/sources/design/node_modules/@agorapulse -type f -name *.mjs)"
     ]
   }
 }

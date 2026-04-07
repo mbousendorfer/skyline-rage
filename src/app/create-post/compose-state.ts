@@ -23,6 +23,12 @@ export interface Customization {
     mediaItems: MediaItem[];
 }
 
+export interface Collaborator {
+    handle: string;
+    name: string;
+    avatar: string;
+}
+
 export interface MediaItem {
     id: number;
     url: string;
@@ -35,6 +41,9 @@ export interface MediaItem {
 
 @Injectable({ providedIn: 'root' })
 export class ComposeStateService {
+    // ── Collaborators ────────────────────────────────────────────────────────
+    collaborators = signal<Collaborator[]>([]);
+
     // ── Media ────────────────────────────────────────────────────────────────
     mediaItems = signal<MediaItem[]>([
         { id: 1, url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=320&h=180&fit=crop', width: 4208, height: 2370, type: 'image' },
