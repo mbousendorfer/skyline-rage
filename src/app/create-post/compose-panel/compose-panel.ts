@@ -232,7 +232,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                                 <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
                                             </div>
                                         </div>
-                                        <div class="char-counts" style="padding: 4px 0 0;">
+                                        <div class="char-counts" style="padding: var(--ref-spacing-xxxs) 0 0;">
                                             <span class="char-count"><ap-symbol symbolId="facebook" size="xs" color="facebook"></ap-symbol> {{ state.fbCharsRemaining() | number }}</span>
                                         </div>
                                     </div>
@@ -413,7 +413,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                                 <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
                                             </div>
                                         </div>
-                                        <div class="char-counts" style="padding: 4px 0 0;">
+                                        <div class="char-counts" style="padding: var(--ref-spacing-xxxs) 0 0;">
                                             <span class="char-count" [class.danger]="state.ytTitle().length > 280"><ap-symbol symbolId="youtube" size="xs" [color]="state.ytTitle().length > 280 ? 'red' : 'youtube'"></ap-symbol> {{ 280 - state.ytTitle().length }}</span>
                                         </div>
                                     </div>
@@ -1110,7 +1110,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             display: flex; align-items: center; justify-content: center;
         }
         .tag-modal {
-            background: var(--ref-color-white);
+            background: #ffffff;
             border-radius: var(--ref-radius-xl);
             width: 520px; max-width: 90vw;
             display: flex; flex-direction: column;
@@ -1176,23 +1176,24 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
         .tag-autocomplete {
             pointer-events: all;
             display: flex; flex-direction: column;
-            background: var(--ref-color-white);
-            border: 1px solid var(--sys-border-color-default);
+            background: #ffffff;
+            border: 1px solid var(--ref-color-grey-20);
             border-radius: var(--ref-radius-md);
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             min-width: 180px;
         }
         .tag-autocomplete-input {
-            border: none; outline: none; padding: 6px 10px;
+            border: none; outline: none;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             font-size: var(--ref-font-size-sm);
             font-family: var(--ref-font-family);
             color: var(--sys-text-color-default);
             background: transparent;
         }
-        .tag-autocomplete-list { border-top: 1px solid var(--sys-border-color-default); }
+        .tag-autocomplete-list { border-top: 1px solid var(--ref-color-grey-20); }
         .tag-autocomplete-item {
-            padding: 6px 10px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             font-size: var(--ref-font-size-sm);
             color: var(--sys-text-color-default);
             cursor: pointer;
@@ -1274,7 +1275,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
         }
         .collab-dropdown-item {
             display: flex; align-items: center; gap: var(--ref-spacing-xxs);
-            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-sm);
             cursor: pointer;
             &:hover { background: var(--ref-color-grey-05); }
             & + & { border-top: 1px solid var(--ref-color-grey-10); }
@@ -1309,7 +1310,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
         }
         .collab-chip {
             display: inline-flex; align-items: center; gap: var(--ref-spacing-xxxs);
-            height: 24px;
+            height: var(--ref-spacing-md);
             padding: 0 var(--ref-spacing-xxs);
             border-radius: var(--ref-radius-full);
             background: var(--ref-color-grey-10);
