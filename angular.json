@@ -41,9 +41,15 @@
             "development": {
               "optimization": false,
               "sourceMap": true
+            },
+            "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "outputHashing": "all",
+              "namedChunks": false
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
@@ -59,5 +65,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
