@@ -1,0 +1,368 @@
+// ============================================================================
+// Variables
+// ============================================================================
+
+$cell-height: 52px;
+$cell-height-small: 40px;
+$sort-icon-size: 16px;
+
+// ============================================================================
+// Base Table Styles
+// ============================================================================
+
+.ap-table {
+    width: 100%;
+    overflow-x: auto;
+    font-family: Averta;
+    border-radius: var(--ref-border-radius-md);
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: var(--ref-color-white);
+
+    // ========================================================================
+    // Table Structure
+    // ========================================================================
+
+    tbody {
+        height: calc(100% - $cell-height);
+        max-height: calc(100% - $cell-height);
+        width: 100%;
+        overflow-y: auto;
+        border-radius: var(--ref-border-radius-md);
+    }
+
+    // When table has visible footer, adjust tbody height
+    &:has(tfoot > .cdk-footer-row:not([hidden])) tbody {
+        height: calc(100% - 2 * $cell-height);
+        max-height: calc(100% - 2 * $cell-height);
+    }
+
+    tr[cdk-row] {
+        background-color: var(--ref-color-white);
+
+        &.selected {
+            background-color: var(--ref-color-soft-blue-10);
+        }
+
+        &:last-child {
+            td[cdk-cell] {
+                border-bottom: none;
+            }
+        }
+    }
+
+    // Apply border radius to last row only when table has no visible footer
+    &:not(:has(tfoot > .cdk-footer-row:not([hidden]))) tr[cdk-row]:last-child {
+        td[cdk-cell]:first-child {
+            border-bottom-left-radius: var(--ref-border-radius-md);
+        }
+
+        td[cdk-cell]:last-child {
+            border-bottom-right-radius: var(--ref-border-radius-md);
+        }
+    }
+
+    // ========================================================================
+    // Table Modifiers
+    // ========================================================================
+
+    &.ap-table-scrollable {
+        display: block;
+        table-layout: fixed;
+
+        tbody {
+            display: block;
+        }
+
+        thead,
+        tbody tr,
+        tfoot {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    }
+
+    &.ap-table--outer-border {
+        border: 1px solid var(--ref-color-grey-20);
+    }
+
+    &.ap-table--header-background th[cdk-header-cell] {
+        background-color: var(--ref-color-grey-05);
+    }
+
+    &.ap-table--striped tbody tr[cdk-row]:nth-child(even) {
+        background-color: var(--ref-color-grey-bg);
+    }
+
+    &.ap-table--striped tbody tr[cdk-row].selected {
+        background-color: var(--ref-color-soft-blue-10);
+    }
+
+    &.ap-table--small {
+        th[cdk-header-cell],
+        td[cdk-cell],
+        td[cdk-footer-cell] {
+            height: $cell-height-small;
+        }
+
+        tbody {
+            height: calc(100% - $cell-height-small);
+            max-height: calc(100% - $cell-height-small);
+        }
+
+        &:has(tfoot > .cdk-footer-row:not([hidden])) tbody {
+            height: calc(100% - 2 * $cell-height-small);
+            max-height: calc(100% - 2 * $cell-height-small);
+        }
+
+        th[cdk-header-cell].ap-table__header-cell--checkbox,
+        td[cdk-cell].ap-table__body-cell--checkbox {
+            width: $cell-height-small;
+        }
+    }
+
+    // ========================================================================
+    // Header Cells
+    // ========================================================================
+
+    th[cdk-header-cell] {
+        height: $cell-height;
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        text-align: left;
+        font-size: var(--ref-font-size-xs);
+        font-weight: var(--ref-font-weight-bold);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-bottom: 1px solid var(--ref-color-grey-10);
+        background-color: var(--ref-color-white);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        &:first-child {
+            border-top-left-radius: var(--ref-border-radius-md);
+        }
+
+        &:last-child {
+            border-top-right-radius: var(--ref-border-radius-md);
+        }
+
+        &.ap-table__header-cell--right {
+            text-align: right;
+            justify-content: flex-end;
+        }
+
+        &.ap-table__header-cell--sortable {
+            cursor: pointer;
+
+            .ap-table__header-sort-symbol {
+                opacity: 0;
+            }
+
+            &:hover .ap-table__header-sort-symbol {
+                opacity: 1;
+            }
+        }
+
+        &.ap-table__header-cell--sorted {
+            color: var(--ref-color-electric-blue-150);
+
+            .ap-table__header-sort-symbol {
+                opacity: 1;
+            }
+        }
+
+        &.ap-table__header-cell--checkbox {
+            width: $cell-height;
+            text-align: center;
+        }
+    }
+
+    // ========================================================================
+    // Body Cells
+    // ========================================================================
+
+    td[cdk-cell] {
+        padding: 0 var(--ref-spacing-xs);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-bottom: 1px solid var(--ref-color-grey-10);
+        height: $cell-height;
+        vertical-align: middle;
+        font-family: Averta;
+
+        &.ap-table__body-cell--right {
+            text-align: right;
+            justify-content: flex-end;
+
+            .ap-table__cell-content {
+                justify-content: flex-end;
+            }
+        }
+
+        &.ap-table__body-cell--checkbox {
+            width: $cell-height;
+            text-align: center;
+        }
+
+        &.ap-table__body-cell--drag {
+            padding: 0 var(--ref-spacing-sm);
+        }
+
+        // Reserves matching right space so content aligns with the sortable
+        // header title text (shifted left by the sort icon + gap).
+        &.ap-table__body-cell--sortable {
+            padding-right: calc(var(--ref-spacing-xs) + #{$sort-icon-size} + var(--ref-spacing-xxs));
+        }
+    }
+
+    // ========================================================================
+    // Footer Cells
+    // ========================================================================
+
+    td[cdk-footer-cell] {
+        padding: 0 var(--ref-spacing-xs);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-top: 1px solid var(--ref-color-grey-10);
+        height: $cell-height;
+        vertical-align: middle;
+        font-family: Averta;
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+        background-color: var(--ref-color-white);
+
+        &.ap-table__footer-cell--right {
+            text-align: right;
+            justify-content: flex-end;
+
+            .ap-table__cell-content {
+                justify-content: flex-end;
+            }
+        }
+
+        &.ap-table__footer-cell--checkbox {
+            width: $cell-height;
+            text-align: center;
+        }
+
+        &.ap-table__footer-cell--sortable {
+            padding-right: calc(var(--ref-spacing-xs) + #{$sort-icon-size} + var(--ref-spacing-xxs));
+        }
+
+        &:first-child {
+            border-bottom-left-radius: var(--ref-border-radius-md);
+        }
+
+        &:last-child {
+            border-bottom-right-radius: var(--ref-border-radius-md);
+        }
+    }
+
+    // ========================================================================
+    // Cell Content & Utilities
+    // ========================================================================
+
+    .ap-table__header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--ref-spacing-xxxs);
+    }
+
+    .ap-table__cell-content {
+        display: flex;
+        align-items: center;
+        gap: var(--ref-spacing-xxs);
+
+        &.ap-table__cell-content--items {
+            flex-wrap: wrap;
+            gap: var(--ref-spacing-xxxs);
+            padding: var(--ref-spacing-xxs) 0;
+        }
+    }
+
+    .ap-table__cell-text-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ap-table__cell-text {
+        color: var(--ref-color-grey-100);
+        font-size: var(--ref-font-size-sm);
+        line-height: var(--ref-font-line-height-sm);
+
+        &.ap-table__cell-text--bold {
+            font-weight: var(--ref-font-weight-bold);
+        }
+    }
+
+    .ap-table__cell-description {
+        color: var(--ref-color-grey-80);
+        font-size: var(--ref-font-size-xs);
+        line-height: var(--ref-font-line-height-xs);
+    }
+
+    .ap-table__cell-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--ref-spacing-xxxs);
+    }
+
+    .ap-table__drag-handle {
+        cursor: move;
+    }
+}
+
+// ============================================================================
+// CDK Drag and Drop Styles (Global)
+// ============================================================================
+
+tr[cdk-row] {
+    &.cdk-drag-preview {
+        display: flex;
+        align-items: center;
+        border-radius: var(--ref-border-radius-md);
+        background-color: var(--ref-color-electric-blue-10);
+        border: 1px solid var(--ref-color-electric-blue-40);
+        opacity: 0.95;
+
+        td[cdk-cell] {
+            border: none;
+            padding: 0 var(--ref-spacing-xs);
+            font-size: var(--ref-font-size-sm);
+            color: var(--ref-color-grey-100);
+            font-family: Averta;
+            background-color: transparent;
+        }
+
+        .ap-table__cell-text {
+            color: var(--ref-color-grey-100);
+            font-size: var(--ref-font-size-sm);
+            font-family: Averta;
+
+            &.ap-table__cell-text--bold {
+                font-weight: var(--ref-font-weight-bold);
+            }
+        }
+    }
+
+    &.cdk-drag-placeholder {
+        background-color: var(--ref-color-electric-blue-05) !important;
+        border: 1px dashed var(--ref-color-electric-blue-30) !important;
+        opacity: 0.7 !important;
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1) !important;
+    }
+
+    &.cdk-drag-animating {
+        transition: transform 350ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    &.cdk-drop-list-dragging .cdk-drag {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+}

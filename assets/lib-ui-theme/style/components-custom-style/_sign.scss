@@ -1,0 +1,11 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+.sign {
+    padding: 0 2px;
+    border-radius: 2px;
+    font-size: vars.$font-size-s;
+    font-weight: vars.$font-weight-bold;
+    background-color: map.get(vars.$colors-orange, 100);
+    color: white;
+}

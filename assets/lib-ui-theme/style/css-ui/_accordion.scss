@@ -1,0 +1,56 @@
+// Agorapulse Accordion Styles
+
+.ap-accordion {
+    background-color: var(--ref-color-white);
+    border: 1px solid var(--ref-color-grey-10);
+    border-radius: var(--ref-border-radius-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.ap-accordion-header {
+    border-bottom: 1px solid var(--ref-color-grey-10);
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xxs);
+    padding: 6px var(--ref-spacing-xs) 6px var(--ref-spacing-sm);
+
+    > i {
+        flex-shrink: 0;
+    }
+}
+
+.ap-accordion-title {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--ref-font-size-sm);
+    font-weight: var(--ref-font-weight-bold);
+    line-height: var(--ref-font-line-height-md);
+    color: var(--ref-color-grey-100);
+}
+
+.ap-accordion-toggle {
+    flex-shrink: 0;
+    transition: transform var(--ref-animation-short);
+}
+
+.ap-accordion-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-spacing-sm);
+    padding: var(--ref-spacing-sm);
+}
+
+.ap-accordion.collapsed {
+    .ap-accordion-header {
+        border-bottom: none;
+    }
+
+    .ap-accordion-toggle {
+        transform: rotate(180deg);
+    }
+
+    .ap-accordion-content {
+        display: none;
+    }
+}

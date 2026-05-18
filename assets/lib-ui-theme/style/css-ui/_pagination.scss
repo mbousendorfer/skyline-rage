@@ -1,0 +1,177 @@
+// Agorapulse Pagination Styles
+@use 'mixins' as m;
+@use 'ui-symbol/icons/build/ap-icons-data' as icons;
+
+.ap-pagination {
+    --paginator-button-size: 36px;
+
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-lg);
+    width: 100%;
+    justify-content: space-between;
+
+    // Item count display — implicit > span
+    > span {
+        font-weight: var(--ref-font-weight-regular);
+        font-size: var(--ref-font-size-sm);
+        line-height: var(--ref-line-height-sm);
+        color: var(--ref-color-grey-60);
+        white-space: nowrap;
+    }
+}
+
+// Page numbers container (includes nav buttons + page buttons)
+.ap-pagination-pages {
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    color: var(--ref-color-electric-blue-100);
+    gap: var(--ref-spacing-xxxs);
+}
+
+// Navigation buttons (prev/next)
+.ap-pagination-nav {
+    display: grid;
+    place-content: center;
+    @include m.fixed-size(var(--paginator-button-size));
+    border-radius: var(--ref-border-radius-sm);
+    background: transparent;
+    border: none;
+    color: var(--ref-color-electric-blue-100);
+    padding: 0;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:disabled {
+        pointer-events: none;
+        color: var(--ref-color-grey-40);
+    }
+
+    &:hover:not(:disabled) {
+        background: var(--ref-color-electric-blue-10);
+    }
+
+    &:active:not(:disabled) {
+        background: var(--ref-color-electric-blue-20);
+    }
+
+    @media (hover: hover) {
+        &:focus:not(:disabled):not(:active) {
+            @include m.focus-ring;
+        }
+    }
+
+    // Nav icon — implicit > i
+    > i {
+        width: 16px;
+        height: 16px;
+    }
+
+    // Arrow icon via ::before (no <i> needed)
+    &::before {
+        @include icons.icon-base;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+// Arrow direction by position — first nav = left, last nav = right
+.ap-pagination-pages > .ap-pagination-nav:first-child::before {
+    @include icons.icon('arrow-left');
+}
+
+.ap-pagination-pages > .ap-pagination-nav:last-child::before {
+    @include icons.icon('arrow-right');
+}
+
+// Individual page button
+.ap-pagination-page {
+    @include m.fixed-size(var(--paginator-button-size));
+    border-radius: var(--ref-border-radius-sm);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-sizing: border-box;
+    color: var(--ref-color-electric-blue-100);
+    font-family: var(--ref-font-family);
+    font-weight: var(--ref-font-weight-regular);
+    font-size: var(--ref-font-size-sm);
+    line-height: var(--ref-line-height-sm);
+    padding: 0;
+
+    &:hover:not(.active) {
+        cursor: pointer;
+        background-color: var(--ref-color-electric-blue-10);
+    }
+
+    @media (hover: hover) {
+        &:focus:not(.disabled):not(:active) {
+            @include m.focus-ring;
+        }
+    }
+
+    &:active:not(.active) {
+        background-color: var(--ref-color-electric-blue-20);
+    }
+
+    &.active {
+        background-color: var(--ref-color-electric-blue-100);
+        color: var(--ref-color-white);
+        cursor: default;
+    }
+}
+
+// Ellipsis — text injected via ::before (no inner text needed)
+.ap-pagination-ellipsis {
+    display: inline-block;
+    width: var(--paginator-button-size);
+    line-height: var(--paginator-button-size);
+    text-align: center;
+    color: var(--ref-color-grey-60);
+    font-family: var(--ref-font-family);
+    font-size: var(--ref-font-size-sm);
+
+    &::before {
+        content: '...';
+    }
+}
+
+// Go to page section
+.ap-pagination-goto {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xs);
+
+    // Label — implicit > span
+    > span {
+        font-weight: var(--ref-font-weight-standard);
+        font-size: var(--ref-font-size-sm);
+        line-height: var(--ref-line-height-sm);
+        color: var(--ref-color-grey-60);
+        white-space: nowrap;
+    }
+
+    // Input — implicit > input
+    > input {
+        box-sizing: border-box;
+        background: var(--ref-color-white);
+        width: 48px;
+        height: var(--paginator-button-size);
+        border-radius: var(--ref-border-radius-sm);
+        border: 1px solid var(--ref-color-grey-20);
+        padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+        font-family: var(--ref-font-family);
+        font-size: var(--ref-font-size-sm);
+        text-align: center;
+
+        &:focus {
+            outline: none;
+            border-color: var(--ref-color-electric-blue-100);
+        }
+    }
+}

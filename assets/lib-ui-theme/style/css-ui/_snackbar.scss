@@ -1,0 +1,181 @@
+// Agorapulse Snackbar Styles
+@use 'ui-symbol/icons/build/ap-icons-data' as icons;
+
+@keyframes ap-snackbar-slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes ap-snackbar-slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+// Snackbar thread container
+.ap-snackbar-thread {
+    position: fixed;
+    top: 68px;
+    right: var(--ref-spacing-lg);
+    width: var(--comp-snackbar-width);
+    z-index: 999999999;
+    gap: var(--comp-snackbar-spacing);
+    display: flex;
+    flex-direction: column;
+}
+
+// Individual snackbar
+.ap-snackbar {
+    display: flex;
+    align-items: center;
+    height: auto;
+    padding: var(--comp-snackbar-padding-vertical) var(--comp-snackbar-padding-horizontal);
+    box-sizing: border-box;
+    box-shadow: var(--comp-snackbar-shadow);
+    border-radius: var(--comp-snackbar-border-radius);
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--comp-snackbar-spacing);
+
+    // Variants — icon is set automatically per variant.
+    // Allowed icons: ap-icon-info_fill, ap-icon-warning_fill, ap-icon-error_fill, ap-icon-rounded-check_fill
+    &.info {
+        background-color: var(--comp-snackbar-info-background-color);
+
+        .ap-snackbar-left > i {
+            color: var(--comp-snackbar-info-icon-color);
+            @include icons.icon('info_fill');
+        }
+    }
+
+    &.success {
+        background-color: var(--comp-snackbar-success-background-color);
+
+        .ap-snackbar-left > i {
+            color: var(--comp-snackbar-success-icon-color);
+            @include icons.icon('rounded-check_fill');
+        }
+    }
+
+    &.warning {
+        background-color: var(--comp-snackbar-warning-background-color);
+
+        .ap-snackbar-left > i {
+            color: var(--comp-snackbar-warning-icon-color);
+            @include icons.icon('warning_fill');
+        }
+    }
+
+    &.error {
+        background-color: var(--comp-snackbar-error-background-color);
+
+        .ap-snackbar-left > i {
+            color: var(--comp-snackbar-error-icon-color);
+            @include icons.icon('error_fill');
+        }
+    }
+
+    &.animate-in {
+        animation: ap-snackbar-slide-in 0.3s ease-out forwards;
+    }
+
+    &.animate-out {
+        animation: ap-snackbar-slide-out 0.3s ease-in forwards;
+    }
+}
+
+// Left side (icon + text)
+.ap-snackbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--comp-snackbar-spacing);
+    flex: 1;
+    min-width: 0;
+
+    // Snackbar icon — implicit > i
+    > i {
+        @include icons.icon-base;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        width: var(--sys-icon-css-sm);
+        height: var(--sys-icon-css-sm);
+    }
+
+    // Snackbar text — implicit > span
+    > span {
+        display: flex;
+        font-family: var(--comp-snackbar-text-style-font-family);
+        font-size: var(--comp-snackbar-text-style-size);
+        font-weight: var(--comp-snackbar-text-style-font-weight);
+        line-height: var(--comp-snackbar-text-style-line-height);
+        justify-content: flex-start;
+        align-items: center;
+        overflow-wrap: anywhere;
+        color: var(--comp-snackbar-text-color);
+    }
+}
+
+// Right side (actions)
+.ap-snackbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--comp-snackbar-spacing);
+    flex-shrink: 0;
+
+    // Action link — implicit > a
+    > a {
+        width: max-content;
+        font-family: var(--comp-snackbar-text-style-font-family);
+        font-size: var(--comp-snackbar-text-style-size);
+        font-weight: var(--comp-link-standalone-default-text-style-font-weight);
+        line-height: var(--comp-snackbar-text-style-line-height);
+        color: var(--comp-link-default-color);
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    // Close button — implicit > button
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: var(--ref-color-grey-100);
+        border-radius: 50%;
+        transition: background-color 0.15s;
+
+        &:hover {
+            background: var(--ref-color-grey-10);
+            color: var(--ref-color-grey-80);
+        }
+
+        > i {
+            @include icons.icon-base;
+            @include icons.icon('close');
+            width: 12px;
+            height: 12px;
+        }
+    }
+}

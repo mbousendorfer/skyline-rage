@@ -1,0 +1,34 @@
+.form-field {
+    margin-bottom: var(--ref-spacing-sm);
+
+    label:not(ap-radio label, ap-select label, ap-input label, ap-textarea-label) {
+        font-size: var(--comp-forms-label-size);
+        font-weight: var(--comp-forms-label-font-weight);
+        line-height: var(--comp-forms-label-line-height);
+        font-family: var(--comp-forms-label-font-family);
+        color: var(--comp-forms-label-text-color);
+        display: block;
+        margin-bottom: var(--comp-forms-label-padding-bottom);
+    }
+
+    &.required label:not(ap-radio label):after {
+        content: '*';
+    }
+}
+
+.form-message,
+.form-field-message {
+    font-size: var(--comp-forms-status-text-size);
+    font-weight: var(--comp-forms-status-text-font-weight);
+    line-height: var(--comp-forms-status-text-line-height);
+    font-family: var(--comp-forms-status-text-font-family);
+    margin: var(--comp-forms-label-padding-bottom) 0;
+
+    &.invalid {
+        color: var(--comp-forms-status-text-error-color);
+    }
+
+    &.valid {
+        color: var(--comp-forms-status-text-success-color);
+    }
+}

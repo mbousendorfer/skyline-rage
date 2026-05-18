@@ -1,0 +1,6 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+.mat-divider {
+    border-color: map.get(vars.$colors-grey, 10);
+}

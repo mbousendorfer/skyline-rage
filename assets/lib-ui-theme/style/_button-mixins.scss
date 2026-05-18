@@ -1,0 +1,234 @@
+@mixin btn-primary-color($color) {
+    background: var(--ref-color-#{$color}-100);
+
+    &:hover {
+        background-color: var(--ref-color-#{$color}-80);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--ref-color-#{$color}-60);
+    }
+
+    &:disabled {
+        background-color: var(--ref-color-#{$color}-20);
+    }
+
+    &.loading {
+        background-color: var(--ref-color-#{$color}-60);
+    }
+
+    .loading-bar {
+        background-color: var(--ref-color-#{$color}-100);
+    }
+}
+
+@mixin btn-secondary-color($color) {
+    background: var(--ref-color-#{$color}-10);
+    color: var(--ref-color-#{$color}-100);
+
+    ap-symbol {
+        color: var(--ref-color-#{$color}-100);
+    }
+
+    &:hover {
+        background-color: var(--ref-color-#{$color}-20);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--ref-color-#{$color}-40);
+    }
+
+    &:focus:not(:disabled):not(:active) {
+        background-color: var(--ref-color-#{$color}-10);
+    }
+
+    &:disabled {
+        background-color: var(--ref-color-#{$color}-10);
+        color: var(--ref-color-#{$color}-20);
+
+        ap-symbol {
+            color: var(--ref-color-#{$color}-20);
+        }
+    }
+
+    &.loading {
+        background-color: var(--ref-color-#{$color}-40);
+    }
+
+    .loading-bar {
+        background-color: var(--ref-color-#{$color}-100);
+    }
+}
+
+@mixin btn-stroked-color(
+    $color,
+    $text-color-shade: 100,
+    $border-color-shade: 60,
+    $hover-border-shade: 80,
+    $active-border-shade: 100,
+    $focus-border-shade: 60,
+    $loading-bar-shade: 100
+) {
+    border-color: var(--ref-color-#{$color}-#{$border-color-shade});
+    color: var(--ref-color-#{$color}-#{$text-color-shade});
+
+    ap-symbol {
+        color: var(--ref-color-#{$color}-#{$text-color-shade});
+    }
+
+    &:hover {
+        border-color: var(--ref-color-#{$color}-#{$hover-border-shade});
+    }
+
+    &:active:not(:disabled) {
+        border-color: var(--ref-color-#{$color}-#{$active-border-shade});
+    }
+
+    &:focus:not(:disabled):not(:active) {
+        border-color: var(--ref-color-#{$color}-#{$focus-border-shade});
+    }
+
+    &:disabled {
+        border-color: var(--ref-color-#{$color}-20);
+        color: var(--ref-color-#{$color}-20);
+
+        ap-symbol {
+            color: var(--ref-color-#{$color}-20);
+        }
+    }
+
+    &.loading {
+        border-color: var(--ref-color-#{$color}-20);
+        color: var(--ref-color-#{$color}-40);
+
+        ap-symbol {
+            color: var(--ref-color-#{$color}-40);
+        }
+    }
+
+    .loading-bar {
+        background-color: var(--ref-color-#{$color}-#{$loading-bar-shade});
+    }
+}
+
+@mixin btn-ghost-color(
+    $color,
+    $text-color-shade: 100,
+    $hover-bg-shade: 10,
+    $active-bg-shade: 20,
+    $focus-bg-shade: 20,
+    $disabled-text-shade: 20,
+    $loading-text-shade: 40,
+    $loading-bar-shade: 100,
+    $border-color-shade: null,
+    $hover-border-shade: null,
+    $active-border-shade: null,
+    $focus-border-shade: null
+) {
+    color: var(--ref-color-#{$color}-#{$text-color-shade});
+
+    ap-symbol {
+        color: var(--ref-color-#{$color}-#{$text-color-shade});
+    }
+
+    &:hover {
+        background-color: var(--ref-color-#{$color}-#{$hover-bg-shade});
+        @if $hover-border-shade {
+            border-color: var(--ref-color-#{$color}-#{$hover-border-shade});
+        }
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--ref-color-#{$color}-#{$active-bg-shade});
+        @if $active-border-shade {
+            border-color: var(--ref-color-#{$color}-#{$active-border-shade});
+        }
+    }
+
+    &:focus:not(:disabled):not(:active) {
+        background-color: var(--ref-color-#{$color}-#{$focus-bg-shade});
+        @if $focus-border-shade {
+            border-color: var(--ref-color-#{$color}-#{$focus-border-shade});
+        }
+    }
+
+    &:disabled {
+        color: var(--ref-color-#{$color}-#{$disabled-text-shade});
+
+        ap-symbol {
+            color: var(--ref-color-#{$color}-#{$disabled-text-shade});
+        }
+    }
+
+    &.loading:not(.locked) {
+        color: var(--ref-color-#{$color}-#{$loading-text-shade});
+
+        ap-symbol {
+            color: var(--ref-color-#{$color}-#{$loading-text-shade});
+        }
+    }
+
+    .loading-bar {
+        background-color: var(--ref-color-#{$color}-#{$loading-bar-shade});
+    }
+
+    @if $border-color-shade {
+        border: 1px solid var(--ref-color-#{$color}-#{$border-color-shade});
+    }
+}
+
+@mixin btn-mermaid-inactive-state {
+    background: linear-gradient(
+            90deg,
+            var(--ref-color-mermaid-gradient-from40) 0%,
+            var(--ref-color-mermaid-gradient-to40) 100%
+    );
+
+    &::after {
+        background: var(--ref-color-white);
+    }
+
+    ap-symbol {
+        opacity: 0.4;
+    }
+}
+
+@mixin icon-btn-color($base, $hover-bg: 10, $active-bg: 20) {
+    &:hover:not(.stroked):not(:disabled) {
+        background: var(--ref-color-#{$base}-#{$hover-bg});
+    }
+
+    &:active:not(.stroked):not(:disabled) {
+        background: var(--ref-color-#{$base}-#{$active-bg});
+    }
+
+    &:disabled {
+        border-color: var(--ref-color-#{$base}-20);
+        ap-symbol {
+            color: var(--ref-color-#{$base}-20);
+        }
+    }
+
+
+    ap-symbol {
+        color: var(--ref-color-#{$base}-100);
+    }
+}
+
+@mixin icon-btn-stroked-color($base) {
+    &:not(.loading):not(.locked):not(:disabled) {
+        border-color: var(--ref-color-#{$base}-100);
+
+        &:hover:not(.locked):not(:disabled) {
+            border-color: var(--ref-color-#{$base}-60);
+        }
+
+        &:active:not(.locked):not(:disabled) {
+            border-color: var(--ref-color-#{$base}-100);
+        }
+    }
+
+    &:disabled {
+        border-color: var(--ref-color-#{$base}-20);
+    }
+}

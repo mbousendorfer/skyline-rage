@@ -1,0 +1,81 @@
+// ── Helpers ──
+
+blockquote {
+    border-left: 5px solid var(--sys-color-accent-default);
+    margin: var(--ref-spacing-md) 0;
+    padding-left: 1.5rem;
+    font-style: italic;
+}
+
+.divider,
+.ap-divider {
+    height: 1px;
+    overflow: hidden;
+    background-color: var(--sys-color-border-color-default);
+}
+
+.left-align,
+.ap-text-left {
+    text-align: left;
+}
+.center-align,
+.ap-text-center {
+    text-align: center;
+}
+.right-align,
+.ap-text-right {
+    text-align: right;
+}
+
+.valign-wrapper {
+    align-items: center;
+    display: flex;
+}
+
+.truncate,
+.ap-truncate {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.circle {
+    border-radius: 50%;
+}
+
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+img.responsive-img,
+video.responsive-video {
+    max-width: 100%;
+    height: auto;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+}
+object,
+embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.square,
+.rounded,
+.round {
+    overflow: hidden;
+}
+.rounded {
+    border-radius: 100%;
+}

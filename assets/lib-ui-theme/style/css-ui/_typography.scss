@@ -1,0 +1,113 @@
+@use 'mixins';
+
+// ── Tag-based rules (global styling) ──
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--sys-text-color-default);
+    font-family: var(--sys-text-style-body-font-family);
+}
+h1 {
+    font-size: var(--sys-text-style-h1-size);
+    line-height: var(--sys-text-style-h1-line-height);
+    font-weight: var(--sys-text-style-h1-weight);
+}
+h2 {
+    font-size: var(--sys-text-style-h2-size);
+    line-height: var(--sys-text-style-h2-line-height);
+    font-weight: var(--sys-text-style-h2-weight);
+}
+h3 {
+    font-size: var(--sys-text-style-h3-size);
+    line-height: var(--sys-text-style-h3-line-height);
+    font-weight: var(--sys-text-style-h3-weight);
+}
+h4 {
+    font-size: var(--sys-text-style-h4-size);
+    line-height: var(--sys-text-style-h4-line-height);
+    font-weight: var(--sys-text-style-h4-weight);
+}
+p {
+    margin: 0 0 var(--ref-spacing-xs);
+}
+
+// ── Typography classes — legacy + .ap-* aliases ──
+
+.h0,
+.ap-h0 {
+    @include mixins.text-style(h0);
+}
+
+.ap-subtitle {
+    @include mixins.text-style(subtitle);
+}
+.ap-subtitle-italic {
+    @include mixins.text-style(subtitle);
+    font-style: italic;
+}
+
+.ap-h1 {
+    @include mixins.text-style(h1);
+}
+.ap-h2 {
+    @include mixins.text-style(h2);
+}
+.ap-h3 {
+    @include mixins.text-style(h3);
+}
+.ap-h4 {
+    @include mixins.text-style(h4);
+}
+.ap-body {
+    @include mixins.text-style(body);
+}
+.ap-body-bold {
+    @include mixins.text-style(body-bold);
+}
+.ap-body-italic {
+    @include mixins.text-style(body);
+    font-style: italic;
+}
+
+p.caption,
+span.caption,
+.ap-caption,
+.mat-caption {
+    font-size: var(--sys-text-style-caption-size);
+    line-height: var(--sys-text-style-caption-line-height);
+}
+
+.ap-caption-bold {
+    @include mixins.text-style(caption-bold);
+}
+.ap-caption-italic {
+    @include mixins.text-style(caption);
+    font-style: italic;
+}
+.ap-marketing {
+    @include mixins.text-style(marketing);
+}
+
+p.large,
+span.large {
+    font-size: 16px;
+    line-height: 20px;
+}
+p.small,
+span.small,
+small {
+    font-size: 10px;
+    line-height: 14px;
+}
+
+.bold,
+.ap-bold {
+    font-weight: var(--sys-text-style-body-bold-weight);
+}
+
+.italic,
+.ap-italic {
+    font-style: italic;
+}

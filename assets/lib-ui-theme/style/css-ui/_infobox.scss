@@ -1,0 +1,171 @@
+// Agorapulse Infobox Styles
+@use 'mixins' as m;
+
+.ap-infobox {
+    container: infobox / inline-size;
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    font-size: var(--ref-font-size-sm);
+    line-height: var(--ref-font-line-height-sm);
+    align-items: flex-start;
+    color: var(--ref-color-grey-100);
+    padding: var(--comp-infobox-padding-top) var(--comp-infobox-padding-right) var(--comp-infobox-padding-bottom)
+        var(--comp-infobox-padding-left);
+    border-radius: var(--comp-infobox-border-radius);
+    overflow: hidden;
+    font-family: var(--comp-infobox-text-title-font-family);
+    box-sizing: border-box;
+    position: relative;
+    gap: var(--ref-spacing-xs);
+
+    // Left banner via pseudo-element (no HTML needed)
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: var(--comp-infobox-border-width, 4px);
+        height: 100%;
+    }
+
+    // Icon — direct <i> child, size defaulted to sm (no wrapper, no size class needed)
+    > i {
+        font-size: var(--sys-icon-css-sm);
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    // With title — center icon vertically with the title+message block
+    &.has-title {
+        align-items: center;
+
+        > i {
+            margin-top: 0;
+        }
+    }
+
+    // Variants — expected icons: ap-icon-info_fill, ap-icon-warning_fill, ap-icon-error_fill, ap-icon-rounded-check_fill
+    &.info {
+        background-color: var(--comp-infobox-info-background-color);
+        > i {
+            color: var(--comp-infobox-info-icon-color);
+        }
+        &::before {
+            background-color: var(--comp-infobox-info-border-left-color);
+        }
+    }
+
+    &.warning {
+        background-color: var(--comp-infobox-warning-background-color);
+        > i {
+            color: var(--comp-infobox-warning-icon-color);
+        }
+        &::before {
+            background-color: var(--comp-infobox-warning-border-left-color);
+        }
+    }
+
+    &.error {
+        background-color: var(--comp-infobox-error-background-color);
+        > i {
+            color: var(--comp-infobox-error-icon-color);
+        }
+        &::before {
+            background-color: var(--comp-infobox-error-border-left-color);
+        }
+    }
+
+    &.success {
+        background-color: var(--comp-infobox-success-background-color);
+        > i {
+            color: var(--comp-infobox-success-icon-color);
+        }
+        &::before {
+            background-color: var(--comp-infobox-success-border-left-color);
+        }
+    }
+}
+
+// Content wrapper
+.ap-infobox-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    justify-content: space-between;
+    gap: var(--ref-spacing-xxs);
+    min-width: 0;
+
+    > .ap-button {
+        width: unset;
+    }
+}
+
+// Text content
+.ap-infobox-texts {
+    display: flex;
+    flex-direction: column;
+    overflow-wrap: anywhere;
+    width: 100%;
+}
+
+// Title
+.ap-infobox-title {
+    font-weight: var(--comp-infobox-text-title-weight);
+    font-family: var(--comp-infobox-text-title-font-family);
+    font-size: var(--comp-infobox-text-title-size);
+    line-height: var(--comp-infobox-text-title-line-height);
+}
+
+// Message/Body text
+.ap-infobox-message {
+    font-weight: var(--comp-infobox-text-content-weight);
+    font-family: var(--comp-infobox-text-content-font-family);
+    font-size: var(--comp-infobox-text-content-size);
+    line-height: var(--comp-infobox-text-content-line-height);
+}
+
+// Close button
+.ap-infobox-close {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include m.fixed-size(var(--comp-close-button-size));
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    padding: var(--comp-close-button-padding);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.25s;
+
+    @media (hover: hover) {
+        &:focus:not(:active) {
+            @include m.focus-ring;
+        }
+    }
+
+    &:hover {
+        background: var(--comp-close-button-hover-background);
+    }
+
+    &:active {
+        background: var(--comp-close-button-active-background);
+    }
+
+    // Close icon (implicit > i)
+    > i {
+        color: var(--ref-color-grey-80);
+    }
+}
+
+// Wide layout via container query
+// Threshold adjusted from 588px to 560px to compensate for infobox padding (28px)
+// so the breakpoint triggers at the same visual width as the Angular component.
+@container infobox (min-width: 560px) {
+    .ap-infobox-content {
+        flex-direction: row;
+        align-items: center;
+    }
+}

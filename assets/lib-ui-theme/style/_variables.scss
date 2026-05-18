@@ -1,0 +1,104 @@
+@use 'sass:math';
+@use 'sass:map';
+@use 'colors';
+@forward 'colors';
+
+$font-family: 'Averta';
+$font-family-header: 'Averta';
+$font-weight: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extra-bold: 800;
+$font-weight-black: 900;
+$font-size-h1: 28px;
+$font-line-height-h1: 35px;
+$font-size-h2: 24px;
+$font-line-height-h2: 30px;
+$font-size-h3: 18px;
+$font-line-height-h3: 22px;
+$font-size-h4: 16px;
+$font-line-height-h4: 20px;
+$font-size: 14px;
+$font-line-height: 17px;
+$font-size-icon: 16px;
+$font-size-s: 12px;
+$font-line-height-s: 18px;
+$font-size-sl: 10px;
+$font-line-height-sm: 14px;
+$font-size-sm: 8px;
+
+$font-color: map.get(colors.$colors-grey, 80);
+
+$border-color: map.get(colors.$colors-grey, 20); //$color-pale-grey,
+$border-radius: 4px;
+$border-radius-l: 8px;
+$border-radius-lg: 10px;
+
+$color-error: map.get(colors.$colors-red, 100);
+$color-info: map.get(colors.$colors-electric-blue, 100);
+$color-success: map.get(colors.$colors-green, 100);
+$color-warning: map.get(colors.$colors-yellow, 100);
+
+$link-color: map.get(colors.$colors-electric-blue, 100);
+
+$padding-xxl: 48px;
+$padding-xl: 32px;
+$padding-l: 24px;
+$padding-m: 16px;
+$padding-ml: 12px;
+$padding-s: 8px;
+$padding-sl: 6px;
+$padding-sm: 4px;
+
+// Forms controls
+$form-control-selected-background-color: map.get(colors.$colors-electric-blue, 100);
+$form-control-selected-border-color: map.get(colors.$colors-electric-blue, 100);
+$form-control-selected-font-color: map.get(colors.$colors-grey, 100);
+$form-control-default-background-color: map.get(colors.$colors-grey, 40);
+$form-control-default-border-color: map.get(colors.$colors-grey, 40);
+$form-control-default-font-color: map.get(colors.$colors-grey, 80);
+$form-control-default-label-color: map.get(colors.$colors-grey, 60);
+$form-control-disabled-background-color: map.get(colors.$colors-grey, 10);
+$form-control-disabled-border-color: map.get(colors.$colors-grey, 20);
+$form-control-disabled-font-color: map.get(colors.$colors-grey, 20);
+$form-control-disabled-selected-background-color: map.get(colors.$colors-grey, 20);
+$form-control-hover-border-color: map.get(colors.$colors-grey, 60);
+$form-input-default-border-color: map.get(colors.$colors-grey, 20);
+$form-input-disabled-background-color: map.get(colors.$colors-grey, 5);
+$form-input-placeholder-font-color: map.get(colors.$colors-grey, 40);
+$form-input-hover-border-color: map.get(colors.$colors-grey, 40);
+
+// Avatar
+
+$avatar-size-large: 64px;
+$avatar-size-large-normal: 56px;
+$avatar-size-normal: 48px;
+$avatar-size-medium: 40px;
+$avatar-size-medium-sm: 36px;
+$avatar-size-small: 32px;
+$avatar-size-mini: 24px;
+$avatar-size-mini-sm: 16px;
+$avatar-size-micro: 12px;
+
+$button-height: 32px;
+
+// Responsive Media Query Ranges
+
+$small-screen-up: 601px !default;
+$medium-screen-up: 993px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+$medium-and-up: 'only screen and (min-width : #{$small-screen-up})' !default;
+$large-and-up: 'only screen and (min-width : #{$medium-screen-up})' !default;
+$extra-large-and-up: 'only screen and (min-width : #{$large-screen-up})' !default;
+$small-and-down: 'only screen and (max-width : #{$small-screen})' !default;
+$medium-and-down: 'only screen and (max-width : #{$medium-screen})' !default;
+$medium-only: 'only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})' !default;
+
+// Grid
+
+$num-cols: 12 !default;
+$gutter-width: 1.5rem !default;

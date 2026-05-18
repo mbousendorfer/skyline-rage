@@ -1,0 +1,162 @@
+.ap-tooltip {
+    --ap-arrow-width: 16px;
+    --ap-arrow-height: 8px;
+    --ap-arrow-offset: 10px;
+    --ap-tooltip-z-index: 9999999;
+
+    width: fit-content;
+    max-width: 350px;
+    background: var(--comp-tooltip-text-color-main-default-bg);
+    border-radius: var(--ref-border-radius-md);
+    position: absolute;
+    z-index: var(--ap-tooltip-z-index);
+    animation: fadeIn var(--ref-animation-short) ease-in-out;
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    &.ap-predefined-tooltip {
+        max-width: 256px;
+        width: 256px;
+        max-height: 280px;
+        border-radius: var(--ref-border-radius-sm);
+        background: var(--ref-color-white);
+
+        /* Shadow/Low (default) */
+        box-shadow: 0 4px 25px -2px rgba(52, 69, 99, 0.15), 0 4px 6px -2px rgba(52, 69, 99, 0.15);
+
+        .ap-content-container.ap-content-predefined-container {
+            padding: 0;
+
+            .ap-tooltip-arrow {
+                color: var(--ref-color-white);
+            }
+        }
+    }
+
+    &.ap-tooltip-click-trigger {
+        z-index: calc(var(--ap-tooltip-z-index) + 1); // has to be above the z-index of the .ap-tooltip class above
+    }
+
+    .ap-content-container {
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        border-radius: var(--ref-border-radius-md);
+
+        .ap-tooltip-text {
+            color: var(--comp-tooltip-text-default-color);
+            font-family: var(--comp-tooltip-text-style-font-family);
+            font-size: var(--comp-tooltip-text-style-size);
+            font-weight: var(--comp-tooltip-text-style-weight);
+            line-height: var(--comp-tooltip-text-style-line-height);
+        }
+
+        .ap-tooltip-arrow {
+            color: var(--ref-color-grey-100);
+            position: absolute;
+            z-index: 10000;
+            width: var(--ap-arrow-width);
+            height: var(--ap-arrow-height);
+            display: block;
+
+            path {
+                fill: currentColor;
+            }
+        }
+    }
+    &.ap-tooltip-top,
+    &.ap-tooltip-bottom {
+        .ap-tooltip-arrow {
+            margin: auto;
+            right: 0;
+            left: 0;
+        }
+    }
+
+    &.ap-tooltip-top,
+    &.ap-tooltip-bottom,
+    &.ap-tooltip-top-left,
+    &.ap-tooltip-top-right,
+    &.ap-tooltip-bottom-left,
+    &.ap-tooltip-bottom-right {
+        .ap-tooltip-arrow {
+            transform: translateY(7px) rotate(180deg);
+        }
+    }
+
+    &.ap-tooltip-top-left,
+    &.ap-tooltip-bottom-left {
+        .ap-tooltip-arrow {
+            left: var(--ap-arrow-offset);
+        }
+    }
+
+    &.ap-tooltip-top-right,
+    &.ap-tooltip-bottom-right {
+        .ap-tooltip-arrow {
+            right: var(--ap-arrow-offset);
+        }
+    }
+
+    &.ap-tooltip-bottom,
+    &.ap-tooltip-bottom-right,
+    &.ap-tooltip-bottom-left {
+        .ap-tooltip-arrow {
+            top: 0;
+            rotate: 180deg;
+        }
+    }
+
+    &.ap-tooltip-top,
+    &.ap-tooltip-top-right,
+    &.ap-tooltip-top-left {
+        .ap-tooltip-arrow {
+            bottom: 0;
+        }
+    }
+
+    &.ap-tooltip-right {
+        .ap-tooltip-arrow {
+            top: 0;
+            left: 0;
+            transform: scale(-1) translateY(-11px) translateX(calc((var(--ap-tooltip-height) / 2 - 4px) * -1));
+            rotate: 90deg;
+        }
+    }
+
+    &.ap-tooltip-left {
+        .ap-tooltip-arrow {
+            top: 0;
+            right: 0;
+            rotate: 90deg;
+            transform: translateY(-11px) translateX(calc((var(--ap-tooltip-height) / 2 - 4px)));
+        }
+    }
+
+    &.ap-tooltip-custom-template {
+        background-color: var(--ref-color-white);
+        filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.08));
+
+        .ap-tooltip-text {
+            color: var(--ref-color-grey-100);
+        }
+
+        .ap-tooltip-arrow {
+            color: var(--ref-color-white);
+            position: absolute;
+            z-index: 10000;
+            width: var(--ap-arrow-width);
+            height: var(--ap-arrow-height);
+            display: block;
+
+            path {
+                fill: currentColor;
+            }
+        }
+    }
+}

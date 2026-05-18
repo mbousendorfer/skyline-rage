@@ -1,0 +1,9 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+span {
+    &.ap-clickable-text {
+        color: map.get(vars.$colors-electric-blue, 100);
+        cursor: pointer;
+    }
+}

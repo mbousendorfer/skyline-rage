@@ -1,0 +1,49 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+.notification {
+    align-items: center;
+    background: map.get(vars.$colors-soft-blue, 10);
+    display: flex;
+    color: vars.$color-info;
+    font-size: vars.$font-size;
+    line-height: 17px;
+    padding: vars.$padding-s vars.$padding-m vars.$padding-s vars.$padding-s;
+    border-radius: vars.$padding-sm;
+
+    .notification-border {
+        align-self: stretch;
+        border: 2px solid vars.$color-info;
+        background-color: vars.$color-info;
+        border-radius: 4px;
+        margin-right: vars.$padding-s;
+    }
+
+    .notification-icon {
+        margin-right: vars.$padding-s;
+    }
+
+    &.warning {
+        background: map.get(vars.$colors-yellow, 10);
+        color: map.get(vars.$colors-grey, 60);
+        .notification-border {
+            border-color: map.get(vars.$colors-yellow, 100);
+            background-color: map.get(vars.$colors-yellow, 100);
+        }
+    }
+
+    &.error {
+        background: map.get(vars.$colors-red, 10);
+        color: vars.$color-error;
+        .notification-border {
+            border-color: vars.$color-error;
+            background-color: vars.$color-error;
+        }
+    }
+
+    /*&.large {
+        padding-bottom: vars.$padding-sm - 1;
+        padding-top: vars.$padding-sm - 1;
+        font-size: vars.$font-size;
+    }*/
+}

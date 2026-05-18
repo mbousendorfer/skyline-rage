@@ -1,0 +1,119 @@
+/*
+ * THEMING
+ * See https://material.angular.io/guide/theming
+ */
+
+// Forward modules to make them available to consumers
+@forward 'colors';
+@forward 'variables';
+
+@use '@angular/material' as mat;
+
+// Use modules for internal consumption
+@use 'colors';
+@use 'variables' as vars;
+
+@use '_tooltip.scss';
+@use '_link.scss';
+@use '_input.scss' as base-input;
+@use '_select.scss' as base-select;
+@use '_table.scss';
+
+@use 'font-face';
+
+/*
+ * TYPOGRAPHY
+ * See https://material.angular.io/guide/typography
+ */
+
+// Override typography for all Angular Material, including mat-base-typography and all components.
+$custom-typography: mat.m2-define-typography-config(
+    $font-family: vars.$font-family,
+    $headline-1: mat.m2-define-typography-level(vars.$font-size-h1, vars.$font-line-height-h1, vars.$font-weight-semibold),
+    $headline-2: mat.m2-define-typography-level(vars.$font-size-h2, vars.$font-line-height-h2, vars.$font-weight-semibold),
+    $body-1: mat.m2-define-typography-level(vars.$font-size, vars.$font-line-height, vars.$font-weight),
+    $body-2: mat.m2-define-typography-level(vars.$font-size, vars.$font-line-height, vars.$font-weight),
+    $caption: mat.m2-define-typography-level(vars.$font-size-s, vars.$font-line-height-s, vars.$font-weight),
+);
+
+/*
+ * TYPOGRAPHY
+ */
+
+@use 'css-ui/typography';
+
+/*
+ * HELPERS
+ */
+@use 'css-ui/helpers';
+
+/*
+ * COMPONENTS
+ */
+
+@use 'components-custom-style/alert';
+@use 'components-custom-style/form';
+@use 'components-custom-style/input';
+@use 'components-custom-style/notification';
+@use 'components-custom-style/mat-button';
+@use 'components-custom-style/mat-button-toggle-group';
+@use 'components-custom-style/mat-dialog';
+@use 'components-custom-style/mat-divider';
+@use 'components-custom-style/mat-expansion-panel';
+@use 'components-custom-style/mat-list';
+@use 'components-custom-style/mat-menu';
+@use 'components-custom-style/mat-snack-bar';
+@use 'components-custom-style/mat-table';
+@use 'components-custom-style/ng-select';
+@use 'components-custom-style/select';
+@use 'components-custom-style/sign';
+@use 'components-custom-style/reduction';
+@use 'components-custom-style/clickable-text';
+@use 'components-custom-style/input-error';
+
+// Material-specific override (from former _mat-typography.scss)
+body {
+    .mat-drawer-container {
+        color: var(--sys-text-color-default);
+    }
+}
+
+.mat-ripple {
+    display: none;
+}
+
+/*
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+}
+
+a, button {
+    cursor: pointer;
+}
+*/
+
+@include mat.core();
+
+@include mat.all-component-typographies($custom-typography);
+
+// https://material.angular.io/guide/theming#defining-a-theme
+$primary: mat.m2-define-palette(colors.$colors-primary);
+$accent: mat.m2-define-palette(colors.$colors-accent);
+$warn: mat.m2-define-palette(colors.$colors-warn);
+
+// Custom palettes
+@include mat.all-component-themes(
+    mat.m2-define-light-theme(
+        (
+            color: (
+                primary: $primary,
+                accent: $accent,
+                warn: $warn,
+            ),
+            typography: $custom-typography,
+            density: 0,
+        )
+    )
+);

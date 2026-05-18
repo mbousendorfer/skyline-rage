@@ -1,0 +1,191 @@
+// Agorapulse Avatar Styles
+@use 'mixins' as m;
+
+.ap-avatar {
+    --ap-avatar-size: 40px;
+    --ap-avatar-border-radius: 100%;
+    --ap-avatar-initials-size: 14px;
+    --ap-avatar-symbol-size: 20px;
+    --ap-avatar-network-size: 16px;
+    --ap-avatar-online-icon-size: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include m.fixed-size(var(--ap-avatar-size));
+    box-sizing: border-box;
+    position: relative;
+    border-radius: var(--ap-avatar-border-radius);
+    background: var(--comp-avatar-background-color);
+    box-shadow: var(--comp-avatar-background-shadow);
+    // Size variants
+    &.size-16 {
+        --ap-avatar-size: 16px;
+        --ap-avatar-initials-size: 8px;
+        --ap-avatar-symbol-size: 8px;
+        --ap-avatar-network-size: 8px;
+        --ap-avatar-online-icon-size: 6px;
+    }
+
+    &.size-24 {
+        --ap-avatar-size: 24px;
+        --ap-avatar-initials-size: 12px;
+        --ap-avatar-symbol-size: 12px;
+        --ap-avatar-network-size: 12px;
+        --ap-avatar-online-icon-size: 6px;
+    }
+
+    &.size-32 {
+        --ap-avatar-size: 32px;
+        --ap-avatar-initials-size: 16px;
+        --ap-avatar-symbol-size: 16px;
+        --ap-avatar-network-size: 12px;
+        --ap-avatar-online-icon-size: 8px;
+    }
+
+    &.size-36 {
+        --ap-avatar-size: 36px;
+        --ap-avatar-initials-size: 16px;
+        --ap-avatar-symbol-size: 18px;
+        --ap-avatar-network-size: 16px;
+        --ap-avatar-online-icon-size: 8px;
+    }
+
+    &.size-40 {
+        --ap-avatar-size: 40px;
+        --ap-avatar-initials-size: 20px;
+        --ap-avatar-symbol-size: 20px;
+        --ap-avatar-network-size: 16px;
+        --ap-avatar-online-icon-size: 12px;
+    }
+
+    &.size-48 {
+        --ap-avatar-size: 48px;
+        --ap-avatar-initials-size: 24px;
+        --ap-avatar-symbol-size: 24px;
+        --ap-avatar-network-size: 16px;
+        --ap-avatar-online-icon-size: 12px;
+    }
+
+    &.size-56 {
+        --ap-avatar-size: 56px;
+        --ap-avatar-initials-size: 28px;
+        --ap-avatar-symbol-size: 28px;
+        --ap-avatar-network-size: 16px;
+        --ap-avatar-online-icon-size: 16px;
+    }
+
+    // Square variant
+    &.square {
+        --ap-avatar-border-radius: var(--sys-border-radius-sm);
+    }
+
+    // Image — implicit > img
+    > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--ap-avatar-border-radius);
+    }
+
+    // Initials
+    > .ap-avatar-initials {
+        font-weight: var(--comp-avatar-initials-weight);
+        font-size: var(--ap-avatar-initials-size);
+        font-family: 'Averta', sans-serif;
+        color: var(--comp-avatar-initials-color);
+        text-transform: uppercase;
+        user-select: none;
+    }
+
+    // Symbol/icon — implicit > i
+    > i {
+        color: var(--comp-avatar-symbol-color);
+        width: var(--ap-avatar-symbol-size);
+        height: var(--ap-avatar-symbol-size);
+    }
+
+    // Big network variant — network icon fills the full avatar
+    &.big {
+        background: none;
+        box-shadow: none;
+
+        > i {
+            color: unset;
+            width: 100%;
+            height: 100%;
+            font-size: var(--ap-avatar-size);
+        }
+    }
+
+    // Online indicator — via ::after pseudo-element when .online class is present
+    &.online::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        @include m.fixed-size(var(--ap-avatar-online-icon-size));
+        border-radius: 100%;
+        border: 1px solid var(--comp-avatar-online-border-color);
+        background: var(--comp-avatar-online-background);
+        box-sizing: border-box;
+    }
+}
+
+// Network overlay badge
+.ap-avatar-network {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include m.fixed-size(var(--ap-avatar-network-size));
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: var(--comp-avatar-background-shadow);
+    border-radius: 100%; // round by default (facebook, twitter, youtube…)
+
+    // Shape inferred from icon child
+    &:has(.ap-icon-instagram-official, .ap-icon-instagram) {
+        border-radius: 28%;
+    }
+
+    &:has(.ap-icon-linkedin-official, .ap-icon-linkedin) {
+        border-radius: 6%;
+    }
+
+    &:has(.ap-icon-google, .ap-icon-meta) {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    &:has(.ap-icon-youtube-official, .ap-icon-youtube) {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    > i {
+        font-size: var(--ap-avatar-network-size);
+        width: var(--ap-avatar-network-size);
+        height: var(--ap-avatar-network-size);
+
+        // Monochrome icon fallback colors (when using ap-icon-{network} instead of -official)
+        &.ap-icon-facebook {
+            color: var(--ref-color-facebook-100);
+        }
+        &.ap-icon-instagram {
+            color: var(--ref-color-instagram-100);
+        }
+        &.ap-icon-linkedin {
+            color: var(--ref-color-linkedin-100);
+        }
+        &.ap-icon-youtube {
+            color: var(--ref-color-youtube-100);
+        }
+    }
+}
+
+// Avatar group styles are in _avatar-group.scss

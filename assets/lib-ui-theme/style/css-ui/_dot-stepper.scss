@@ -1,0 +1,68 @@
+// Agorapulse Dot Stepper Styles
+
+.ap-dot-stepper {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: var(--comp-dot-stepper-spacing);
+    place-content: stretch center;
+    width: 100%;
+    box-sizing: border-box;
+
+    // Individual dot — implicit > button
+    > button {
+        position: relative;
+        width: var(--comp-dot-stepper-dot-size);
+        height: var(--comp-dot-stepper-dot-size);
+        border-radius: 50%;
+        border: var(--comp-dot-stepper-dot-inactive-border-width) solid var(--comp-dot-stepper-dot-inactive-border-color);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        padding: 0;
+        box-sizing: border-box;
+
+        // Hover state
+        &:hover:not(.active):not(:disabled) {
+            border-color: var(--ref-color-electric-blue-60);
+            background: var(--comp-dot-stepper-dot-inactive-focused-background-color);
+        }
+
+        // Focus state (inactive dots only)
+        &:focus:not(:disabled):not(.active) {
+            background: var(--comp-dot-stepper-dot-inactive-hovered-background-color);
+            outline: none;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: calc(var(--comp-dot-stepper-dot-size) + var(--comp-dot-stepper-dot-inactive-border-width));
+                height: calc(var(--comp-dot-stepper-dot-size) + var(--comp-dot-stepper-dot-inactive-border-width));
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                border: var(--comp-dot-stepper-dot-inactive-border-width) solid var(--ref-color-electric-blue-100);
+            }
+        }
+
+        // Active state
+        &.active {
+            background: var(--comp-dot-stepper-dot-active-background-color);
+            border-color: var(--ref-color-electric-blue-150);
+            cursor: default;
+        }
+
+        // Disabled state
+        &:disabled {
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        // Pressed state
+        &:not(.active):not(:disabled):active {
+            background: var(--comp-dot-stepper-dot-inactive-clicked-background-color);
+        }
+    }
+}

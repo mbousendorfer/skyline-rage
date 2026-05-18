@@ -1,0 +1,8 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+.ap-input-error {
+    color: map.get(vars.$colors-red, 100);
+    font-weight: vars.$font-weight;
+    font-size: vars.$font-size-s;
+}

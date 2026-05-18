@@ -1,0 +1,191 @@
+// Agorapulse Checkbox Styles
+@use 'mixins' as m;
+
+.ap-checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xxs);
+    cursor: pointer;
+
+    // Hide native checkbox input (accessible)
+    > input[type='checkbox'] {
+        @include m.sr-only;
+    }
+
+    &.full-width {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    // No-label variant: larger hit area with background feedback
+    &:not(:has(> span:not(:empty))) {
+        padding: 10px;
+        border-radius: var(--ref-border-radius-md);
+        transition: background-color 0.15s;
+
+        // Hover: grey background
+        &:hover:not(:has(input:disabled)) {
+            background: var(--ref-color-grey-05);
+        }
+
+        // Checked hover: blue background
+        &:hover:not(:has(input:disabled)):has(input:checked),
+        &:hover:not(:has(input:disabled)).indeterminate {
+            background: var(--ref-color-electric-blue-10);
+        }
+
+        // Checked active: darker blue background
+        &:active:not(:has(input:disabled)):has(input:checked),
+        &:active:not(:has(input:disabled)).indeterminate {
+            background: var(--ref-color-electric-blue-20);
+        }
+    }
+
+    // Disabled container
+    &:has(input:disabled) {
+        cursor: default;
+    }
+
+    // Checkbox box — <i> element (hosts ::before dash + ::after checkmark)
+    > i {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        @include m.fixed-size(16px);
+        border-radius: var(--sys-border-radius-sm);
+        border: 1px solid var(--ref-color-grey-60);
+        background: var(--ref-color-white);
+        box-sizing: border-box;
+        flex-shrink: 0;
+        transition:
+            background-color 0.15s,
+            border-color 0.15s;
+
+        // Checkmark via CSS (no inline SVG needed)
+        &::after {
+            content: '';
+            display: none;
+            width: 10px;
+            height: 10px;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M14.238 3.337a.92.92 0 0 1 .025 1.301l-7.7 8a.92.92 0 0 1-1.326 0l-3.5-3.636a.92.92 0 1 1 1.326-1.276L5.9 10.674l7.037-7.312a.92.92 0 0 1 1.301-.025' clip-rule='evenodd' fill='white'/%3E%3C/svg%3E");
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            background-color: var(--ref-color-white);
+        }
+
+        // Indeterminate dash via CSS
+        &::before {
+            content: '';
+            display: none;
+            width: 8px;
+            height: 1.5px;
+            background: var(--ref-color-white);
+        }
+    }
+
+    // Hover state
+    &:hover:not(:has(input:disabled)) > i {
+        border-color: var(--ref-color-grey-80);
+    }
+
+    // Active state
+    &:active:not(:has(input:disabled)) > i {
+        border-color: var(--ref-color-grey-100);
+    }
+
+    // Checked state — show checkmark
+    &:has(input:checked) > i {
+        background: var(--ref-color-electric-blue-100);
+        border-color: var(--ref-color-electric-blue-100);
+
+        &::after {
+            display: block;
+        }
+    }
+
+    // Checked hover
+    &:hover:not(:has(input:disabled)):has(input:checked) > i {
+        background: var(--ref-color-electric-blue-80);
+        border-color: var(--ref-color-electric-blue-100);
+    }
+
+    // Checked active
+    &:active:not(:has(input:disabled)):has(input:checked) > i {
+        background: var(--ref-color-electric-blue-60);
+        border-color: var(--ref-color-electric-blue-100);
+    }
+
+    // Disabled state
+    &:has(input:disabled) > i {
+        background: var(--ref-color-grey-10);
+        border-color: var(--ref-color-grey-20);
+        pointer-events: none;
+    }
+
+    // Disabled + checked
+    &:has(input:disabled:checked) > i {
+        background: var(--ref-color-grey-20);
+        border-color: var(--ref-color-grey-20);
+    }
+
+    // Indeterminate state (class on container)
+    &.indeterminate > i {
+        background: var(--ref-color-electric-blue-100);
+        border-color: var(--ref-color-electric-blue-100);
+
+        &::before {
+            display: block;
+        }
+    }
+
+    // Indeterminate hover
+    &.indeterminate:hover:not(:has(input:disabled)) > i {
+        background: var(--ref-color-electric-blue-80);
+        border-color: var(--ref-color-electric-blue-100);
+    }
+
+    // Indeterminate disabled
+    &.indeterminate:has(input:disabled) > i {
+        background: var(--ref-color-grey-20);
+        border-color: var(--ref-color-grey-20);
+    }
+
+    // Focus ring (any focus on hover-capable devices, matching original component)
+    @media (hover: hover) {
+        &:has(input:focus:not(:disabled)) > i {
+            @include m.focus-ring-3px;
+        }
+    }
+
+    // Error state
+    &.error > i {
+        border-color: var(--ref-color-red-100);
+    }
+
+    // Label — direct span child
+    > span {
+        display: flex;
+        align-items: center;
+        font-family: var(--comp-forms-label-font-family);
+        font-size: var(--comp-forms-label-size);
+        font-weight: var(--comp-forms-label-font-weight);
+        line-height: var(--comp-forms-label-line-height);
+        color: var(--comp-forms-label-text-color);
+        user-select: none;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    // Label: disabled
+    &:has(input:disabled) > span {
+        color: var(--ref-color-grey-60);
+        cursor: default;
+    }
+
+    // Bold modifier
+    &.bold > span {
+        font-weight: var(--ref-font-weight-bold);
+    }
+}

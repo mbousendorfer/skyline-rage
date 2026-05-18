@@ -1,0 +1,76 @@
+// Agorapulse Counter Styles
+
+.ap-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border-radius: var(--comp-counter-border-radius);
+    padding: 0 2px;
+    box-sizing: border-box;
+
+    // Normal size (default)
+    &.normal {
+        font-weight: var(--comp-counter-text-style-font-weight);
+        font-family: var(--comp-counter-text-style-font-family);
+        line-height: var(--comp-counter-text-style-line-height);
+        font-size: var(--comp-counter-text-style-size);
+        height: var(--comp-counter-height);
+        max-height: var(--comp-counter-height);
+    }
+
+    // Big size
+    &.big {
+        font-weight: var(--comp-counter-big-text-style-font-weight);
+        font-family: var(--comp-counter-big-text-style-font-family);
+        line-height: var(--comp-counter-big-text-style-line-height);
+        font-size: var(--comp-counter-big-text-style-size);
+        height: var(--comp-counter-big-height);
+        max-height: var(--comp-counter-big-height);
+    }
+
+    // Blue color (background by default)
+    &.blue {
+        color: var(--comp-counter-blue-color);
+        background-color: var(--comp-counter-blue-with-background-background-color);
+
+        &.no-bg {
+            background-color: transparent;
+        }
+    }
+
+    // Orange color (background by default)
+    &.orange {
+        color: var(--comp-counter-orange-with-background-color);
+        background-color: var(--comp-counter-orange-with-background-background-color);
+
+        &.no-bg {
+            color: var(--comp-counter-orange-color);
+            background-color: transparent;
+        }
+    }
+
+    // Grey color (background by default)
+    &.grey {
+        color: var(--comp-counter-grey-color);
+        background-color: var(--comp-counter-grey-with-background-background-color);
+
+        &.no-bg {
+            background-color: transparent;
+        }
+    }
+
+    // Notification style
+    &.notif {
+        padding: 0 4px;
+        border-radius: var(--comp-counter-notif-border-radius);
+        font-size: var(--comp-counter-text-style-size);
+        font-weight: var(--comp-counter-text-style-font-weight);
+        font-family: var(--comp-counter-text-style-font-family);
+        line-height: var(--comp-counter-text-style-line-height);
+        min-width: var(--comp-counter-notif-min-width);
+        height: var(--comp-counter-notif-min-width);
+        color: var(--comp-counter-notif-color);
+        background-color: var(--comp-counter-notif-background-color);
+    }
+}

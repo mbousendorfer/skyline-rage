@@ -1,0 +1,16 @@
+@use '../variables' as vars;
+
+select {
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$border-radius;
+    color: vars.$font-color;
+    font-family: vars.$font-family;
+    font-size: vars.$font-size;
+    font-weight: vars.$font-weight-semibold;
+    padding: 6px vars.$padding-m;
+    -webkit-appearance: none;
+}
+
+select:focus {
+    outline: none;
+}

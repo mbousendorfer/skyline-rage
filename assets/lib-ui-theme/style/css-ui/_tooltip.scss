@@ -1,0 +1,133 @@
+// Agorapulse Tooltip Styles
+
+@keyframes ap-tooltip-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.ap-tooltip {
+    --ap-arrow-width: 16px;
+    --ap-arrow-height: 8px;
+    --ap-arrow-offset: 10px;
+
+    width: fit-content;
+    max-width: 350px;
+    background: var(--comp-tooltip-text-color-main-default-bg);
+    border-radius: var(--ref-border-radius-md);
+    position: absolute;
+    z-index: 9999999;
+    animation: ap-tooltip-fade-in var(--ref-animation-short, 0.15s) ease-in-out;
+
+    // Text styles — gated to CSS-UI position classes to avoid leaking into Angular tooltip
+    &.top,
+    &.top-left,
+    &.top-right,
+    &.bottom,
+    &.bottom-left,
+    &.bottom-right,
+    &.left,
+    &.right {
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        color: var(--comp-tooltip-text-default-color);
+        font-family: var(--comp-tooltip-text-style-font-family);
+        font-size: var(--comp-tooltip-text-style-size);
+        font-weight: var(--comp-tooltip-text-style-weight);
+        line-height: var(--comp-tooltip-text-style-line-height);
+    }
+
+    // Arrow via CSS (no inline SVG needed)
+    // Base arrow styles on ::after — content is only set when a position class is present
+    // to avoid conflicts with the Angular tooltip which also uses .ap-tooltip
+    &::after {
+        display: block;
+        position: absolute;
+        z-index: 10000;
+        width: var(--ap-arrow-width);
+        height: var(--ap-arrow-height);
+        background-color: var(--ref-color-grey-100);
+        clip-path: polygon(0 0, 50% 100%, 100% 0);
+    }
+
+    // Only render the arrow when a CSS-UI position class is applied
+    &.top::after,
+    &.top-left::after,
+    &.top-right::after,
+    &.bottom::after,
+    &.bottom-left::after,
+    &.bottom-right::after,
+    &.left::after,
+    &.right::after {
+        content: '';
+    }
+
+    // Arrow positioning - Top
+    &.top::after,
+    &.top-left::after,
+    &.top-right::after {
+        bottom: 0;
+        transform: translateY(100%);
+    }
+
+    &.top::after {
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+    }
+
+    &.top-left::after {
+        left: var(--ap-arrow-offset);
+    }
+
+    &.top-right::after {
+        right: var(--ap-arrow-offset);
+    }
+
+    // Arrow positioning - Bottom
+    &.bottom::after,
+    &.bottom-left::after,
+    &.bottom-right::after {
+        top: 0;
+        transform: rotate(180deg) translateY(100%);
+    }
+
+    &.bottom::after {
+        left: 50%;
+        transform: translateX(-50%) rotate(180deg) translateY(100%);
+    }
+
+    &.bottom-left::after {
+        left: var(--ap-arrow-offset);
+    }
+
+    &.bottom-right::after {
+        right: var(--ap-arrow-offset);
+    }
+
+    // Arrow positioning - Left (arrow points right, toward the trigger)
+    &.left::after {
+        right: 0;
+        top: 50%;
+        transform: translateX(calc(100% - var(--ap-arrow-height) / 2)) translateY(-50%) rotate(-90deg);
+    }
+
+    // Arrow positioning - Right (arrow points left, toward the trigger)
+    &.right::after {
+        left: 0;
+        top: 50%;
+        transform: translateX(calc(-100% + var(--ap-arrow-height) / 2)) translateY(-50%) rotate(90deg);
+    }
+
+    // Custom template tooltip (white background, rich content)
+    &.custom {
+        background-color: var(--ref-color-white);
+        color: var(--ref-color-grey-100);
+        filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.08));
+
+        &::after {
+            background-color: var(--ref-color-white);
+        }
+    }
+}

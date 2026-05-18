@@ -1,0 +1,113 @@
+// Agorapulse Stepper Styles
+
+.ap-stepper {
+    display: flex;
+    align-items: flex-start;
+
+    // With line connector
+    &.with-line .ap-stepper-item {
+        position: relative;
+
+        &:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 28px;
+            width: 1px;
+            height: calc(100% - 4px);
+            background-color: var(--ref-color-grey-20);
+        }
+
+        &.completed:not(:last-child)::after {
+            background-color: var(--ref-color-electric-blue-100);
+        }
+    }
+}
+
+// Stepper item — state modifiers on this element
+.ap-stepper-item {
+    display: flex;
+    align-items: center;
+    height: fit-content;
+
+    // Step number circle — implicit > span:first-child
+    > span:first-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        border-radius: 24px;
+        font-family: var(--ref-font-family);
+        font-size: var(--ref-font-size-sm);
+        font-weight: var(--ref-font-weight-regular);
+        line-height: 24px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    // Step text label — implicit > span:last-child
+    > span:last-child {
+        padding-left: var(--ref-spacing-xs);
+        height: fit-content;
+        margin: auto;
+        line-height: 24px;
+        vertical-align: middle;
+        font-family: var(--ref-font-family);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-100);
+    }
+
+    // Active state
+    &.active {
+        > span:first-child {
+            background-color: var(--ref-color-electric-blue-100);
+            color: var(--ref-color-white);
+            box-shadow: 0 0 0 1.5px var(--ref-color-electric-blue-10);
+            border: 1.5px solid var(--ref-color-electric-blue-10);
+            line-height: 21px;
+        }
+
+        > span:last-child {
+            font-weight: var(--ref-font-weight-bold);
+        }
+    }
+
+    // Completed state
+    &.completed > span:first-child {
+        background-color: var(--ref-color-electric-blue-10);
+        color: var(--ref-color-electric-blue-100);
+    }
+
+    // Pending state
+    &.pending > span:first-child {
+        background-color: transparent;
+        color: var(--ref-color-electric-blue-100);
+        border: 1px solid var(--ref-color-electric-blue-10);
+        line-height: 22px;
+    }
+
+    // Clickable step (completed steps that can be navigated to)
+    &.clickable > span:last-child {
+        cursor: pointer;
+
+        &:hover {
+            color: var(--ref-color-electric-blue-100);
+        }
+    }
+}
+
+// Separator between steps
+.ap-stepper-separator {
+    display: inline-flex;
+    align-items: center;
+    margin: auto 10px;
+    color: var(--ref-color-grey-60);
+
+    // Separator icon — implicit > i
+    > i {
+        width: 16px;
+        height: 16px;
+    }
+}

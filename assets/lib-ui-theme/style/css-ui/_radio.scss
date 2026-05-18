@@ -1,0 +1,106 @@
+// Agorapulse Radio Styles
+@use 'mixins' as m;
+
+.ap-radio-container {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xxs);
+    cursor: pointer;
+
+    // Hide native radio input (accessible)
+    > input[type='radio'] {
+        @include m.sr-only;
+    }
+
+    // Disabled container
+    &:has(input:disabled) {
+        cursor: default;
+    }
+
+    // Radio indicator — ::before pseudo-element (no empty span needed)
+    &::before {
+        content: '';
+        @include m.fixed-size(16px);
+        border-radius: 100%;
+        border: 1px solid var(--ref-color-grey-60);
+        background: var(--ref-color-electric-blue-100);
+        box-shadow: inset 0 0 0 16px var(--ref-color-white);
+        transition: box-shadow var(--comp-radio-transition-duration);
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+
+    // Indicator: checked
+    &:has(input:checked)::before {
+        border-color: var(--ref-color-electric-blue-100);
+        box-shadow: inset 0 0 0 3px var(--ref-color-white);
+    }
+
+    // Indicator: disabled
+    &:has(input:disabled)::before {
+        box-shadow: inset 0 0 0 16px var(--ref-color-grey-10);
+        border-color: var(--ref-color-grey-20);
+    }
+
+    // Indicator: disabled + checked
+    &:has(input:disabled:checked)::before {
+        background: var(--ref-color-grey-40);
+        box-shadow: inset 0 0 0 3px var(--ref-color-grey-10);
+        border-color: var(--ref-color-grey-20);
+    }
+
+    // Indicator: hover (not disabled)
+    &:hover:not(:has(input:disabled))::before {
+        border-color: var(--ref-color-grey-80);
+    }
+
+    // Indicator: hover + checked (keep blue)
+    &:hover:not(:has(input:disabled)):has(input:checked)::before {
+        border-color: var(--ref-color-electric-blue-100);
+    }
+
+    // Focus ring on indicator (keyboard only)
+    &:has(input:focus-visible)::before {
+        outline: 3px solid var(--ref-color-electric-blue-100);
+        outline-offset: 1px;
+        border-color: var(--ref-color-grey-80);
+    }
+
+    // Focus + checked
+    &:has(input:focus-visible:checked)::before {
+        border-color: var(--ref-color-electric-blue-100);
+    }
+
+    // Error state — compound selectors to override :has(input:checked) specificity
+    &.error::before,
+    &.error:has(input:checked)::before {
+        border-color: var(--ref-color-red-100);
+    }
+
+    &.error:hover:not(:has(input:disabled))::before {
+        border-color: var(--ref-color-red-60);
+    }
+
+    &.error:has(input:focus-visible)::before {
+        outline-color: var(--ref-color-red-100);
+        border-color: var(--ref-color-red-60);
+    }
+
+    // Label — direct span child
+    > span {
+        display: flex;
+        align-items: center;
+        @include m.text-style('body');
+        color: var(--ref-color-grey-100);
+        user-select: none;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    // Label: disabled
+    &:has(input:disabled) > span {
+        color: var(--ref-color-grey-60);
+    }
+}

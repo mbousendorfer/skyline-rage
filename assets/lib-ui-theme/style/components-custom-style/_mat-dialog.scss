@@ -1,0 +1,37 @@
+@use '../variables' as vars;
+
+.mat-dialog-actions {
+    background-color: vars.$color-grey-white;
+    border-top: 1px solid vars.$color-silver;
+    margin-top: vars.$padding-l;
+    padding: vars.$padding-l;
+
+    &.ap-space-between {
+        margin-left: -(vars.$padding-l);
+        margin-right: -(vars.$padding-l);
+        justify-content: space-between;
+    }
+
+    div:first-child {
+        margin-left: vars.$padding-l;
+    }
+
+    div:last-child {
+        margin-right: vars.$padding-l;
+    }
+}
+
+.dark-backdrop {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.white-backdrop {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.full-screen-modal {
+    .mat-dialog-container {
+        max-width: none;
+        background: transparent;
+    }
+}

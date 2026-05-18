@@ -1,0 +1,128 @@
+textarea,
+select,
+input,
+button {
+    outline: none;
+    &.full-width {
+        box-sizing: border-box;
+        width: 100%;
+    }
+}
+
+form.full-width {
+    textarea,
+    select,
+    input,
+    button {
+        box-sizing: border-box;
+        width: 100%;
+    }
+}
+
+input,
+textarea {
+    border: 1px solid var(--comp-input-border-default-color);
+    border-radius: var(--comp-input-border-radius);
+    color: var(--comp-input-text-default-color);
+    font-family: var(--comp-input-text-font-family);
+    font-size: var(--comp-input-text-size);
+    font-weight: var(--comp-input-text-font-weight);
+    padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+
+    &::placeholder {
+        color: var(--comp-input-text-placeholder-color);
+    }
+    // Disabled
+    &:disabled {
+        background-color: var(--comp-input-fill-disabled-color);
+        color: var(--comp-input-text-disabled-color);
+    }
+    // Focus
+    &:focus:not(.transparent) {
+        border-color: var(--comp-input-border-focused-color);
+    }
+    // Invalid
+    &.invalid:not([disabled]):not(.transparent):not(:focus):not(:hover),
+    &.ng-invalid.ng-dirty.ng-touched:not([disabled]):not(:focus):not(:hover):not(.transparent) {
+        border: 1px solid var(--comp-input-border-error-color);
+    }
+    // Valid
+    &.valid:not([disabled]):not(:focus):not(:hover):not(.transparent) {
+        border: 1px solid var(--comp-input-border-success-color);
+    }
+
+    // Transparent
+    &.transparent {
+        border: 0;
+        background-color: transparent;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    // Hover
+    &:not(.transparent):not(.valid):not(.invalid):not(:focus):not([disabled]):hover {
+        border-color: var(--comp-input-border-hover-color);
+    }
+}
+
+.input-group {
+    display: flex;
+    flex-direction: row;
+    width: 180px;
+    color: var(--comp-input-text-default-color);
+    border-radius: var(--comp-input-border-radius);
+
+    input {
+        box-sizing: border-box;
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-lg) var(--ref-spacing-xxs) var(--ref-spacing-sm);
+        width: 100%;
+    }
+
+    .input-group-append {
+        position: relative;
+        top: 10px;
+        right: 26px;
+        height: 15px;
+        width: 0;
+        color: var(--comp-input-icon-color);
+    }
+
+    input:focus + .input-group-append {
+        color: var(--comp-input-border-focused-color);
+    }
+
+    &.disabled {
+        background-color: var(--comp-input-fill-disabled-color);
+        color: var(--comp-input-border-disabled-color);
+    }
+
+    &.full-width {
+        box-sizing: border-box;
+        width: 100%;
+    }
+}
+
+form.submitted {
+    input,
+    textarea {
+        // Invalid
+        &.ng-invalid:not([disabled]):not(.transparent) {
+            border: 1px solid var(--comp-input-border-error-color);
+        }
+    }
+}
+
+textarea {
+    resize: none;
+}
+
+/* Hide HTML5 Up and Down arrows on number inputs */
+/*input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}*/

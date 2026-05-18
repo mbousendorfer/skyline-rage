@@ -1,0 +1,15 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+span.ap-reduction {
+    color: map.get(vars.$colors-green, 100);
+    font-size: vars.$font-size-s;
+    font-weight: vars.$font-weight-bold;
+    padding: vars.$padding-sm vars.$padding-s vars.$padding-sm vars.$padding-s;
+    background-color: map.get(vars.$colors-green, 10);
+    border-radius: vars.$border-radius;
+
+    &.ap-line-through {
+        text-decoration: line-through;
+    }
+}

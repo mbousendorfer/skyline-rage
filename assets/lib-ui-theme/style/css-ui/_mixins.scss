@@ -1,0 +1,50 @@
+// Shared mixins for css-ui components
+
+// Focus ring standard
+@mixin focus-ring {
+    outline: 2px solid var(--ref-color-electric-blue-100);
+    outline-offset: 1px;
+}
+
+// Focus ring with 3px width (checkbox, radio)
+@mixin focus-ring-3px {
+    outline: 3px solid var(--ref-color-electric-blue-100);
+    outline-offset: 1px;
+}
+
+// Visually hidden, accessible to screen readers
+@mixin sr-only {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+}
+
+// Truncate text with ellipsis
+@mixin truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// Fixed size (width + height + min + max)
+@mixin fixed-size($size) {
+    width: $size;
+    height: $size;
+    min-width: $size;
+    min-height: $size;
+    max-width: $size;
+    max-height: $size;
+}
+
+// Text-style shorthand
+@mixin text-style($name) {
+    font-family: var(--sys-text-style-#{$name}-font-family);
+    font-size: var(--sys-text-style-#{$name}-size);
+    font-weight: var(--sys-text-style-#{$name}-weight);
+    line-height: var(--sys-text-style-#{$name}-line-height);
+}

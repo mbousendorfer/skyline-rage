@@ -1,0 +1,183 @@
+@use '../variables' as vars;
+@use 'sass:map';
+@import '@ng-select/ng-select/themes/default.theme.css';
+
+@mixin select-state-style($color) {
+    .ng-select-container {
+        border-color: $color;
+    }
+}
+
+.ng-select:not(.ap-select) {
+    div,
+    span {
+        font-weight: normal !important;
+    }
+    input {
+        padding: 0; // Reset theme input padding
+    }
+    &:not(.ng-select-disabled):not(.ng-select-focused):not(.valid):not(.invalid) {
+        .ng-select-container:hover {
+            border-color: map.get(vars.$colors-grey, 40);
+        }
+    }
+    .ng-select-container {
+        border-radius: vars.$border-radius !important;
+        border: 1px solid vars.$form-input-default-border-color;
+        font-weight: normal;
+        box-shadow: none !important;
+        .ng-placeholder {
+            color: vars.$form-input-placeholder-font-color !important;
+        }
+        .ng-value-container {
+            font-weight: normal;
+            padding-left: vars.$padding-m;
+            .ng-placeholder {
+                color: vars.$border-color;
+            }
+            .ng-value span:not(.ng-value-icon) {
+                color: vars.$form-control-selected-font-color;
+                display: flex;
+                ap-symbol {
+                    padding-right: vars.$padding-s;
+                }
+                ap-avatar {
+                    ap-symbol {
+                        padding: 0 !important;
+                    }
+                }
+            }
+        }
+    }
+    &.ng-select-opened {
+        .ng-select-container {
+            border-color: vars.$form-control-selected-border-color !important;
+            .ng-arrow {
+                border-color: transparent transparent vars.$form-control-selected-border-color;
+            }
+        }
+    }
+    &.ng-select-single {
+        .ng-select-container {
+            .ng-value-container {
+                .ng-input {
+                    padding-left: vars.$padding-m;
+                }
+            }
+        }
+    }
+    // Invalid
+    &.invalid:not(.ng-select-disabled),
+    &.ng-invalid.ng-dirty.ng-touched:not(.ng-select-disabled) {
+        @include select-state-style(vars.$color-error);
+    }
+    // Valid
+    &.valid:not(.ng-select-disabled) {
+        @include select-state-style(vars.$color-success);
+    }
+}
+
+form.submitted {
+    .ng-select {
+        // Invalid
+        &.ng-invalid:not(.ng-select-disabled) {
+            @include select-state-style(vars.$color-error);
+        }
+    }
+}
+
+.ng-dropdown-panel {
+    border: none;
+    box-shadow: none;
+    &.ng-select-bottom {
+        border-radius: vars.$border-radius;
+        box-shadow: 0 7px 50px rgba(0, 0, 0, 0.08);
+        margin-top: vars.$padding-sm;
+    }
+    &.ng-select-top {
+        border-radius: vars.$border-radius;
+        box-shadow: 0 7px 50px rgba(0, 0, 0, 0.08);
+        margin-bottom: vars.$padding-sm;
+    }
+    .ng-dropdown-panel-items {
+        padding: vars.$padding-s 0;
+        .ng-option,
+        .ng-optgroup {
+            padding: vars.$padding-s vars.$padding-m;
+            span {
+                color: vars.$form-control-selected-font-color;
+                display: flex;
+                ap-symbol {
+                    padding-right: vars.$padding-s;
+                }
+                ap-avatar {
+                    ap-symbol {
+                        padding: 0 !important;
+                    }
+                }
+                .checkmark {
+                    ap-symbol {
+                        padding-right: 0;
+                    }
+                }
+            }
+
+            ap-avatar {
+                ap-symbol {
+                    .ap-symbol {
+                        color: var(--ref-color-white);
+                    }
+                }
+                .initials {
+                    color: var(--ref-color-white);
+                }
+            }
+            &.ng-option-selected {
+                background-color: unset;
+                span {
+                    color: map.get(vars.$colors-electric-blue, 100);
+                    ap-symbol .svg {
+                        fill: map.get(vars.$colors-electric-blue, 100) !important;
+                    }
+                }
+                span.checkbox {
+                    .checkmark {
+                        ap-symbol .svg {
+                            fill: white !important;
+                        }
+                    }
+                }
+            }
+            &.ng-option-marked {
+                background-color: map.get(vars.$colors-electric-blue, 10);
+                span {
+                    color: map.get(vars.$colors-electric-blue, 100);
+                    ap-symbol .svg {
+                        fill: map.get(vars.$colors-electric-blue, 100) !important;
+                    }
+                }
+                span.checkbox {
+                    .checkmark {
+                        ap-symbol .svg {
+                            fill: white !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.ng-dropdown-panel.ng-select-top .ng-dropdown-panel-items .ng-option:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.ng-dropdown-panel.ng-select-bottom .ng-dropdown-panel-items .ng-option:last-child {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: unset;
+}
