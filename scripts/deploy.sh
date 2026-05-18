@@ -28,6 +28,14 @@ if [ ! -f "$BUILD_DIR/index.html" ]; then
   exit 1
 fi
 
+# Angular's --base-href doesn't rewrite absolute URLs hardcoded in SCSS
+# (e.g. url(/assets/lib-ui-theme/fonts/...) in theme.scss). On GitHub Pages
+# the site is served under /${REPO_NAME}/, so we rewrite those URLs in the
+# built CSS to include the prefix.
+echo "==> Rewriting absolute /assets/ URLs in built CSS"
+find "$BUILD_DIR" -type f -name '*.css' -exec \
+  sed -i '' "s|url(/assets/|url(${BASE_HREF}assets/|g" {} +
+
 MAIN_SHA="$(git rev-parse --short HEAD)"
 TMP="$(mktemp -d -t skyline-rage-ghpages)"
 trap 'rm -rf "$TMP"' EXIT
