@@ -99,11 +99,12 @@ interface Validation {
                                             }
                                             <div class="fb-card" [class.has-error]="fbProfileHasError(profile.id)">
                                                 <div class="post-header">
-                                                    <ap-avatar [username]="profile.name" network="facebook" [size]="36"></ap-avatar>
+                                                    <ap-avatar [username]="profile.name" [size]="40"></ap-avatar>
                                                     <div class="post-meta">
                                                         <div class="post-author">{{ profile.name }}</div>
-                                                        <div class="post-date">27 novembre, à 13 h 37 · <ap-symbol symbolId="web" size="xs" color="basic-grey"></ap-symbol></div>
+                                                        <div class="post-date">27 November at 13:37 · <ap-symbol symbolId="web" size="xs" color="basic-grey"></ap-symbol></div>
                                                     </div>
+                                                    <ap-symbol class="net-more" symbolId="more" size="sm" color="basic-grey"></ap-symbol>
                                                 </div>
                                                 <div class="post-text">{{ state.getDisplayText(profile.id) }}</div>
                                                 @if (state.getDisplayMedia(profile.id).length > 0) {
@@ -124,6 +125,10 @@ interface Validation {
                                                         }
                                                     </div>
                                                 }
+                                                <div class="fb-engagement">
+                                                    <span class="fb-reactions"><ap-symbol symbolId="ns-facebook_like" size="xs" color="facebook"></ap-symbol> 128</span>
+                                                    <span class="fb-counts">12 comments · 3 shares</span>
+                                                </div>
                                                 <div class="fb-actions">
                                                     <button class="fb-btn"><ap-symbol symbolId="ns-facebook_like" size="sm" color="basic-grey"></ap-symbol> Like</button>
                                                     <button class="fb-btn"><ap-symbol symbolId="ns-facebook_comment" size="sm" color="basic-grey"></ap-symbol> Comment</button>
@@ -184,11 +189,13 @@ interface Validation {
                                             }
                                             <div class="li-card" [class.has-error]="liProfileHasError(profile.id)">
                                                 <div class="post-header">
-                                                    <ap-avatar [username]="profile.name" network="linkedin" [size]="40"></ap-avatar>
+                                                    <ap-avatar [username]="profile.name" [size]="48"></ap-avatar>
                                                     <div class="post-meta">
                                                         <div class="post-author">{{ profile.name }}</div>
-                                                        <div class="post-date">Just now · <ap-symbol symbolId="web" size="xs" color="basic-grey"></ap-symbol></div>
+                                                        <div class="li-sub">Social media management · 12,480 followers</div>
+                                                        <div class="post-date">1h · <ap-symbol symbolId="web" size="xs" color="basic-grey"></ap-symbol></div>
                                                     </div>
+                                                    <ap-symbol class="net-more" symbolId="more" size="sm" color="basic-grey"></ap-symbol>
                                                 </div>
                                                 <div class="post-text">
                                                     {{ liDisplayText(profile.id) }}
@@ -214,11 +221,15 @@ interface Validation {
                                                         }
                                                     </div>
                                                 }
+                                                <div class="li-social">
+                                                    <span class="li-reactions"><ap-symbol symbolId="ns-linkedin_like" size="xs" color="linkedin"></ap-symbol> 88</span>
+                                                    <span class="li-counts">14 comments · 6 reposts</span>
+                                                </div>
                                                 <div class="li-actions">
                                                     <button class="li-btn"><ap-symbol symbolId="ns-linkedin_like" size="sm" color="basic-grey"></ap-symbol> Like</button>
                                                     <button class="li-btn"><ap-symbol symbolId="ns-linkedin_comment" size="sm" color="basic-grey"></ap-symbol> Comment</button>
-                                                    <button class="li-btn"><ap-symbol symbolId="repost" size="sm" color="basic-grey"></ap-symbol> Repost</button>
-                                                    <button class="li-btn"><ap-symbol symbolId="paper-plane" size="sm" color="basic-grey"></ap-symbol> Send</button>
+                                                    <button class="li-btn"><ap-symbol symbolId="ns-linkedin_repost" size="sm" color="basic-grey"></ap-symbol> Repost</button>
+                                                    <button class="li-btn"><ap-symbol symbolId="ns-linkedin_share" size="sm" color="basic-grey"></ap-symbol> Send</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -270,10 +281,8 @@ interface Validation {
                                             <div class="ig-card" [class.has-error]="igProfileHasError(profile.id)">
                                                 <div class="ig-header">
                                                     <ap-avatar [username]="profile.name" [size]="32"></ap-avatar>
-                                                    <div class="ig-meta">
-                                                        <span class="ig-author">{{ profile.name }}</span>
-                                                        <span class="ig-time">Now</span>
-                                                    </div>
+                                                    <span class="ig-author">{{ profile.name }}</span>
+                                                    <ap-symbol class="net-more" symbolId="more" size="sm" color="basic-grey"></ap-symbol>
                                                 </div>
                                                 @if (state.getDisplayMedia(profile.id).length > 0) {
                                                     <div class="carousel ig">
@@ -301,6 +310,7 @@ interface Validation {
                                                     </div>
                                                     <ap-symbol symbolId="ns-instagram_bookmark" size="md"></ap-symbol>
                                                 </div>
+                                                <div class="ig-likes">1,234 likes</div>
                                                 @if (state.collaborators().length > 0) {
                                                     <div class="ig-collaborators">
                                                         <span class="ig-collab-with">With</span>
@@ -321,6 +331,7 @@ interface Validation {
                                                         <strong>{{ profile.name }}</strong> {{ state.getCustomization(profile.id)?.firstCommentText }}
                                                     </div>
                                                 }
+                                                <div class="ig-postdate">2 hours ago</div>
                                             </div>
                                         </div>
                                     }
@@ -369,14 +380,25 @@ interface Validation {
                                                 }
                                             }
                                             <div class="x-card" [class.has-error]="xProfileHasError(profile.id)">
-                                                <div class="post-header">
-                                                    <ap-avatar [username]="profile.name" network="twitter" [size]="36"></ap-avatar>
-                                                    <div class="post-meta">
-                                                        <div class="post-author">{{ profile.name }}</div>
-                                                        <div class="post-date">Just now</div>
+                                                <div class="x-header">
+                                                    <ap-avatar [username]="profile.name" [size]="40"></ap-avatar>
+                                                    <div class="x-meta">
+                                                        <span class="x-name">{{ profile.name }}</span>
+                                                        <span class="x-handle">&#64;{{ xHandle(profile.name) }} · 1h</span>
                                                     </div>
+                                                    <ap-symbol class="net-more" symbolId="more" size="sm" color="basic-grey"></ap-symbol>
                                                 </div>
-                                                <div class="post-text">{{ truncate(state.getDisplayText(profile.id), 280) }}</div>
+                                                <div class="x-text">{{ truncate(state.getDisplayText(profile.id), 280) }}</div>
+                                                <div class="x-actions">
+                                                    <span class="x-action"><ap-symbol symbolId="ns-x_comment" size="xs" color="basic-grey"></ap-symbol> 12</span>
+                                                    <span class="x-action"><ap-symbol symbolId="ns-x_repost" size="xs" color="basic-grey"></ap-symbol> 4</span>
+                                                    <span class="x-action"><ap-symbol symbolId="ns-x_like" size="xs" color="basic-grey"></ap-symbol> 86</span>
+                                                    <span class="x-action"><ap-symbol symbolId="ns-x_view" size="xs" color="basic-grey"></ap-symbol> 2.4K</span>
+                                                    <span class="x-action-right">
+                                                        <ap-symbol symbolId="ns-x_bookmark" size="xs" color="basic-grey"></ap-symbol>
+                                                        <ap-symbol symbolId="ns-x_share" size="xs" color="basic-grey"></ap-symbol>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     }
@@ -469,13 +491,14 @@ interface Validation {
         /* Infoboxes */
         .validation-item { margin-bottom: 6px; }
 
-        /* Post cards — no is-customized styling here, affordance is on the wrapper only */
+        /* Post cards — faux social feed: mimic each network's real look, not the Agorapulse DS */
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: var(--sys-border-radius-md); overflow: hidden; background: var(--ref-color-white);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             &.has-error { border-color: var(--ref-color-red-60); }
         }
-        .x-card { padding-bottom: 12px; }
+        .net-more { margin-left: auto; cursor: pointer; flex-shrink: 0; }
 
         .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .post-meta { flex: 1; }
@@ -514,12 +537,18 @@ interface Validation {
         }
         .see-more { font-size: var(--sys-text-style-caption-bold-size); color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: var(--sys-text-style-caption-bold-weight); }
 
-        .fb-actions { display: flex; padding: 4px; border-top: 1px solid var(--sys-border-color-default); }
+        /* ── Facebook — real look ── */
+        .fb-card .post-author { font-size: 15px; font-weight: 600; color: #050505; line-height: 1.2; }
+        .fb-card .post-date { font-size: 13px; color: #65676B; }
+        .fb-card .post-text { font-size: 15px; color: #050505; line-height: 1.3333; padding: 4px 12px 10px; }
+        .fb-engagement { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 13px; color: #65676B; border-bottom: 1px solid #CED0D4; }
+        .fb-reactions { display: flex; align-items: center; gap: 5px; }
+        .fb-actions { display: flex; padding: 4px; }
         .fb-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px; background: none; border: none; border-radius: var(--sys-border-radius-md);
-            font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
-            &:hover { background: var(--ref-color-grey-05); }
+            padding: 8px; background: none; border: none; border-radius: 6px;
+            font-size: 15px; font-weight: 600; color: #65676B; cursor: pointer; font-family: inherit;
+            &:hover { background: #F2F2F2; }
         }
         .first-comment-preview {
             display: flex; align-items: flex-start; gap: 8px;
@@ -530,24 +559,47 @@ interface Validation {
             flex: 1; background: var(--ref-color-grey-05); border-radius: var(--sys-border-radius-lg);
             padding: 8px 12px; font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height);
         }
-        .li-actions { display: flex; padding: 4px; border-top: 1px solid var(--sys-border-color-default); }
+        /* ── LinkedIn — real look ── */
+        .li-card .post-header { align-items: flex-start; }
+        .li-card .post-author { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.9); line-height: 1.28; }
+        .li-sub { font-size: 12px; color: rgba(0,0,0,0.6); line-height: 1.33; }
+        .li-card .post-date { font-size: 12px; color: rgba(0,0,0,0.6); }
+        .li-card .post-text { font-size: 14px; color: rgba(0,0,0,0.9); line-height: 1.43; }
+        .li-social { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: rgba(0,0,0,0.6); border-bottom: 1px solid #e8e8e8; }
+        .li-reactions { display: flex; align-items: center; gap: 4px; }
+        .li-actions { display: flex; padding: 4px; }
         .li-btn {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
-            padding: 8px 4px; background: none; border: none; border-radius: var(--sys-border-radius-md);
-            font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
-            &:hover { background: var(--ref-color-grey-05); }
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 10px 4px; background: none; border: none; border-radius: 4px;
+            font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.6); cursor: pointer; font-family: inherit;
+            &:hover { background: rgba(0,0,0,0.08); }
         }
-        .ig-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
-        .ig-meta { display: flex; flex-direction: column; }
-        .ig-author { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
-        .ig-time { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
-        .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
-        .ig-actions-left { display: flex; gap: 12px; }
-        .ig-caption { padding: 2px 12px 10px; font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height); }
-        .ig-first-comment { padding: 6px 12px 10px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); border-top: 1px solid var(--sys-border-color-default); }
-        .ig-collaborators { display: flex; align-items: center; gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs); }
-        .ig-collab-with { font-size: var(--sys-text-style-caption-size); line-height: var(--sys-text-style-caption-line-height); color: var(--ref-color-grey-60); }
-        .ig-collab-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ref-color-white); }
+        /* ── Instagram — real look ── */
+        .ig-card { border-color: #dbdbdb; }
+        .ig-header { display: flex; align-items: center; gap: 10px; padding: 8px 14px; }
+        .ig-author { font-size: 14px; font-weight: 600; color: #262626; }
+        .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 4px; }
+        .ig-actions-left { display: flex; gap: 16px; }
+        .ig-likes { padding: 2px 14px; font-size: 14px; font-weight: 600; color: #262626; }
+        .ig-caption { padding: 2px 14px 4px; font-size: 14px; color: #262626; line-height: 1.4; }
+        .ig-caption strong, .ig-first-comment strong { font-weight: 600; }
+        .ig-caption .see-more { color: #8E8E8E; font-weight: 400; }
+        .ig-first-comment { padding: 4px 14px; font-size: 14px; color: #262626; }
+        .ig-postdate { padding: 4px 14px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2px; color: #8E8E8E; }
+        .ig-collaborators { display: flex; align-items: center; gap: 6px; padding: 4px 14px; }
+        .ig-collab-with { font-size: 12px; color: #8E8E8E; }
+        .ig-collab-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; }
+
+        /* ── X (Twitter) — real look ── */
+        .x-card { padding-bottom: 4px; }
+        .x-header { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px 2px; }
+        .x-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+        .x-name { font-size: 15px; font-weight: 700; color: #0f1419; }
+        .x-handle { font-size: 14px; color: #536471; }
+        .x-text { padding: 2px 14px 10px; font-size: 15px; color: #0f1419; line-height: 1.35; }
+        .x-actions { display: flex; align-items: center; justify-content: space-between; padding: 2px 14px 8px; }
+        .x-action { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #536471; }
+        .x-action-right { display: flex; align-items: center; gap: 16px; }
     `],
 })
 export class PreviewPanelComponent {
@@ -769,5 +821,9 @@ export class PreviewPanelComponent {
 
     truncate(text: string, max: number) {
         return text?.length > max ? text.substring(0, max) + '…' : text;
+    }
+
+    xHandle(name: string): string {
+        return name.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
     }
 }
