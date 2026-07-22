@@ -3,9 +3,15 @@
   "configurations": [
     {
       "name": "compose",
-      "runtimeExecutable": "/opt/homebrew/Cellar/node@22/22.22.2/bin/node",
+      "runtimeExecutable": "/opt/homebrew/opt/node@22/bin/node",
       "runtimeArgs": ["node_modules/.bin/ng", "serve"],
       "port": 4200
+    },
+    {
+      "name": "compose-static",
+      "runtimeExecutable": "/opt/homebrew/bin/python3",
+      "runtimeArgs": ["-m", "http.server", "8231", "--directory", "dist/compose-claude/browser"],
+      "port": 8231
     }
   ]
 }

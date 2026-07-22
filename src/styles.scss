@@ -1,14 +1,6 @@
 @use 'ui-theme/assets/style/font-face';
 @use 'ui-theme/assets/style/variables';
 
-:root {
-  --ref-radius-sm: 4px;
-  --ref-radius-md: 6px;
-  --ref-radius-lg: 8px;
-  --ref-radius-xl: 12px;
-  --ref-radius-full: 9999px;
-}
-
 html,
 body {
     height: 100%;

@@ -19,22 +19,22 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "../design/libs/ui-symbol/src/assets",
+                "input": "node_modules/@agorapulse/ui-symbol/assets",
                 "output": "./assets/lib-ui-symbol"
               },
               {
                 "glob": "**/*",
-                "input": "../design/libs/ui-theme/assets",
+                "input": "node_modules/@agorapulse/ui-theme/assets",
                 "output": "./assets/lib-ui-theme"
               }
             ],
             "styles": [
               "src/styles.scss",
-              "../design/libs/ui-theme/assets/style/theme.scss",
-              "../design/libs/ui-theme/assets/desktop_variables.css"
+              "node_modules/@agorapulse/ui-theme/assets/style/theme.scss",
+              "node_modules/@agorapulse/ui-theme/assets/desktop_variables.css"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["../design/libs"]
+              "includePaths": ["node_modules/@agorapulse", "node_modules"]
             }
           },
           "configurations": {

@@ -1,7 +1,35 @@
 {
   "name": "compose-claude",
   "scripts": {
-    "start": "node_modules/.bin/ng serve",
-    "postinstall": "[ -L node_modules ] || ln -sf ../design/node_modules node_modules"
+    "start": "ng serve",
+    "build": "ng build"
+  },
+  "dependencies": {
+    "@agorapulse/ui-animations": "^21.0.1",
+    "@agorapulse/ui-components": "^21.1.17",
+    "@agorapulse/ui-symbol": "^21.0.6",
+    "@agorapulse/ui-theme": "^21.0.10",
+    "@angular/animations": "22.0.5",
+    "@angular/cdk": "22.0.3",
+    "@angular/common": "22.0.5",
+    "@angular/compiler": "22.0.5",
+    "@angular/core": "22.0.5",
+    "@angular/forms": "22.0.5",
+    "@angular/material": "22.0.3",
+    "@angular/platform-browser": "22.0.5",
+    "@angular/router": "22.0.5",
+    "@ng-select/ng-select": "23.2.0",
+    "dompurify": "^3.4.12",
+    "lottie-web": "^5.12.0",
+    "ngx-lottie": "^12.0.0",
+    "rxjs": "7.8.0",
+    "tslib": "2.3.1",
+    "zone.js": "0.15.1"
+  },
+  "devDependencies": {
+    "@angular/build": "22.0.5",
+    "@angular/cli": "22.0.5",
+    "@angular/compiler-cli": "22.0.5",
+    "typescript": "6.0.3"
   }
 }

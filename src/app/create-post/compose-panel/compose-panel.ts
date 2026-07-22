@@ -3,33 +3,30 @@ import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { ToggleComponent } from '@agorapulse/ui-components/toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
+import { SelectComponent } from '@agorapulse/ui-components/legacy/select';
+import { InputComponent } from '@agorapulse/ui-components/legacy/input';
+import { ActionDropdownComponent, ActionDropdownTriggerDirective, ActionDropdownItem } from '@agorapulse/ui-components/action-dropdown';
+import { ModalComponent } from '@agorapulse/ui-components/modal';
+import { MatDialog } from '@angular/material/dialog';
+import { CollabModalComponent } from './collab-modal.component';
+import { TagModalComponent } from './tag-modal.component';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import {
     ChangeDetectionStrategy, Component, computed, effect,
-    ElementRef, HostListener, inject, signal, ViewChild,
+    ElementRef, inject, signal, ViewChild,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ComposeStateService, Collaborator, Customization, MediaItem } from '../compose-state';
+import { SegmentedControlComponent, SegmentedControlOption } from '@agorapulse/ui-components/segmented-control';
+import { ComposeStateService, Customization, MediaItem } from '../compose-state';
 
 interface TaggedUser { id: string; x: number; y: number; username: string; }
-
-interface CollabUser { handle: string; name: string; avatar: string; }
-
-const COLLAB_MOCK_USERS: CollabUser[] = [
-    { handle: '@sophie.martin',     name: 'Sophie Martin',  avatar: 'https://i.pravatar.cc/40?img=1' },
-    { handle: '@lucas.photography', name: 'Lucas Bernard',  avatar: 'https://i.pravatar.cc/40?img=2' },
-    { handle: '@marie.creates',     name: 'Marie Dupont',   avatar: 'https://i.pravatar.cc/40?img=3' },
-    { handle: '@julien.traveler',   name: 'Julien Moreau',  avatar: 'https://i.pravatar.cc/40?img=4' },
-    { handle: '@camille.studio',    name: 'Camille Leroy',  avatar: 'https://i.pravatar.cc/40?img=5' },
-    { handle: '@theo.visuals',      name: 'Théo Petit',     avatar: 'https://i.pravatar.cc/40?img=6' },
-];
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe],
+    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, SelectComponent, InputComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe, SegmentedControlComponent],
     template: `
         <div class="compose-panel" [class.is-draft]="state.isDraft()">
             <!-- Hidden file inputs for upload sources -->
@@ -146,50 +143,16 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                             }
                             <div class="media-grid">
                                 <!-- Upload source picker -->
-                                <div class="add-media-wrap">
-                                    <button class="add-media-btn" (click)="toggleUploadPicker()">
-                                        <ap-symbol symbolId="plus" size="sm" color="basic-grey"></ap-symbol>
-                                    </button>
-                                    @if (showUploadPicker()) {
-                                        <div class="upload-picker">
-                                            <button class="upload-option" (click)="pickFromComputer()">
-                                                <ap-symbol symbolId="image" size="xs" color="basic-grey"></ap-symbol>
-                                                From computer
-                                            </button>
-                                            <button class="upload-option" (click)="openLibrary()">
-                                                <ap-symbol symbolId="folder" size="xs" color="basic-grey"></ap-symbol>
-                                                From Library
-                                            </button>
-                                            <button class="upload-option" [class.disabled]="!googleDriveConnected" (click)="openGoogleDrive()">
-                                                <ap-symbol symbolId="image" size="xs" color="basic-grey"></ap-symbol>
-                                                Google Drive
-                                                @if (!googleDriveConnected) {
-                                                    <span class="upload-option-suffix">Connect</span>
-                                                }
-                                            </button>
-                                            <button class="upload-option" [class.disabled]="!canvaConnected" (click)="openCanva()">
-                                                <ap-symbol symbolId="pen" size="xs" color="basic-grey"></ap-symbol>
-                                                Design with Canva
-                                                @if (!canvaConnected) {
-                                                    <span class="upload-option-suffix">Connect</span>
-                                                }
-                                            </button>
-                                        </div>
-                                    }
-                                </div>
+                                <button class="add-media-btn" [apActionDropdownTrigger]="uploadMenu">
+                                    <ap-symbol symbolId="plus" size="sm" color="basic-grey"></ap-symbol>
+                                </button>
+                                <ap-action-dropdown #uploadMenu [items]="uploadMenuItems" (itemClick)="onUploadMenuAction($event)"></ap-action-dropdown>
                                 @for (item of state.mediaItems(); track item.id) {
                                     <div class="media-thumb">
                                         <img [src]="item.url" alt="Media" />
                                         <div class="media-overlay">
-                                            <div class="media-menu-wrap">
-                                                <ap-icon-button class="media-overlay-btn" type="flat" size="small" symbolId="more" ariaLabel="Media options" (onClick)="toggleMediaMenu(item.id)"></ap-icon-button>
-                                                @if (mediaMenuOpenId() === item.id) {
-                                                    <div class="media-menu">
-                                                        <ap-button class="media-menu-item" [config]="{style:'ghost',color:'grey'}" size="small" (click)="replaceMedia(item.id)">Replace</ap-button>
-                                                        <ap-button class="media-menu-item" [config]="{style:'ghost',color:'red'}" size="small" (click)="removeMedia(item.id)">Remove</ap-button>
-                                                    </div>
-                                                }
-                                            </div>
+                                            <ap-icon-button class="media-overlay-btn" [apActionDropdownTrigger]="mediaMenu" type="flat" size="small" symbolId="more" ariaLabel="Media options"></ap-icon-button>
+                                            <ap-action-dropdown #mediaMenu [items]="mediaMenuItems" (itemClick)="onMediaMenuAction(item.id, $event)"></ap-action-dropdown>
                                             <ap-icon-button class="media-overlay-btn" type="flat" size="small" symbolId="trash" ariaLabel="Remove media" (onClick)="removeMedia(item.id)"></ap-icon-button>
                                         </div>
                                     </div>
@@ -218,11 +181,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                             </div>
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <ap-tabs [selectedIndex]="fbTabIndex()" (tabChange)="setFbPostType($event.index)">
-                                        <ap-tab label="Post"></ap-tab>
-                                        <ap-tab label="Reel" symbolId="video"></ap-tab>
-                                        <ap-tab label="Story"></ap-tab>
-                                    </ap-tabs>
+                                    <ap-segmented-control [options]="postTypeOptions" [value]="fbPostType()" (valueChange)="setFbPostType($event)"></ap-segmented-control>
                                     <div class="field-group">
                                         <label class="field-label">Video title</label>
                                         <div class="field-textarea-wrap">
@@ -266,11 +225,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                             </div>
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
-                                    <ap-tabs [selectedIndex]="igTabIndex()" (tabChange)="setIgPostType($event.index)">
-                                        <ap-tab label="Post"></ap-tab>
-                                        <ap-tab label="Reel" symbolId="video"></ap-tab>
-                                        <ap-tab label="Story"></ap-tab>
-                                    </ap-tabs>
+                                    <ap-segmented-control [options]="postTypeOptions" [value]="igPostType()" (valueChange)="setIgPostType($event)"></ap-segmented-control>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Publish via Mobile Notification</span><span class="option-hint">We'll send a push notification from our mobile app so the selected owner can complete the action from their smartphone.</span></div>
                                         <ap-toggle name="igMobileNotif" [checked]="state.igMobileNotif()" (change)="state.igMobileNotif.set($event)"></ap-toggle>
@@ -297,16 +252,16 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                         </div>
                                         @if (igPostType() === 'post') {
                                             <div class="option-row action-row">
-                                                <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
+                                                <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
                                                 <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                             </div>
                                         }
                                         <div class="option-row action-row">
-                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
                                             <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
-                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
+                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
                                             <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
                                         </div>
                                     }
@@ -419,26 +374,27 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                     </div>
                                     <div class="option-row">
                                         <div class="option-info"><span class="option-label">Privacy status</span></div>
-                                        <div class="privacy-tabs">
-                                            <ap-button class="privacy-btn-left" [config]="state.ytPrivacy()==='public' ? {style:'primary',color:'blue'} : {style:'stroked',color:'grey'}" size="small" (click)="state.ytPrivacy.set('public')">Public</ap-button>
-                                            <ap-button class="privacy-btn-right" [config]="state.ytPrivacy()==='private' ? {style:'primary',color:'blue'} : {style:'stroked',color:'grey'}" size="small" (click)="state.ytPrivacy.set('private')">Private</ap-button>
-                                        </div>
+                                        <ap-segmented-control
+                                            [options]="[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }]"
+                                            [value]="state.ytPrivacy()"
+                                            (valueChange)="state.ytPrivacy.set($event === 'private' ? 'private' : 'public')">
+                                        </ap-segmented-control>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">Category</label>
-                                        <select class="field-select"><option value="">Select Category</option></select>
+                                        <ap-select placeholder="Select Category" [options]="[]"></ap-select>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">Playlist</label>
-                                        <select class="field-select"><option value="">Select a playlist</option></select>
+                                        <ap-select placeholder="Select a playlist" [options]="[]"></ap-select>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">YouTube Video tags <span class="optional-label">(optional)</span></label>
-                                        <input class="field-input" type="text" placeholder="Type your video tags" />
+                                        <ap-input name="ytVideoTags" placeholder="Type your video tags"></ap-input>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">License <span class="optional-label">(optional)</span></label>
-                                        <select class="field-select"><option value="">Select a license</option></select>
+                                        <ap-select placeholder="Select a license" [options]="[]"></ap-select>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
@@ -579,9 +535,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                             <div class="media-thumb small">
                                                 <img [src]="item.url" alt="Media" />
                                                 <div class="media-overlay">
-                                                    <button (click)="state.removeCustomizationMedia(custom.profileId, item.id)">
-                                                        <ap-symbol symbolId="trash" size="xs" color="red"></ap-symbol>
-                                                    </button>
+                                                    <ap-icon-button class="media-overlay-btn" type="flat" symbolId="trash" color="red" ariaLabel="Remove media" (onClick)="state.removeCustomizationMedia(custom.profileId, item.id)"></ap-icon-button>
                                                 </div>
                                             </div>
                                         }
@@ -620,15 +574,15 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
                                             <ap-toggle name="igPulseLink" [checked]="state.igPulseLink()" (change)="state.igPulseLink.set($event)"></ap-toggle>
                                         </div>
                                         <div class="option-row action-row">
-                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
                                             <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
-                                            <div class="option-info-row"><ap-symbol symbolId="user" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
+                                            <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
                                             <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
-                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="xs" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
+                                            <div class="option-info-row"><ap-symbol symbolId="product-tag" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
                                             <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
                                         </div>
                                     }
@@ -698,118 +652,7 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             </div>
         </div>
 
-        @if (tagModalOpen()) {
-            <div class="tag-modal-overlay" (click)="closeTagModal()">
-                <div class="tag-modal" (click)="$event.stopPropagation()">
-                    <div class="tag-modal-header">
-                        <span class="tag-modal-title">Tag users</span>
-                        <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Close" (onClick)="closeTagModal()"></ap-icon-button>
-                    </div>
 
-                    <div class="tag-modal-image-area" (click)="onTagImageClick($event)">
-                        @if (tagModalImage()) {
-                            <img class="tag-modal-img" [src]="tagModalImage()!.url" alt="Post image" />
-                        } @else {
-                            <div class="tag-modal-no-image">No image available — add an image to the post first</div>
-                        }
-
-                        @for (tag of tagModalTags(); track tag.id) {
-                            <div class="tag-pin" [style.left.%]="tag.x" [style.top.%]="tag.y">
-                                <div class="tag-pin-dot"></div>
-                                <div class="tag-pin-badge">
-                                    <span>&#64;{{ tag.username }}</span>
-                                    <button class="tag-pin-remove" (click)="$event.stopPropagation(); removeTag(tag.id)">×</button>
-                                </div>
-                            </div>
-                        }
-
-                        @if (pendingPin()) {
-                            <div class="tag-pin pending" [style.left.%]="pendingPin()!.x" [style.top.%]="pendingPin()!.y" (click)="$event.stopPropagation()">
-                                <div class="tag-pin-dot"></div>
-                                <div class="tag-autocomplete">
-                                    <input class="tag-autocomplete-input" type="text" placeholder="Search username…"
-                                        [value]="tagSearchQuery()"
-                                        (input)="tagSearchQuery.set(asTextarea($event))"
-                                        autofocus />
-                                    @if (tagSuggestions().length > 0) {
-                                        <div class="tag-autocomplete-list">
-                                            @for (s of tagSuggestions(); track s) {
-                                                <div class="tag-autocomplete-item" (click)="selectTagSuggestion(s)">&#64;{{ s }}</div>
-                                            }
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <div class="tag-modal-footer">
-                        <ap-button [config]="{ style: 'ghost', color: 'grey' }" (click)="closeTagModal()">Cancel</ap-button>
-                        <ap-button [config]="{ style: 'primary', color: 'orange' }" (click)="saveTagModal()">Save tags</ap-button>
-                    </div>
-                </div>
-            </div>
-        }
-
-        @if (collabModalOpen()) {
-            <div class="collab-modal-overlay" (click)="closeCollabModal()">
-                <div class="collab-modal" (click)="$event.stopPropagation()">
-                    <div class="collab-modal-header">
-                        <div class="collab-modal-titles">
-                            <span class="collab-modal-title">Invite Collaborators</span>
-                            <span class="collab-modal-subtitle">Up to 3 collaborators can be invited to this post</span>
-                        </div>
-                        <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Close" (onClick)="closeCollabModal()"></ap-icon-button>
-                    </div>
-                    <div class="collab-modal-body">
-                        @if (collabPending().length < 3) {
-                            <div class="collab-search-container">
-                                <div class="collab-search-wrap">
-                                    <ap-symbol symbolId="search" size="xs" color="basic-grey"></ap-symbol>
-                                    <input
-                                        class="collab-search-input"
-                                        type="text"
-                                        placeholder="Search Instagram accounts…"
-                                        [value]="collabSearchQuery()"
-                                        (input)="collabSearchQuery.set(asTextarea($event))"
-                                        autofocus />
-                                </div>
-                                @if (collabSuggestions().length > 0) {
-                                    <div class="collab-dropdown">
-                                        @for (user of collabSuggestions(); track user.handle) {
-                                            <div class="collab-dropdown-item" (click)="selectCollaborator(user)">
-                                                <img class="collab-avatar-lg" [src]="user.avatar" [alt]="user.name" />
-                                                <div class="collab-user-info">
-                                                    <span class="collab-user-name">{{ user.name }}</span>
-                                                    <span class="collab-user-handle">{{ user.handle }}</span>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        } @else {
-                            <div class="collab-max-reached">Maximum of 3 collaborators reached</div>
-                        }
-                        @if (collabPending().length > 0) {
-                            <div class="collab-chips">
-                                @for (user of collabPending(); track user.handle) {
-                                    <div class="collab-chip">
-                                        <img class="collab-avatar-sm" [src]="user.avatar" [alt]="user.name" />
-                                        <span class="collab-chip-handle">{{ user.handle }}</span>
-                                        <button class="collab-chip-remove" (click)="removeCollaborator(user.handle)">×</button>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-                    <div class="collab-modal-footer">
-                        <ap-button [config]="{ style: 'ghost', color: 'grey' }" (click)="closeCollabModal()">Cancel</ap-button>
-                        <ap-button [config]="{ style: 'primary', color: 'orange' }" (click)="confirmCollabModal()">Confirm</ap-button>
-                    </div>
-                </div>
-            </div>
-        }
     `,
     styles: [`
         :host { display: flex; flex: 1; min-width: 0; min-height: 0; max-width: 50%; }
@@ -837,11 +680,11 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
         }
         .draft-toggle-tab {
             flex-shrink: 0; margin-left: auto; display: flex; align-items: center; gap: 7px;
-            cursor: pointer; padding: 0 16px 0 8px; border-radius: 20px;
+            cursor: pointer; padding: 0 16px 0 8px; border-radius: var(--comp-label-border-radius);
             transition: background 0.15s;
         }
         .draft-toggle-label {
-            font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
+            font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight);
             color: var(--sys-text-color-light);
             transition: color 0.15s;
         }
@@ -849,50 +692,51 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             color: var(--ref-color-yellow-150);
         }
         .panel-header {
-            padding: 16px 0 12px; font-size: var(--ref-font-size-md); font-weight: var(--ref-font-weight-bold);
+            padding: 16px 0 12px; font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height);
             color: var(--sys-text-color-default);
         }
         .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 24px; background: var(--ref-color-white); }
         .section { padding: 16px 0; max-width: 640px; margin: 0 auto; }
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-        .section-title { display: flex; align-items: center; gap: 6px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .section-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
+        .section-title { display: flex; align-items: center; gap: 6px; font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
+        .section-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
 
         .text-editor {
-            border: 1px solid var(--sys-border-color-default); border-radius: var(--ref-radius-md); overflow: hidden;
-            background: var(--ref-color-white); transition: border-color 0.15s, box-shadow 0.15s;
-            &.inner { border-radius: 6px; margin: 8px 0; }
-            &.focused { border-color: var(--ref-color-electric-blue-60); box-shadow: 0 0 0 3px var(--ref-color-electric-blue-05); }
+            border: 1px solid var(--comp-input-border-default-color); border-radius: var(--comp-input-border-radius); overflow: hidden;
+            background: var(--comp-input-fill-color); transition: border-color 0.15s;
+            &.inner { border-radius: var(--comp-input-border-radius); margin: 8px 0; }
+            &:hover:not(.focused) { border-color: var(--comp-input-border-hover-color); }
+            &.focused { border-color: var(--comp-input-border-focused-color); }
             textarea { min-height: 96px; transition: min-height 0.25s ease; }
             &.expanded textarea { min-height: 280px; }
         }
         .post-textarea {
-            width: 100%; padding: 8px 12px; border: none; outline: none; resize: none;
-            font-size: var(--ref-font-size-sm); color: var(--sys-text-color-default);
-            font-family: var(--ref-font-family); background: transparent; line-height: var(--ref-font-line-height-sm);
+            width: 100%; padding: var(--ref-spacing-xxs) var(--comp-input-padding-horizontal); border: none; outline: none; resize: none;
+            font-size: var(--comp-input-text-size); color: var(--comp-input-text-default-color);
+            font-family: var(--comp-input-text-font-family); font-weight: var(--comp-input-text-font-weight);
+            background: transparent; line-height: var(--comp-input-text-line-height);
             box-sizing: border-box;
-            &.small { padding: 8px 12px; font-size: var(--ref-font-size-xs); }
-            &::placeholder { color: var(--ref-color-grey-60); }
+            &::placeholder { color: var(--comp-input-text-placeholder-color); }
         }
         .editor-toolbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 8px; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 4px 8px; border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-white);
         }
         .toolbar-icons { display: flex; }
         .toolbar-right { display: flex; align-items: center; gap: 4px; }
         .editor-footer {
             display: flex; align-items: center;
-            padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 8px 12px; border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-05);
         }
         .char-counts { display: flex; gap: 12px; &.inner { padding: 4px 12px 8px; } }
         .char-count {
-            display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs);
+            display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size);
             color: var(--ref-color-electric-blue-100);
             &.grey { color: var(--ref-color-grey-60); }
             &.warning { color: var(--ref-color-orange-100); }
-            &.danger { color: var(--ref-color-red-100); font-weight: var(--ref-font-weight-bold); }
+            &.danger { color: var(--ref-color-red-100); font-weight: var(--sys-text-style-caption-bold-weight); }
         }
 
         .collapsible-header {
@@ -900,55 +744,32 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             padding: 8px 0 12px; cursor: pointer; user-select: none;
             &.padded { padding: 12px; }
         }
-        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .section-count { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-regular); color: var(--ref-color-grey-60); }
+        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
+        .section-count { font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight); color: var(--ref-color-grey-60); }
 
         .media-grid { display: flex; gap: 8px; flex-wrap: wrap; &.inner { padding: 0 12px 8px; } }
         .add-media-btn {
             width: 96px; height: 96px; border: 2px dashed var(--ref-color-grey-40);
-            border-radius: var(--ref-radius-md); background: transparent; cursor: pointer;
+            border-radius: var(--sys-border-radius-md); background: transparent; cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
             &:hover { background: var(--ref-color-grey-05); border-color: var(--ref-color-electric-blue-60); }
         }
         .media-thumb {
-            position: relative; width: 96px; height: 96px; border-radius: var(--ref-radius-md); overflow: hidden;
+            position: relative; width: 96px; height: 96px; border-radius: var(--sys-border-radius-md); overflow: hidden;
             img { width: 100%; height: 100%; object-fit: cover; display: block; }
             .media-overlay {
                 position: absolute; top: 4px; right: 4px; display: flex; gap: 4px;
                 opacity: 0; transition: opacity 0.15s;
             }
             .media-overlay-btn {
-                ::ng-deep button { width: 24px; min-width: 24px; height: 24px; min-height: 24px; padding: 0; border-radius: var(--ref-radius-sm); background: rgba(255,255,255,0.92) !important; }
+                ::ng-deep button { width: 24px; min-width: 24px; height: 24px; min-height: 24px; padding: 0; border-radius: var(--sys-border-radius-sm); background: rgba(255,255,255,0.92) !important; }
             }
             &:hover .media-overlay { opacity: 1; }
         }
 
-        /* Upload source picker popover */
-        .add-media-wrap { position: relative; }
-        .upload-picker {
-            position: absolute; top: calc(100% + 4px); left: 0; z-index: 100;
-            background: var(--ref-color-white); border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md); box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            padding: 4px; min-width: 180px;
-        }
-        .upload-option {
-            display: flex; align-items: center; gap: 8px; width: 100%;
-            background: none; border: none; border-radius: var(--ref-radius-md);
-            padding: 8px 12px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-regular);
-            color: var(--sys-text-color-default); cursor: pointer;
-            font-family: var(--ref-font-family); text-align: left;
-            transition: background 0.15s;
-            &:hover:not(.disabled) { background: var(--ref-color-grey-05); }
-            &.disabled { opacity: 0.5; cursor: not-allowed; }
-        }
-        .upload-option-suffix {
-            margin-left: auto; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
-            color: var(--ref-color-electric-blue-100);
-        }
-
         /* Drag & drop zone */
         .media-drop-zone {
-            position: relative; border-radius: 8px;
+            position: relative; border-radius: var(--sys-border-radius-lg);
             transition: background 0.15s, border-color 0.15s;
             &.drag-over {
                 background: var(--ref-color-electric-blue-05);
@@ -959,30 +780,17 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 8px; background: var(--ref-color-electric-blue-05);
-            border-radius: 8px; pointer-events: none;
-            font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--ref-color-electric-blue-100);
-        }
-
-        /* Per-thumb ⋯ menu */
-        .media-menu-wrap { position: relative; }
-        .media-menu {
-            position: absolute; top: calc(100% + 4px); right: 0; z-index: 110;
-            background: var(--ref-color-white); border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md); box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            padding: 4px; min-width: 120px;
-        }
-        .media-menu-item {
-            display: block; width: 100%;
-            ::ng-deep button { justify-content: flex-start !important; width: 100%; border-radius: var(--ref-radius-md); }
+            border-radius: var(--sys-border-radius-lg); pointer-events: none;
+            font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--ref-color-electric-blue-100);
         }
 
         /* Customizations section hint */
-        .customizations-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0 0 8px; }
+        .customizations-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0 0 8px; }
 
         /* Customization cards */
         .custom-card {
             border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md);
+            border-radius: var(--sys-border-radius-md);
             overflow: hidden; margin-bottom: 8px; background: var(--ref-color-white);
             transition: box-shadow 0.2s, border-color 0.2s;
             &.has-error { border-color: var(--ref-color-red-60); }
@@ -1001,347 +809,94 @@ const COLLAB_MOCK_USERS: CollabUser[] = [
             transition: background 0.15s;
         }
         .profile-row { display: flex; align-items: center; gap: 8px; }
-        .profile-label { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .profile-label { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
         .row-gap { display: flex; align-items: center; gap: 6px; }
         .inner-pad { padding: 8px 12px; }
 
         .option-row {
             display: flex; align-items: flex-start; justify-content: space-between;
-            padding: 12px; border-top: 1px solid var(--ref-color-grey-10); gap: 12px;
+            padding: var(--ref-spacing-sm) var(--ref-spacing-xs); border-top: 1px solid var(--sys-border-color-default); gap: var(--ref-spacing-sm);
             &.toggle-row { align-items: center; }
             &.action-row { align-items: center; }
         }
-        .option-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-        .option-info-row { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .option-label { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .option-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); line-height: var(--ref-font-line-height-xs); }
+        .option-info { display: flex; flex-direction: column; gap: var(--ref-spacing-xxxs); flex: 1; }
+        .option-info-row { display: flex; align-items: center; gap: var(--ref-spacing-xs); flex: 1; }
+        .option-label { font-size: var(--sys-text-style-body-size); font-weight: var(--sys-text-style-body-weight); line-height: var(--sys-text-style-body-line-height); color: var(--sys-text-color-default); }
+        .option-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); line-height: var(--sys-text-style-caption-line-height); }
 
         .first-comment-editor {
             padding: 8px 12px 12px;
-            border-top: 1px solid var(--ref-color-grey-10);
+            border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg);
         }
 
-        .network-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: var(--ref-font-line-height-xs); }
-        .network-card { border: 1px solid var(--sys-border-color-default); border-radius: var(--ref-radius-md); margin-top: 12px; overflow: hidden; background: var(--ref-color-white); }
+        .network-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: var(--sys-text-style-caption-line-height); }
+        .network-card { border: 1px solid var(--sys-border-color-default); border-radius: var(--sys-border-radius-md); margin-top: 12px; overflow: hidden; background: var(--ref-color-white); }
         .network-card-content { padding: 0 0 12px; }
-        .network-label { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .network-card-content > ap-segmented-control { display: block; padding: var(--ref-spacing-sm) var(--ref-spacing-sm) 0; }
+        .network-label { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
         .field-group {
             padding: 12px;
-            .field-label { display: block; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-light); margin-bottom: 4px; }
+            .field-label { display: block; font-family: var(--comp-forms-label-font-family); font-size: var(--comp-forms-label-size); font-weight: var(--comp-forms-label-font-weight); line-height: var(--comp-forms-label-line-height); color: var(--comp-forms-label-text-color); margin-bottom: var(--comp-forms-label-spacing-vertical); }
             .field-textarea {
-                width: 100%; padding: 8px 10px; border: 1px solid var(--sys-border-color-default);
-                border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
-                font-family: var(--ref-font-family); resize: none; outline: none;
-                background: var(--ref-color-white); box-sizing: border-box;
-                &::placeholder { color: var(--ref-color-grey-60); }
-                &:focus { border-color: var(--ref-color-electric-blue-60); }
+                width: 100%; padding: var(--ref-spacing-xxs) var(--comp-input-padding-horizontal); border: 1px solid var(--comp-input-border-default-color);
+                border-radius: var(--comp-input-border-radius); font-size: var(--comp-input-text-size); color: var(--comp-input-text-default-color);
+                font-family: var(--comp-input-text-font-family); font-weight: var(--comp-input-text-font-weight); line-height: var(--comp-input-text-line-height);
+                resize: none; outline: none;
+                background: var(--comp-input-fill-color); box-sizing: border-box;
+                &::placeholder { color: var(--comp-input-text-placeholder-color); }
+                &:hover:not(:focus) { border-color: var(--comp-input-border-hover-color); }
+                &:focus { border-color: var(--comp-input-border-focused-color); }
             }
         }
-        .empty-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 4px 0 0; }
+        .empty-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 4px 0 0; }
 
         /* Per-profile media override */
         .custom-media-section {
             padding: 8px 12px 10px;
-            border-top: 1px solid var(--ref-color-grey-10);
+            border-top: 1px solid var(--sys-border-color-default);
         }
         .custom-media-header {
             display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
         }
-        .custom-media-label { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .custom-media-hint { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
+        .custom-media-label { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
+        .custom-media-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
         .add-media-btn.small { width: 48px; height: 48px; }
-        .media-thumb.small { width: 48px; height: 48px; border-radius: 6px; }
+        .media-thumb.small { width: 48px; height: 48px; border-radius: var(--sys-border-radius-md); }
 
         /* ap-tabs inside network cards — collapse empty content area */
-        .network-card-content ap-tabs { display: block; }
-        .network-card-content ap-tabs ::ng-deep > div > div:last-child { display: none !important; }
 
         /* LinkedIn audience targeting */
         .option-section-title {
-            padding: 10px 12px 2px; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
-            color: var(--sys-text-color-light); text-transform: uppercase; letter-spacing: 0.04em;
-            border-top: 1px solid var(--ref-color-grey-10);
+            padding: 10px 12px 2px; font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); line-height: var(--sys-text-style-caption-bold-line-height);
+            color: var(--sys-text-color-default);
+            border-top: 1px solid var(--sys-border-color-default);
         }
-        .option-section-desc { padding: 2px 12px 6px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); line-height: var(--ref-font-line-height-xs); }
+        .option-section-desc { padding: 2px 12px 6px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); line-height: var(--sys-text-style-caption-line-height); }
         .audience-btn {
             display: block;
-            border-top: 1px solid var(--ref-color-grey-10);
-            ::ng-deep button { justify-content: flex-start !important; padding-left: 12px; width: 100%; }
+            width: fit-content;
+            margin: var(--ref-spacing-xxs) var(--ref-spacing-xs) 0;
         }
 
         /* Textarea with footer toolbar (Facebook/YouTube video title) */
         .field-textarea-wrap { position: relative; }
         .field-textarea-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 6px 4px 2px; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 4px 6px 4px 2px; border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-white);
         }
 
         /* Form fields for YouTube */
-        .field-select {
-            width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
-            font-family: var(--ref-font-family); background: var(--ref-color-white);
-            outline: none; cursor: pointer;
-            &:focus { border-color: var(--ref-color-electric-blue-60); }
-        }
-        .field-input {
-            width: 100%; padding: 8px 12px; border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md); font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default);
-            font-family: var(--ref-font-family); background: var(--ref-color-white);
-            outline: none; box-sizing: border-box;
-            &::placeholder { color: var(--ref-color-grey-60); }
-            &:focus { border-color: var(--ref-color-electric-blue-60); }
-        }
         .required-star { color: var(--ref-color-red-100); }
-        .optional-label { color: var(--ref-color-grey-60); font-weight: var(--ref-font-weight-regular); }
+        .optional-label { color: var(--ref-color-grey-60); font-weight: var(--sys-text-style-body-weight); }
 
-        /* Privacy button group (YouTube) */
-        .privacy-tabs { display: flex; }
-        .privacy-btn-left ::ng-deep button { border-radius: var(--comp-button-border-radius) 0 0 var(--comp-button-border-radius) !important; border-right: none !important; }
-        .privacy-btn-right ::ng-deep button { border-radius: 0 var(--comp-button-border-radius) var(--comp-button-border-radius) 0 !important; }
 
-        /* Tag Modal */
-        .tag-modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .tag-modal {
-            background: #ffffff;
-            border-radius: var(--ref-radius-xl);
-            width: 520px; max-width: 90vw;
-            display: flex; flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-        }
-        .tag-modal-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
-            border-bottom: 1px solid var(--sys-border-color-default);
-            flex-shrink: 0;
-        }
-        .tag-modal-title {
-            font-size: var(--ref-font-size-md);
-            font-weight: var(--ref-font-weight-bold);
-            line-height: var(--ref-font-line-height-lg);
-            color: var(--sys-text-color-default);
-        }
-        .tag-modal-image-area {
-            position: relative;
-            cursor: crosshair;
-            background: var(--ref-color-grey-10);
-            aspect-ratio: 1;
-            overflow: hidden;
-        }
-        .tag-modal-img {
-            width: 100%; height: 100%;
-            object-fit: cover; display: block;
-        }
-        .tag-modal-no-image {
-            display: flex; align-items: center; justify-content: center;
-            height: 100%; color: var(--ref-color-grey-60);
-            font-size: var(--ref-font-size-sm);
-            text-align: center; padding: var(--ref-spacing-md);
-        }
-        .tag-pin {
-            position: absolute; transform: translate(-50%, -50%);
-            display: flex; flex-direction: column; align-items: center; gap: var(--ref-spacing-xxxs);
-            z-index: 10; pointer-events: none;
-        }
-        .tag-pin-dot {
-            width: var(--ref-spacing-xs); height: var(--ref-spacing-xs);
-            border-radius: var(--ref-radius-full);
-            background: #ffffff;
-            border: 2px solid var(--ref-color-grey-100);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-        }
-        .tag-pin-badge {
-            display: flex; align-items: center; gap: var(--ref-spacing-xxxs);
-            background: rgba(0,0,0,0.7);
-            color: #ffffff;
-            font-size: var(--ref-font-size-xs);
-            line-height: var(--ref-font-line-height-xs);
-            padding: 2px 6px;
-            border-radius: var(--ref-radius-sm);
-            pointer-events: all; white-space: nowrap;
-        }
-        .tag-pin-remove {
-            background: none; border: none; color: #ffffff;
-            cursor: pointer; padding: 0; font-size: var(--ref-font-size-sm);
-            line-height: var(--ref-font-line-height-sm);
-        }
-        .tag-autocomplete {
-            pointer-events: all;
-            display: flex; flex-direction: column;
-            background: #ffffff;
-            border: 1px solid var(--ref-color-grey-20);
-            border-radius: var(--ref-radius-md);
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            min-width: 180px;
-        }
-        .tag-autocomplete-input {
-            border: none; outline: none;
-            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
-            font-size: var(--ref-font-size-sm);
-            font-family: var(--ref-font-family);
-            color: var(--sys-text-color-default);
-            background: transparent;
-        }
-        .tag-autocomplete-list { border-top: 1px solid var(--ref-color-grey-20); }
-        .tag-autocomplete-item {
-            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
-            font-size: var(--ref-font-size-sm);
-            color: var(--sys-text-color-default);
-            cursor: pointer;
-            &:hover { background: var(--ref-color-grey-05); }
-        }
-        .tag-modal-footer {
-            display: flex; justify-content: flex-end; gap: var(--ref-spacing-xxs);
-            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
-            border-top: 1px solid var(--sys-border-color-default);
-            flex-shrink: 0;
-        }
-
-        /* Invite Collaborators Modal */
-        .collab-modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .collab-modal {
-            background: #ffffff;
-            border-radius: var(--ref-radius-xl);
-            width: 480px; max-width: 90vw;
-            display: flex; flex-direction: column;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-        }
-        .collab-modal-header {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
-            border-bottom: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-xl) var(--ref-radius-xl) 0 0;
-            flex-shrink: 0;
-        }
-        .collab-modal-titles {
-            display: flex; flex-direction: column; gap: var(--ref-spacing-xxxs);
-        }
-        .collab-modal-title {
-            font-size: var(--ref-font-size-md);
-            font-weight: var(--ref-font-weight-bold);
-            line-height: var(--ref-font-line-height-lg);
-            color: var(--sys-text-color-default);
-        }
-        .collab-modal-subtitle {
-            font-size: var(--ref-font-size-xs);
-            line-height: var(--ref-font-line-height-xs);
-            color: var(--ref-color-grey-60);
-        }
-        .collab-modal-body {
-            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
-            display: flex; flex-direction: column; gap: var(--ref-spacing-xxs);
-        }
-        .collab-search-container { position: relative; }
-        .collab-search-wrap {
-            display: flex; align-items: center; gap: var(--ref-spacing-xxs);
-            height: 36px;
-            padding: 0 var(--ref-spacing-xs);
-            border: 1px solid var(--ref-color-grey-20);
-            border-radius: var(--ref-radius-sm);
-            background: #ffffff;
-            &:focus-within { border-color: var(--ref-color-electric-blue-100); outline: 2px solid var(--ref-color-electric-blue-20); }
-        }
-        .collab-search-input {
-            flex: 1; border: none; outline: none;
-            font-size: var(--ref-font-size-sm);
-            line-height: var(--ref-font-line-height-sm);
-            font-family: var(--ref-font-family);
-            color: var(--ref-color-grey-100);
-            background: transparent;
-            &::placeholder { color: var(--ref-color-grey-60); }
-        }
-        .collab-dropdown {
-            position: absolute; top: calc(100% + var(--ref-spacing-xxxs));
-            left: 0; right: 0; z-index: 10;
-            border: 1px solid var(--ref-color-grey-20);
-            border-radius: var(--ref-radius-md);
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .collab-dropdown-item {
-            display: flex; align-items: center; gap: var(--ref-spacing-xxs);
-            padding: var(--ref-spacing-xxs) var(--ref-spacing-sm);
-            cursor: pointer;
-            &:hover { background: var(--ref-color-grey-05); }
-            & + & { border-top: 1px solid var(--ref-color-grey-10); }
-        }
-        .collab-avatar-lg {
-            width: 32px; height: 32px;
-            border-radius: var(--ref-radius-full);
-            object-fit: cover; flex-shrink: 0;
-        }
-        .collab-user-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-        .collab-user-name {
-            font-size: var(--ref-font-size-sm);
-            font-weight: var(--ref-font-weight-bold);
-            line-height: var(--ref-font-line-height-sm);
-            color: var(--ref-color-grey-100);
-        }
-        .collab-user-handle {
-            font-size: var(--ref-font-size-xs);
-            line-height: var(--ref-font-line-height-xs);
-            color: var(--ref-color-grey-60);
-        }
-        .collab-max-reached {
-            font-size: var(--ref-font-size-xs);
-            line-height: var(--ref-font-line-height-xs);
-            color: var(--ref-color-grey-60);
-            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
-            background: var(--ref-color-grey-05);
-            border-radius: var(--ref-radius-sm);
-        }
-        .collab-chips {
-            display: flex; flex-wrap: wrap; gap: var(--ref-spacing-xxs);
-        }
-        .collab-chip {
-            display: inline-flex; align-items: center; gap: var(--ref-spacing-xxxs);
-            height: var(--ref-spacing-md);
-            padding: 0 var(--ref-spacing-xxs);
-            border-radius: var(--ref-radius-full);
-            background: var(--ref-color-grey-10);
-        }
-        .collab-avatar-sm {
-            width: var(--ref-spacing-md); height: var(--ref-spacing-md);
-            border-radius: var(--ref-radius-full);
-            object-fit: cover; flex-shrink: 0;
-        }
-        .collab-chip-handle {
-            font-size: var(--ref-font-size-xs);
-            line-height: var(--ref-font-line-height-xs);
-            color: var(--ref-color-grey-100);
-        }
-        .collab-chip-remove {
-            background: none; border: none; color: var(--ref-color-grey-60);
-            cursor: pointer; padding: 0;
-            font-size: var(--ref-font-size-sm);
-            line-height: var(--ref-font-line-height-sm);
-        }
-        .collab-modal-footer {
-            display: flex; justify-content: flex-end; gap: var(--ref-spacing-xxs);
-            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
-            border-top: 1px solid var(--sys-border-color-default);
-            border-radius: 0 0 var(--ref-radius-xl) var(--ref-radius-xl);
-            flex-shrink: 0;
-        }
     `],
 })
 export class ComposePanelComponent {
     state = inject(ComposeStateService);
+    private readonly dialog = inject(MatDialog);
     private el = inject(ElementRef);
     @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
     @ViewChild('replaceInput') private replaceInput!: ElementRef<HTMLInputElement>;
@@ -1353,11 +908,34 @@ export class ComposePanelComponent {
     flashingId = signal<string | null>(null);
     mediaExpanded = signal(this.state.mediaItems().length === 0);
     isDraggingOver = signal(false);
-    showUploadPicker = signal(false);
-    mediaMenuOpenId = signal<number | null>(null);
     replaceTargetId = signal<number | null>(null);
     readonly googleDriveConnected = false;
     readonly canvaConnected = false;
+
+    readonly uploadMenuItems: ActionDropdownItem[] = [
+        { name: 'computer', label: 'From computer', startSymbolId: 'image' },
+        { name: 'library', label: 'From Library', startSymbolId: 'folder' },
+        { name: 'gdrive', label: 'Google Drive', startSymbolId: 'image', badgeLabel: this.googleDriveConnected ? undefined : 'Connect', disabled: !this.googleDriveConnected },
+        { name: 'canva', label: 'Design with Canva', startSymbolId: 'pen', badgeLabel: this.canvaConnected ? undefined : 'Connect', disabled: !this.canvaConnected },
+    ];
+    readonly mediaMenuItems: ActionDropdownItem[] = [
+        { name: 'replace', label: 'Replace', startSymbolId: 'refresh' },
+        { name: 'remove', label: 'Remove', startSymbolId: 'trash', redModeEnabled: true },
+    ];
+
+    onUploadMenuAction(item: ActionDropdownItem): void {
+        switch (item.name) {
+            case 'computer': this.pickFromComputer(); break;
+            case 'library': this.openLibrary(); break;
+            case 'gdrive': this.openGoogleDrive(); break;
+            case 'canva': this.openCanva(); break;
+        }
+    }
+
+    onMediaMenuAction(id: number, item: ActionDropdownItem): void {
+        if (item.name === 'replace') this.replaceMedia(id);
+        else if (item.name === 'remove') this.removeMedia(id);
+    }
     customizationsExpanded = signal(true);
     fbOptionsExpanded = signal(true);
     igOptionsExpanded = signal(true);
@@ -1368,15 +946,14 @@ export class ComposePanelComponent {
 
     fbPostType = signal<'post' | 'reel' | 'story'>('post');
     igPostType = signal<'post' | 'reel' | 'story'>('post');
-    fbTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.fbPostType()));
-    igTabIndex = computed(() => (['post', 'reel', 'story'] as const).indexOf(this.igPostType()));
+    readonly postTypeOptions: SegmentedControlOption[] = [
+        { value: 'post', label: 'Post' },
+        { value: 'reel', label: 'Reel', symbolId: 'video' },
+        { value: 'story', label: 'Story' },
+    ];
 
     // Tag users modal
-    tagModalOpen = signal(false);
-    tagModalTags = signal<TaggedUser[]>([]);
     savedTags = signal<TaggedUser[]>([]);
-    pendingPin = signal<{ x: number; y: number } | null>(null);
-    tagSearchQuery = signal('');
 
     tagUsersLabel = computed(() => {
         const n = this.savedTags().length;
@@ -1387,103 +964,32 @@ export class ComposePanelComponent {
         this.state.mediaItems().find(m => m.type === 'image') ?? null
     );
 
-    tagSuggestions = computed(() => {
-        const q = this.tagSearchQuery().toLowerCase();
-        const all = ['sarah_design', 'john_marketing', 'alex_creative', 'maya_social', 'lucas_brand'];
-        return q ? all.filter(u => u.includes(q)).slice(0, 5) : all.slice(0, 5);
-    });
-
-    // Invite Collaborators modal
-    collabModalOpen = signal(false);
-    collabSearchQuery = signal('');
-    collabPending = signal<CollabUser[]>([]);
-
-    collabSuggestions = computed(() => {
-        const q = this.collabSearchQuery().toLowerCase();
-        if (!q) return [];
-        const selected = this.collabPending().map(u => u.handle);
-        return COLLAB_MOCK_USERS.filter(u =>
-            (u.handle.toLowerCase().includes(q) || u.name.toLowerCase().includes(q))
-            && !selected.includes(u.handle)
-        ).slice(0, 6);
-    });
-
     collabLabel = computed(() => {
         const n = this.state.collaborators().length;
         return n > 0 ? `Invite Collaborators (${n})` : 'Invite Collaborators';
     });
 
-    setFbPostType(i: number): void { this.fbPostType.set((['post', 'reel', 'story'] as const)[i]); }
-    setIgPostType(i: number): void { this.igPostType.set((['post', 'reel', 'story'] as const)[i]); }
+    setFbPostType(v: string): void { this.fbPostType.set(v as 'post' | 'reel' | 'story'); }
+    setIgPostType(v: string): void { this.igPostType.set(v as 'post' | 'reel' | 'story'); }
 
     openTagModal(): void {
-        this.tagModalTags.set([...this.savedTags()]);
-        this.pendingPin.set(null);
-        this.tagSearchQuery.set('');
-        this.tagModalOpen.set(true);
-    }
-
-    closeTagModal(): void {
-        this.tagModalOpen.set(false);
-        this.pendingPin.set(null);
-    }
-
-    saveTagModal(): void {
-        this.savedTags.set(this.tagModalTags());
-        this.closeTagModal();
-    }
-
-    onTagImageClick(event: MouseEvent): void {
-        const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
-        this.pendingPin.set({ x, y });
-        this.tagSearchQuery.set('');
-    }
-
-    selectTagSuggestion(username: string): void {
-        const pin = this.pendingPin();
-        if (!pin) return;
-        const tag: TaggedUser = { id: crypto.randomUUID(), x: pin.x, y: pin.y, username };
-        this.tagModalTags.update(tags => [...tags, tag]);
-        this.pendingPin.set(null);
-        this.tagSearchQuery.set('');
-    }
-
-    removeTag(id: string): void {
-        this.tagModalTags.update(tags => tags.filter(t => t.id !== id));
-    }
-
-    @HostListener('document:keydown.escape')
-    onEscape(): void {
-        if (this.tagModalOpen()) this.closeTagModal();
-        if (this.collabModalOpen()) this.closeCollabModal();
+        ModalComponent.openDialog(
+            this.dialog,
+            { matDialogConfig: { data: { imageUrl: this.tagModalImage()?.url ?? null, tags: this.savedTags() } } },
+            TagModalComponent,
+        ).afterClosed().subscribe((result) => {
+            if (result) this.savedTags.set(result);
+        });
     }
 
     openCollabModal(): void {
-        this.collabPending.set([...this.state.collaborators()]);
-        this.collabSearchQuery.set('');
-        this.collabModalOpen.set(true);
-    }
-
-    closeCollabModal(): void {
-        this.collabModalOpen.set(false);
-        this.collabSearchQuery.set('');
-    }
-
-    confirmCollabModal(): void {
-        this.state.collaborators.set(this.collabPending());
-        this.closeCollabModal();
-    }
-
-    selectCollaborator(user: CollabUser): void {
-        if (this.collabPending().length >= 3) return;
-        this.collabPending.update(list => [...list, user]);
-        this.collabSearchQuery.set('');
-    }
-
-    removeCollaborator(handle: string): void {
-        this.collabPending.update(list => list.filter(u => u.handle !== handle));
+        ModalComponent.openDialog(
+            this.dialog,
+            { matDialogConfig: { data: { collaborators: this.state.collaborators() } } },
+            CollabModalComponent,
+        ).afterClosed().subscribe((result) => {
+            if (result) this.state.collaborators.set(result);
+        });
     }
 
     fbWarning = computed(() => { const r = this.state.fbCharsRemaining(); return r < 1000 && r >= 0; });
@@ -1550,12 +1056,12 @@ export class ComposePanelComponent {
 
     networkHeaderBg(network: string): string {
         const tints: Record<string, string> = {
-            facebook:  'rgba(24,  119, 242, 0.06)',
-            instagram: 'rgba(225,  48,  108, 0.06)',
-            linkedin:  'rgba(10,  102, 194, 0.06)',
-            twitter:   'rgba(0,     0,   0, 0.04)',
-            youtube:   'rgba(255,   0,   0, 0.05)',
-            tiktok:    'rgba(0,     0,   0, 0.04)',
+            facebook:  'var(--ref-color-facebook-10)',
+            instagram: 'var(--ref-color-instagram-10)',
+            linkedin:  'var(--ref-color-linkedin-10)',
+            twitter:   'var(--ref-color-twitter-10)',
+            youtube:   'var(--ref-color-youtube-10)',
+            tiktok:    'var(--ref-color-tiktok-default-10)',
         };
         return tints[network] ?? 'var(--ref-color-grey-05)';
     }
@@ -1591,31 +1097,24 @@ export class ComposePanelComponent {
 
     removeMedia(id: number): void {
         this.state.removeMediaItem(id);
-        this.mediaMenuOpenId.set(null);
-    }
-
-    toggleUploadPicker(): void {
-        this.showUploadPicker.update(v => !v);
     }
 
     pickFromComputer(): void {
-        this.showUploadPicker.set(false);
         this.fileInput.nativeElement.click();
     }
 
     openLibrary(): void {
-        this.showUploadPicker.set(false);
         // Library picker integration — stub
     }
 
     openGoogleDrive(): void {
         if (!this.googleDriveConnected) return;
-        this.showUploadPicker.set(false);
+        // Google Drive picker integration — stub
     }
 
     openCanva(): void {
         if (!this.canvaConnected) return;
-        this.showUploadPicker.set(false);
+        // Canva integration — stub
     }
 
     onFilesSelected(event: Event): void {
@@ -1650,13 +1149,8 @@ export class ComposePanelComponent {
         }
     }
 
-    toggleMediaMenu(id: number): void {
-        this.mediaMenuOpenId.update(v => v === id ? null : id);
-    }
-
     replaceMedia(id: number): void {
         this.replaceTargetId.set(id);
-        this.mediaMenuOpenId.set(null);
         this.replaceInput.nativeElement.click();
     }
 
@@ -1672,7 +1166,6 @@ export class ComposePanelComponent {
     onDrop(event: DragEvent): void {
         event.preventDefault();
         this.isDraggingOver.set(false);
-        this.showUploadPicker.set(false);
         const files = event.dataTransfer?.files;
         if (!files) return;
         Array.from(files)

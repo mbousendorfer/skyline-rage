@@ -2,6 +2,7 @@ import { AvatarComponent } from '@agorapulse/ui-components/avatar';
 import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { InfoboxComponent } from '@agorapulse/ui-components/infobox';
+import { TagComponent } from '@agorapulse/ui-components/tag';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal } from '@angular/core';
@@ -20,7 +21,7 @@ interface Validation {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-preview-panel',
-    imports: [AvatarComponent, ButtonComponent, IconButtonComponent, InfoboxComponent, TooltipDirective, SymbolComponent],
+    imports: [AvatarComponent, ButtonComponent, IconButtonComponent, InfoboxComponent, TagComponent, TooltipDirective, SymbolComponent],
     template: `
         <div class="preview-panel">
             <div class="panel-header">Social Media Previews</div>
@@ -78,10 +79,7 @@ interface Validation {
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-badge">
-                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
-                                                        Customized
-                                                    </span>
+                                                    <ap-tag color="blue">Customized</ap-tag>
                                                 }
                                             </div>
                                             @for (v of fbValidations(profile.id); track v.key) {
@@ -166,10 +164,7 @@ interface Validation {
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-badge">
-                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
-                                                        Customized
-                                                    </span>
+                                                    <ap-tag color="blue">Customized</ap-tag>
                                                 }
                                             </div>
                                             @for (v of liValidations(profile.id); track v.key) {
@@ -254,10 +249,7 @@ interface Validation {
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-badge">
-                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
-                                                        Customized
-                                                    </span>
+                                                    <ap-tag color="blue">Customized</ap-tag>
                                                 }
                                             </div>
                                             @for (v of igValidations(profile.id); track v.key) {
@@ -358,10 +350,7 @@ interface Validation {
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
                                                 <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
-                                                    <span class="customized-badge">
-                                                        <ap-symbol symbolId="check" size="xs" color="azure"></ap-symbol>
-                                                        Customized
-                                                    </span>
+                                                    <ap-tag color="blue">Customized</ap-tag>
                                                 }
                                             </div>
                                             @for (v of xValidations(profile.id); track v.key) {
@@ -409,7 +398,7 @@ interface Validation {
             background: var(--ref-color-grey-bg); overflow: hidden;
         }
         .panel-header {
-            padding: 8px 16px; font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold);
+            padding: 8px 16px; font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height);
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg); flex-shrink: 0;
@@ -420,14 +409,14 @@ interface Validation {
             flex-shrink: 0;
         }
         .status {
-            display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-regular);
+            display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight);
             &.ready { color: var(--ref-color-grey-60); }
             &.warn  { color: var(--ref-color-orange-100); }
             &.err   { color: var(--ref-color-red-100); }
         }
         button.status.clickable {
-            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--ref-radius-sm);
-            font-family: var(--ref-font-family); font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
+            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--sys-border-radius-sm);
+            font-family: var(--ref-font-family); font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight);
             transition: background 0.15s;
             &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-10); } }
             &.warn { color: var(--ref-color-orange-100); &:hover { background: var(--ref-color-orange-10); } }
@@ -435,7 +424,7 @@ interface Validation {
         .empty-state {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 12px; padding: 24px; text-align: center;
-            p { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); margin: 0; line-height: var(--ref-font-line-height-xs); }
+            p { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0; line-height: var(--sys-text-style-caption-line-height); }
         }
         .previews-list {
             flex: 1; min-height: 0; overflow-y: auto; background: var(--ref-color-grey-bg);
@@ -447,9 +436,9 @@ interface Validation {
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 0 12px; cursor: pointer;
         }
-        .network-title { display: flex; align-items: center; gap: 8px; font-size: var(--ref-font-size-md); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
+        .network-title { display: flex; align-items: center; gap: 8px; font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); line-height: var(--sys-text-style-body-bold-line-height); color: var(--sys-text-color-default); }
         .network-right { display: flex; align-items: center; gap: 6px; }
-        .posts-count { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
+        .posts-count { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
         .net-error-dot {
             width: 8px; height: 8px; border-radius: 50%;
             background: var(--ref-color-red-100); flex-shrink: 0;
@@ -457,10 +446,10 @@ interface Validation {
 
         .preview-cards { padding: 0 0 16px; }
         .preview-card-wrapper {
-            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: var(--ref-radius-md);
+            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: var(--sys-border-radius-md);
             &.is-customized {
                 background: var(--ref-color-electric-blue-05);
-                border-radius: 12px;
+                border-radius: var(--sys-border-radius-lg);
                 padding: 0 8px 8px;
                 margin-left: -8px; margin-right: -8px; margin-bottom: 4px;
             }
@@ -472,16 +461,9 @@ interface Validation {
             padding: 8px 0;
             &.is-customized {
                 background: var(--ref-color-electric-blue-10);
-                border-radius: 8px 8px 0 0;
+                border-radius: var(--sys-border-radius-lg) var(--sys-border-radius-lg) 0 0;
                 padding: 8px 12px;
             }
-        }
-        .customized-badge {
-            display: flex; align-items: center; gap: 4px;
-            font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold);
-            background: var(--ref-color-electric-blue-20);
-            color: var(--ref-color-electric-blue-100);
-            border-radius: var(--ref-radius-full); padding: 4px 8px;
         }
 
         /* Infoboxes */
@@ -490,16 +472,16 @@ interface Validation {
         /* Post cards — no is-customized styling here, affordance is on the wrapper only */
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
-            border-radius: var(--ref-radius-md); overflow: hidden; background: var(--ref-color-white);
+            border-radius: var(--sys-border-radius-md); overflow: hidden; background: var(--ref-color-white);
             &.has-error { border-color: var(--ref-color-red-60); }
         }
         .x-card { padding-bottom: 12px; }
 
         .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .post-meta { flex: 1; }
-        .post-author { font-size: var(--ref-font-size-sm); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .post-date { display: flex; align-items: center; gap: 4px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
-        .post-text { padding: 4px 12px 8px; font-size: var(--ref-font-size-sm); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-sm); }
+        .post-author { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
+        .post-date { display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
+        .post-text { padding: 4px 12px 8px; font-size: var(--sys-text-style-body-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-body-line-height); }
         /* Carousel */
         .carousel {
             position: relative; overflow: hidden;
@@ -528,44 +510,44 @@ interface Validation {
         .carousel-dot {
             width: 6px; height: 6px; border-radius: 50%;
             background: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.15s;
-            &.active { background: white; }
+            &.active { background: var(--ref-color-white); }
         }
-        .see-more { font-size: var(--ref-font-size-xs); color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: var(--ref-font-weight-bold); }
+        .see-more { font-size: var(--sys-text-style-caption-bold-size); color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: var(--sys-text-style-caption-bold-weight); }
 
-        .fb-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
+        .fb-actions { display: flex; padding: 4px; border-top: 1px solid var(--sys-border-color-default); }
         .fb-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px; background: none; border: none; border-radius: 6px;
-            font-size: var(--ref-font-size-xs); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
+            padding: 8px; background: none; border: none; border-radius: var(--sys-border-radius-md);
+            font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
             &:hover { background: var(--ref-color-grey-05); }
         }
         .first-comment-preview {
             display: flex; align-items: flex-start; gap: 8px;
-            padding: 8px 12px; border-top: 1px solid var(--ref-color-grey-10);
+            padding: 8px 12px; border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg);
         }
         .comment-bubble {
-            flex: 1; background: var(--ref-color-grey-05); border-radius: 12px;
-            padding: 8px 12px; font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-xs);
+            flex: 1; background: var(--ref-color-grey-05); border-radius: var(--sys-border-radius-lg);
+            padding: 8px 12px; font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height);
         }
-        .li-actions { display: flex; padding: 4px; border-top: 1px solid var(--ref-color-grey-10); }
+        .li-actions { display: flex; padding: 4px; border-top: 1px solid var(--sys-border-color-default); }
         .li-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
-            padding: 8px 4px; background: none; border: none; border-radius: 6px;
-            font-size: var(--ref-font-size-xs); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
+            padding: 8px 4px; background: none; border: none; border-radius: var(--sys-border-radius-md);
+            font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); cursor: pointer; font-family: var(--ref-font-family);
             &:hover { background: var(--ref-color-grey-05); }
         }
         .ig-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
         .ig-meta { display: flex; flex-direction: column; }
-        .ig-author { font-size: var(--ref-font-size-xs); font-weight: var(--ref-font-weight-bold); color: var(--sys-text-color-default); }
-        .ig-time { font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); }
+        .ig-author { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
+        .ig-time { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
         .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
         .ig-actions-left { display: flex; gap: 12px; }
-        .ig-caption { padding: 2px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--sys-text-color-default); line-height: var(--ref-font-line-height-xs); }
-        .ig-first-comment { padding: 6px 12px 10px; font-size: var(--ref-font-size-xs); color: var(--ref-color-grey-60); border-top: 1px solid var(--ref-color-grey-10); }
+        .ig-caption { padding: 2px 12px 10px; font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height); }
+        .ig-first-comment { padding: 6px 12px 10px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); border-top: 1px solid var(--sys-border-color-default); }
         .ig-collaborators { display: flex; align-items: center; gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs); }
-        .ig-collab-with { font-size: var(--ref-font-size-xs); line-height: var(--ref-font-line-height-xs); color: var(--ref-color-grey-60); }
-        .ig-collab-avatar { width: 28px; height: 28px; border-radius: var(--ref-radius-full); object-fit: cover; border: 2px solid #ffffff; }
+        .ig-collab-with { font-size: var(--sys-text-style-caption-size); line-height: var(--sys-text-style-caption-line-height); color: var(--ref-color-grey-60); }
+        .ig-collab-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ref-color-white); }
     `],
 })
 export class PreviewPanelComponent {

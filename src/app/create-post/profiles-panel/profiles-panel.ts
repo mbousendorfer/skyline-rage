@@ -1,7 +1,7 @@
 import { CheckboxComponent } from '@agorapulse/ui-components/checkbox';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
-import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
+import { InputSearchComponent } from '@agorapulse/ui-components/input-search';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -11,21 +11,18 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-profiles-panel',
-    imports: [CheckboxComponent, AvatarComponent, IconButtonComponent, TabsComponent, TabComponent, TooltipDirective, SymbolComponent, FormsModule],
+    imports: [CheckboxComponent, AvatarComponent, TabsComponent, TabComponent, InputSearchComponent, TooltipDirective, SymbolComponent, FormsModule],
     template: `
         <div class="profiles-panel">
             <div class="panel-header">Social Profiles</div>
 
             <div class="search-box">
-                <ap-symbol symbolId="search" size="xs" color="basic-grey"></ap-symbol>
-                <input
-                    type="text"
+                <ap-input-search
                     placeholder="Search..."
-                    [(ngModel)]="searchQuery"
-                    (ngModelChange)="onSearch($event)" />
-                @if (searchQuery()) {
-                    <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Clear search" (onClick)="clearSearch()"></ap-icon-button>
-                }
+                    [clearable]="true"
+                    [ngModel]="searchQuery()"
+                    (ngModelChange)="onSearch($event)">
+                </ap-input-search>
             </div>
 
             <ap-tabs class="profiles-tabs"
@@ -134,34 +131,20 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
         .panel-header {
             padding: 8px 16px;
-            font-size: var(--ref-font-size-sm);
-            font-weight: var(--ref-font-weight-bold);
+            font-size: var(--sys-text-style-h3-size);
+            font-weight: var(--sys-text-style-h3-weight);
+            line-height: var(--sys-text-style-h3-line-height);
             color: var(--sys-text-color-default);
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
 
         .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             padding: 8px 12px;
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
 
-            input {
-                flex: 1;
-                border: none;
-                outline: none;
-                font-size: var(--ref-font-size-xs);
-                color: var(--sys-text-color-default);
-                background: transparent;
-                font-family: var(--ref-font-family);
-
-                &::placeholder {
-                    color: var(--ref-color-grey-60);
-                }
-            }
+            ap-input-search { display: block; }
         }
 
 
@@ -169,7 +152,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             display: block;
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
-            ::ng-deep > div > div:last-child { display: none !important; }
+            ::ng-deep .ap-tabs__content { display: none; }
         }
 
         .select-all {
@@ -204,10 +187,9 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
 
             .group-name {
                 flex: 1;
-                font-size: var(--ref-font-size-xs);
-                font-weight: var(--ref-font-weight-bold);
-                letter-spacing: 0.6px;
-                text-transform: uppercase;
+                font-size: var(--sys-text-style-caption-bold-size);
+                font-weight: var(--sys-text-style-caption-bold-weight);
+                line-height: var(--sys-text-style-caption-bold-line-height);
                 color: var(--ref-color-grey-60);
                 white-space: nowrap;
                 overflow: hidden;
@@ -239,8 +221,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .profile-name {
-            font-size: var(--ref-font-size-sm);
-            font-weight: var(--ref-font-weight-regular);
+            font-size: var(--sys-text-style-body-size);
+            font-weight: var(--sys-text-style-body-weight);
             color: var(--sys-text-color-default);
             white-space: nowrap;
             overflow: hidden;
@@ -255,9 +237,9 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .selected-count {
-            font-size: var(--ref-font-size-xs);
+            font-size: var(--sys-text-style-caption-size);
             color: var(--ref-color-electric-blue-100);
-            font-weight: var(--ref-font-weight-regular);
+            font-weight: var(--sys-text-style-caption-weight);
         }
 
         .queues-empty {
@@ -268,7 +250,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             justify-content: center;
             gap: 8px;
             color: var(--ref-color-grey-60);
-            font-size: var(--ref-font-size-xs);
+            font-size: var(--sys-text-style-caption-size);
         }
     `],
 })
@@ -298,10 +280,6 @@ export class ProfilesPanelComponent {
 
     onSearch(query: string): void {
         this.searchQuery.set(query);
-    }
-
-    clearSearch(): void {
-        this.searchQuery.set('');
     }
 
     filterProfiles(profiles: Profile[]): Profile[] {

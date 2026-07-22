@@ -64,7 +64,27 @@
       "Bash(find /Users/matthieu.bousendorfer/sources/compose-claude/node_modules -name *.d.ts)",
       "Bash(find /Users/matthieu.bousendorfer/sources/design/node_modules/@agorapulse -name *.d.ts)",
       "Bash(find /Users/matthieu.bousendorfer/sources/design/node_modules/@agorapulse -type f -name *.mjs)",
-      "Bash(grep -n \"rgba\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|font-size:\\\\|font-weight:\\\\|line-height:\\\\|padding:\\\\|margin:\\\\|gap:\\\\|border-radius:\\\\|border:\\\\|background:\" /Users/matthieu.bousendorfer/sources/compose-claude/src/app/create-post/compose-panel/compose-panel.ts)"
+      "Bash(grep -n \"rgba\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|font-size:\\\\|font-weight:\\\\|line-height:\\\\|padding:\\\\|margin:\\\\|gap:\\\\|border-radius:\\\\|border:\\\\|background:\" /Users/matthieu.bousendorfer/sources/compose-claude/src/app/create-post/compose-panel/compose-panel.ts)",
+      "Bash(grep -iA30 \"paths\")",
+      "Bash(grep -iA12 '\"styles\"')",
+      "Bash(which python3; which npx; ls /opt/homebrew/bin/node 2>/dev/null; which node)",
+      "Bash(lsof -ti:8231)",
+      "mcp__plugin_figma_figma__get_libraries",
+      "Bash(awk '/\\\\.ap-native-select/,/^}/' __TRACKED_VAR__/_select.scss)",
+      "Bash(cd /tmp && curl -s -o composer_fig1.png \"https://www.figma.com/api/mcp/asset/44430585-dc12-418d-9634-b0890d3a39b7\" && echo \"saved $\\(ls -la composer_fig1.png | awk '{print $5}'\\) bytes\")",
+      "Bash(awk '{print $5}')",
+      "mcp__plugin_figma_figma__upload_assets",
+      "Bash(:)",
+      "Bash(grep -nA1 \"panel-header\" src/app/create-post/compose-panel/compose-panel.ts)",
+      "Bash(sed -n '858,859p;903,904p' src/app/create-post/compose-panel/compose-panel.ts)",
+      "Bash(sed -n '135,142p' src/app/create-post/profiles-panel/profiles-panel.ts)",
+      "Bash(sed -n '411,416p' src/app/create-post/preview-panel/preview-panel.ts)",
+      "Bash(sed -n '450p' src/app/create-post/preview-panel/preview-panel.ts)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\),indent=2\\)\\); print\\('deps has @angular/cli:', '@angular/cli' in {**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('scripts:', json.dumps\\(d.get\\('scripts',{}\\),indent=2\\)[:600]\\); alld={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; print\\('has @angular/cli:', '@angular/cli' in alld\\); print\\('has @angular/build:', '@angular/build' in alld\\)\")",
+      "Bash(ln -sfn . skyline-rage)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)"
     ]
   }
 }
