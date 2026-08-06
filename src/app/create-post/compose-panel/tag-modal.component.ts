@@ -87,13 +87,13 @@ const TAG_USERS = ['sarah_design', 'john_marketing', 'alex_creative', 'maya_soci
         .tag-pin-dot {
             width: var(--ref-spacing-xs); height: var(--ref-spacing-xs); border-radius: 50%;
             background: var(--ref-color-white); border: 2px solid var(--ref-color-grey-100);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 4px var(--net-pin-shadow);
         }
         .tag-pin-badge {
             display: flex; align-items: center; gap: var(--ref-spacing-xxxs);
-            background: rgba(0,0,0,0.7); color: var(--ref-color-white);
+            background: var(--net-pin-badge-bg); color: var(--ref-color-white);
             font-size: var(--sys-text-style-caption-size); line-height: var(--sys-text-style-caption-line-height);
-            padding: 2px 6px; border-radius: var(--sys-border-radius-sm);
+            padding: 0 var(--ref-spacing-xxxs); border-radius: var(--sys-border-radius-sm);
             pointer-events: all; white-space: nowrap;
         }
         .tag-pin-remove {

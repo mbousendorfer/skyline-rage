@@ -1,5 +1,6 @@
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
 import { ButtonComponent } from '@agorapulse/ui-components/button';
+import { DotStepperComponent } from '@agorapulse/ui-components/dot-stepper';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { InfoboxComponent } from '@agorapulse/ui-components/infobox';
 import { TagComponent } from '@agorapulse/ui-components/tag';
@@ -21,7 +22,7 @@ interface Validation {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-preview-panel',
-    imports: [AvatarComponent, ButtonComponent, IconButtonComponent, InfoboxComponent, TagComponent, TooltipDirective, SymbolComponent],
+    imports: [AvatarComponent, ButtonComponent, DotStepperComponent, IconButtonComponent, InfoboxComponent, TagComponent, TooltipDirective, SymbolComponent],
     template: `
         <div class="preview-panel">
             <div class="panel-header">Social Media Previews</div>
@@ -69,7 +70,7 @@ interface Validation {
                                 </div>
                                 <div class="network-right">
                                     <span class="posts-count">{{ state.facebookProfiles().length }} post(s)</span>
-                                    <ap-icon-button [symbolId]="fbExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
+                                    <ap-icon-button [symbolId]="fbExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
                             </div>
                             @if (fbExpanded()) {
@@ -77,7 +78,7 @@ interface Validation {
                                     @for (profile of state.facebookProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -117,11 +118,12 @@ interface Validation {
                                                         @if (state.getDisplayMedia(profile.id).length > 1) {
                                                             <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
                                                             <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
-                                                            <div class="carousel-dots">
-                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
-                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
-                                                                }
-                                                            </div>
+                                                            <ap-dot-stepper class="carousel-dots"
+                                                                [items]="state.getDisplayMedia(profile.id)"
+                                                                [index]="getCarouselIndex(profile.id)"
+                                                                [interactive]="true"
+                                                                (dotClick)="setCarouselIndex(profile.id, $event)">
+                                                            </ap-dot-stepper>
                                                         }
                                                     </div>
                                                 }
@@ -159,7 +161,7 @@ interface Validation {
                                 </div>
                                 <div class="network-right">
                                     <span class="posts-count">{{ state.linkedinProfiles().length }} post(s)</span>
-                                    <ap-icon-button [symbolId]="liExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
+                                    <ap-icon-button [symbolId]="liExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
                             </div>
                             @if (liExpanded()) {
@@ -167,7 +169,7 @@ interface Validation {
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -213,11 +215,12 @@ interface Validation {
                                                         @if (state.getDisplayMedia(profile.id).length > 1) {
                                                             <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
                                                             <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
-                                                            <div class="carousel-dots">
-                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
-                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
-                                                                }
-                                                            </div>
+                                                            <ap-dot-stepper class="carousel-dots"
+                                                                [items]="state.getDisplayMedia(profile.id)"
+                                                                [index]="getCarouselIndex(profile.id)"
+                                                                [interactive]="true"
+                                                                (dotClick)="setCarouselIndex(profile.id, $event)">
+                                                            </ap-dot-stepper>
                                                         }
                                                     </div>
                                                 }
@@ -250,7 +253,7 @@ interface Validation {
                                 </div>
                                 <div class="network-right">
                                     <span class="posts-count">{{ state.instagramProfiles().length }} post(s)</span>
-                                    <ap-icon-button [symbolId]="igExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
+                                    <ap-icon-button [symbolId]="igExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
                             </div>
                             @if (igExpanded()) {
@@ -258,7 +261,7 @@ interface Validation {
                                     @for (profile of state.instagramProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -294,11 +297,12 @@ interface Validation {
                                                         @if (state.getDisplayMedia(profile.id).length > 1) {
                                                             <button class="carousel-btn prev" (click)="prevSlide(profile.id)" [disabled]="getCarouselIndex(profile.id) === 0"><ap-symbol symbolId="chevron-left" size="xs" color="white"></ap-symbol></button>
                                                             <button class="carousel-btn next" (click)="nextSlide(profile.id, state.getDisplayMedia(profile.id).length)" [disabled]="getCarouselIndex(profile.id) === state.getDisplayMedia(profile.id).length - 1"><ap-symbol symbolId="chevron-right" size="xs" color="white"></ap-symbol></button>
-                                                            <div class="carousel-dots">
-                                                                @for (img of state.getDisplayMedia(profile.id); track img.id; let i = $index) {
-                                                                    <span class="carousel-dot" [class.active]="getCarouselIndex(profile.id) === i" (click)="setCarouselIndex(profile.id, i)"></span>
-                                                                }
-                                                            </div>
+                                                            <ap-dot-stepper class="carousel-dots"
+                                                                [items]="state.getDisplayMedia(profile.id)"
+                                                                [index]="getCarouselIndex(profile.id)"
+                                                                [interactive]="true"
+                                                                (dotClick)="setCarouselIndex(profile.id, $event)">
+                                                            </ap-dot-stepper>
                                                         }
                                                     </div>
                                                 }
@@ -351,7 +355,7 @@ interface Validation {
                                 </div>
                                 <div class="network-right">
                                     <span class="posts-count">{{ state.twitterProfiles().length }} post(s)</span>
-                                    <ap-icon-button [symbolId]="xExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat" size="small"></ap-icon-button>
+                                    <ap-icon-button [symbolId]="xExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
                             </div>
                             @if (xExpanded()) {
@@ -359,7 +363,7 @@ interface Validation {
                                     @for (profile of state.twitterProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" size="small" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -419,25 +423,20 @@ interface Validation {
             flex: 1; min-height: 0; min-width: 0;
             background: var(--ref-color-grey-bg); overflow: hidden;
         }
-        .panel-header {
-            padding: 8px 16px; font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height);
-            color: var(--sys-text-color-default);
-            border-bottom: 1px solid var(--sys-border-color-default);
-            background: var(--ref-color-grey-bg); flex-shrink: 0;
-        }
         .status-bar {
-            display: flex; gap: 16px; padding: 8px 16px; align-items: center;
+            display: flex; gap: var(--ref-spacing-sm); padding: var(--ref-spacing-xxs) var(--ref-spacing-sm); align-items: center;
             background: var(--ref-color-grey-bg); border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
         .status {
-            display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight);
-            &.ready { color: var(--ref-color-grey-60); }
+            display: flex; align-items: center; gap: var(--ref-spacing-xxxs); font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight);
+            &.ready { color: var(--sys-text-color-light); }
             &.warn  { color: var(--ref-color-orange-100); }
             &.err   { color: var(--ref-color-red-100); }
         }
         button.status.clickable {
-            background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--sys-border-radius-sm);
+            background: none; border: none; cursor: pointer;
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-radius: var(--sys-border-radius-sm);
             font-family: var(--ref-font-family); font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight);
             transition: background 0.15s;
             &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-10); } }
@@ -445,66 +444,74 @@ interface Validation {
         }
         .empty-state {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 12px; padding: 24px; text-align: center;
-            p { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0; line-height: var(--sys-text-style-caption-line-height); }
+            gap: var(--ref-spacing-xs); padding: var(--ref-spacing-md); text-align: center;
+            p { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); margin: 0; line-height: var(--sys-text-style-caption-line-height); }
         }
         .previews-list {
             flex: 1; min-height: 0; overflow-y: auto; background: var(--ref-color-grey-bg);
             display: flex; flex-direction: column; align-items: center;
             scroll-behavior: smooth;
         }
-        .network-section { width: 100%; max-width: 500px; padding: 16px 16px 0; }
+        .network-section { width: 100%; max-width: 500px; padding: var(--ref-spacing-sm) var(--ref-spacing-sm) 0; }
         .network-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 0 12px; cursor: pointer;
+            padding: 0 0 var(--ref-spacing-xs); cursor: pointer;
         }
-        .network-title { display: flex; align-items: center; gap: 8px; font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); line-height: var(--sys-text-style-body-bold-line-height); color: var(--sys-text-color-default); }
-        .network-right { display: flex; align-items: center; gap: 6px; }
-        .posts-count { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
+        .network-title { display: flex; align-items: center; gap: var(--ref-spacing-xxs); font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); line-height: var(--sys-text-style-body-bold-line-height); color: var(--sys-text-color-default); }
+        .network-right { display: flex; align-items: center; gap: var(--ref-spacing-xxs); }
+        .posts-count { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); }
+        /* Kept hand-built: Badge is blue/orange only and Status renders a pill, not a bare dot. */
         .net-error-dot {
-            width: 8px; height: 8px; border-radius: 50%;
+            width: var(--ref-spacing-xxs); height: var(--ref-spacing-xxs); border-radius: 50%;
             background: var(--ref-color-red-100); flex-shrink: 0;
         }
 
-        .preview-cards { padding: 0 0 16px; }
+        .preview-cards { padding: 0 0 var(--ref-spacing-sm); }
         .preview-card-wrapper {
-            margin-bottom: 8px; scroll-margin-top: 12px; border-radius: var(--sys-border-radius-md);
+            margin-bottom: var(--ref-spacing-xxs); scroll-margin-top: var(--ref-spacing-xs); border-radius: var(--sys-border-radius-md);
             &.is-customized {
                 background: var(--ref-color-electric-blue-05);
                 border-radius: var(--sys-border-radius-lg);
-                padding: 0 8px 8px;
-                margin-left: -8px; margin-right: -8px; margin-bottom: 4px;
+                padding: 0 var(--ref-spacing-xxs) var(--ref-spacing-xxs);
+                margin-left: calc(-1 * var(--ref-spacing-xxs)); margin-right: calc(-1 * var(--ref-spacing-xxs));
+                margin-bottom: var(--ref-spacing-xxxs);
             }
         }
 
         /* Customize bar */
         .customize-bar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 0;
+            padding: var(--ref-spacing-xxs) 0;
             &.is-customized {
                 background: var(--ref-color-electric-blue-10);
                 border-radius: var(--sys-border-radius-lg) var(--sys-border-radius-lg) 0 0;
-                padding: 8px 12px;
+                padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             }
         }
 
         /* Infoboxes */
-        .validation-item { margin-bottom: 6px; }
+        .validation-item { margin-bottom: var(--ref-spacing-xxxs); }
 
-        /* Post cards — faux social feed: mimic each network's real look, not the Agorapulse DS */
+        /* ─────────────────────────────────────────────────────────────────────
+           Post cards — faux social feed. Deliberately OUTSIDE the Agorapulse DS:
+           they reproduce each network's own chrome so the user can judge the real
+           rendering. Colours come from src/_network-chrome.scss (--fb-*, --li-*,
+           --ig-*, --x-*, --net-*); the px type scales below are the networks' own.
+           Nothing here may be tokenized to DS colour tokens — see that file.
+           ───────────────────────────────────────────────────────────────────── */
         .fb-card, .li-card, .ig-card, .x-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: var(--sys-border-radius-md); overflow: hidden; background: var(--ref-color-white);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--net-font-family);
             &.has-error { border-color: var(--ref-color-red-60); }
         }
         .net-more { margin-left: auto; cursor: pointer; flex-shrink: 0; }
 
-        .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+        .post-header { display: flex; align-items: center; gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); }
         .post-meta { flex: 1; }
         .post-author { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
-        .post-date { display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
-        .post-text { padding: 4px 12px 8px; font-size: var(--sys-text-style-body-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-body-line-height); }
+        .post-date { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); }
+        .post-text { padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs) var(--ref-spacing-xxs); font-size: var(--sys-text-style-body-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-body-line-height); }
         /* Carousel */
         .carousel {
             position: relative; overflow: hidden;
@@ -515,90 +522,87 @@ interface Validation {
             flex: 0 0 100%;
             img { width: 100%; height: 200px; object-fit: cover; display: block; }
         }
+        /* Hand-built: no DS component for a media carousel arrow. Scrim from the network layer. */
         .carousel-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(0,0,0,0.45); border: none; border-radius: 50%;
-            width: 28px; height: 28px; cursor: pointer;
+            background: var(--net-scrim); border: none; border-radius: 50%;
+            width: var(--ref-spacing-md); height: var(--ref-spacing-md); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.15s; z-index: 2;
-            &:hover:not(:disabled) { background: rgba(0,0,0,0.65); }
+            &:hover:not(:disabled) { background: var(--net-scrim-hover); }
             &:disabled { opacity: 0.25; cursor: default; }
-            &.prev { left: 8px; }
-            &.next { right: 8px; }
+            &.prev { left: var(--ref-spacing-xxs); }
+            &.next { right: var(--ref-spacing-xxs); }
         }
+        /* DS Dot Stepper, positioned over the media. .dots inside is width:100% + centered. */
         .carousel-dots {
-            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 4px; z-index: 2;
-        }
-        .carousel-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.15s;
-            &.active { background: var(--ref-color-white); }
+            position: absolute; bottom: var(--ref-spacing-xxs); left: 0; right: 0; z-index: 2;
         }
         .see-more { font-size: var(--sys-text-style-caption-bold-size); color: var(--ref-color-electric-blue-100); cursor: pointer; font-weight: var(--sys-text-style-caption-bold-weight); }
 
         /* ── Facebook — real look ── */
-        .fb-card .post-author { font-size: 15px; font-weight: 600; color: #050505; line-height: 1.2; }
-        .fb-card .post-date { font-size: 13px; color: #65676B; }
-        .fb-card .post-text { font-size: 15px; color: #050505; line-height: 1.3333; padding: 4px 12px 10px; }
-        .fb-engagement { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 13px; color: #65676B; border-bottom: 1px solid #CED0D4; }
+        .fb-card .post-author { font-size: 15px; font-weight: 600; color: var(--fb-text); line-height: 1.2; }
+        .fb-card .post-date { font-size: 13px; color: var(--fb-text-muted); }
+        .fb-card .post-text { font-size: 15px; color: var(--fb-text); line-height: 1.3333; padding: 4px 12px 10px; }
+        .fb-engagement { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 13px; color: var(--fb-text-muted); border-bottom: 1px solid var(--fb-divider); }
         .fb-reactions { display: flex; align-items: center; gap: 5px; }
         .fb-actions { display: flex; padding: 4px; }
         .fb-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
             padding: 8px; background: none; border: none; border-radius: 6px;
-            font-size: 15px; font-weight: 600; color: #65676B; cursor: pointer; font-family: inherit;
-            &:hover { background: #F2F2F2; }
+            font-size: 15px; font-weight: 600; color: var(--fb-text-muted); cursor: pointer; font-family: inherit;
+            &:hover { background: var(--fb-action-hover); }
         }
+        /* Agorapulse chrome again below — the first-comment preview is our UI, not Facebook's */
         .first-comment-preview {
-            display: flex; align-items: flex-start; gap: 8px;
-            padding: 8px 12px; border-top: 1px solid var(--sys-border-color-default);
+            display: flex; align-items: flex-start; gap: var(--ref-spacing-xxs);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg);
         }
         .comment-bubble {
             flex: 1; background: var(--ref-color-grey-05); border-radius: var(--sys-border-radius-lg);
-            padding: 8px 12px; font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height);
         }
         /* ── LinkedIn — real look ── */
         .li-card .post-header { align-items: flex-start; }
-        .li-card .post-author { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.9); line-height: 1.28; }
-        .li-sub { font-size: 12px; color: rgba(0,0,0,0.6); line-height: 1.33; }
-        .li-card .post-date { font-size: 12px; color: rgba(0,0,0,0.6); }
-        .li-card .post-text { font-size: 14px; color: rgba(0,0,0,0.9); line-height: 1.43; }
-        .li-social { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: rgba(0,0,0,0.6); border-bottom: 1px solid #e8e8e8; }
+        .li-card .post-author { font-size: 14px; font-weight: 600; color: var(--li-text); line-height: 1.28; }
+        .li-sub { font-size: 12px; color: var(--li-text-muted); line-height: 1.33; }
+        .li-card .post-date { font-size: 12px; color: var(--li-text-muted); }
+        .li-card .post-text { font-size: 14px; color: var(--li-text); line-height: 1.43; }
+        .li-social { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; color: var(--li-text-muted); border-bottom: 1px solid var(--li-divider); }
         .li-reactions { display: flex; align-items: center; gap: 4px; }
         .li-actions { display: flex; padding: 4px; }
         .li-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
             padding: 10px 4px; background: none; border: none; border-radius: 4px;
-            font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.6); cursor: pointer; font-family: inherit;
-            &:hover { background: rgba(0,0,0,0.08); }
+            font-size: 14px; font-weight: 600; color: var(--li-text-muted); cursor: pointer; font-family: inherit;
+            &:hover { background: var(--li-action-hover); }
         }
         /* ── Instagram — real look ── */
-        .ig-card { border-color: #dbdbdb; }
+        .ig-card { border-color: var(--ig-border); }
         .ig-header { display: flex; align-items: center; gap: 10px; padding: 8px 14px; }
-        .ig-author { font-size: 14px; font-weight: 600; color: #262626; }
+        .ig-author { font-size: 14px; font-weight: 600; color: var(--ig-text); }
         .ig-actions { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 4px; }
         .ig-actions-left { display: flex; gap: 16px; }
-        .ig-likes { padding: 2px 14px; font-size: 14px; font-weight: 600; color: #262626; }
-        .ig-caption { padding: 2px 14px 4px; font-size: 14px; color: #262626; line-height: 1.4; }
+        .ig-likes { padding: 2px 14px; font-size: 14px; font-weight: 600; color: var(--ig-text); }
+        .ig-caption { padding: 2px 14px 4px; font-size: 14px; color: var(--ig-text); line-height: 1.4; }
         .ig-caption strong, .ig-first-comment strong { font-weight: 600; }
-        .ig-caption .see-more { color: #8E8E8E; font-weight: 400; }
-        .ig-first-comment { padding: 4px 14px; font-size: 14px; color: #262626; }
-        .ig-postdate { padding: 4px 14px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2px; color: #8E8E8E; }
+        .ig-caption .see-more { color: var(--ig-text-muted); font-weight: 400; }
+        .ig-first-comment { padding: 4px 14px; font-size: 14px; color: var(--ig-text); }
+        .ig-postdate { padding: 4px 14px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2px; color: var(--ig-text-muted); }
         .ig-collaborators { display: flex; align-items: center; gap: 6px; padding: 4px 14px; }
-        .ig-collab-with { font-size: 12px; color: #8E8E8E; }
-        .ig-collab-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; }
+        .ig-collab-with { font-size: 12px; color: var(--ig-text-muted); }
+        .ig-collab-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--ig-avatar-ring); }
 
         /* ── X (Twitter) — real look ── */
         .x-card { padding-bottom: 4px; }
         .x-header { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px 2px; }
         .x-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
-        .x-name { font-size: 15px; font-weight: 700; color: #0f1419; }
-        .x-handle { font-size: 14px; color: #536471; }
-        .x-text { padding: 2px 14px 10px; font-size: 15px; color: #0f1419; line-height: 1.35; }
+        .x-name { font-size: 15px; font-weight: 700; color: var(--x-text); }
+        .x-handle { font-size: 14px; color: var(--x-text-muted); }
+        .x-text { padding: 2px 14px 10px; font-size: 15px; color: var(--x-text); line-height: 1.35; }
         .x-actions { display: flex; align-items: center; justify-content: space-between; padding: 2px 14px 8px; }
-        .x-action { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #536471; }
+        .x-action { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--x-text-muted); }
         .x-action-right { display: flex; align-items: center; gap: 16px; }
     `],
 })

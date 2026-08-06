@@ -25,18 +25,18 @@ import { ComposeStateService } from './compose-state';
                     <ap-icon-button
                         symbolId="history"
                         ariaLabel="Post history"
-                        type="flat"
-                        [class.panel-btn-active]="rightPanel() === 'history'"
+                        [type]="rightPanel() === 'history' ? 'stroked' : 'flat'"
+                        [color]="rightPanel() === 'history' ? 'blue' : 'none'"
                         [apTooltip]="'Post modification history'"
                         apTooltipPosition="bottom"
                         [apTooltipShowDelay]="400"
                         (onClick)="togglePanel('history')">
                     </ap-icon-button>
                     <ap-icon-button
-                        type="flat"
                         symbolId="single-chat-bubble"
                         ariaLabel="Post conversation"
-                        [class.panel-btn-active]="rightPanel() === 'conversation'"
+                        [type]="rightPanel() === 'conversation' ? 'stroked' : 'flat'"
+                        [color]="rightPanel() === 'conversation' ? 'blue' : 'none'"
                         [apTooltip]="'Post conversation'"
                         apTooltipPosition="bottom"
                         [apTooltipShowDelay]="400"
@@ -89,11 +89,11 @@ import { ComposeStateService } from './compose-state';
                                                     <span class="conv-time">{{ msg.time }}</span>
                                                 </div>
                                                 <ap-tag [color]="msg.type === 'Internal' ? 'blue' : 'tagOrange'">{{ msg.type }}</ap-tag>
-                                                <ap-icon-button class="conv-reply-btn" type="flat" size="small" symbolId="reply" ariaLabel="Reply" [apTooltip]="'Reply to this message'" apTooltipPosition="left" [apTooltipShowDelay]="400" (onClick)="replyingTo.set(msg.id)"></ap-icon-button>
+                                                <ap-icon-button class="conv-reply-btn" type="flat" symbolId="reply" ariaLabel="Reply" [apTooltip]="'Reply to this message'" apTooltipPosition="left" [apTooltipShowDelay]="400" (onClick)="replyingTo.set(msg.id)"></ap-icon-button>
                                             </div>
                                             <div class="conv-msg-content">
                                                 @if (msg.replyToId) {
-                                                    <div class="conv-reply-quote">{{ getMessageById(msg.replyToId)?.text }}</div>
+                                                    <div class="conv-reply-quote ap-truncate">{{ getMessageById(msg.replyToId)?.text }}</div>
                                                 }
                                                 <div class="conv-text">{{ msg.text }}</div>
                                                 @if (msg.attachments.length) {
@@ -101,9 +101,9 @@ import { ComposeStateService } from './compose-state';
                                                         @for (att of msg.attachments; track att.name) {
                                                             <div class="conv-attachment">
                                                                 <ap-symbol symbolId="paper-clip" size="xs" color="basic-grey"></ap-symbol>
-                                                                <span class="conv-att-name">{{ att.name }}</span>
+                                                                <span class="conv-att-name ap-truncate">{{ att.name }}</span>
                                                                 <span class="conv-att-size">{{ att.size }}</span>
-                                                                <ap-icon-button type="flat" size="small" symbolId="download" ariaLabel="Download"></ap-icon-button>
+                                                                <ap-icon-button type="flat" symbolId="download" ariaLabel="Download"></ap-icon-button>
                                                             </div>
                                                         }
                                                     </div>
@@ -116,7 +116,7 @@ import { ComposeStateService } from './compose-state';
                                 <div class="conv-empty">
                                     <ap-symbol symbolId="single-chat-bubble" size="lg" color="basic-grey"></ap-symbol>
                                     <p class="conv-empty-text">No comments yet, be the first to add one</p>
-                                    <ap-button [config]="{style:'ghost',color:'blue'}" size="small">Add a comment</ap-button>
+                                    <ap-button [config]="{style:'ghost',color:'blue'}">Add a comment</ap-button>
                                 </div>
                             }
                             <div class="conv-composer">
@@ -126,7 +126,7 @@ import { ComposeStateService } from './compose-state';
                                             <ap-symbol symbolId="reply" size="xs" color="basic-grey"></ap-symbol>
                                             <span>Replying to <strong>{{ getMessageById(replyingTo()!)?.author }}</strong></span>
                                         </div>
-                                        <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Cancel reply" (onClick)="replyingTo.set(null)"></ap-icon-button>
+                                        <ap-icon-button type="flat" symbolId="close" ariaLabel="Cancel reply" (onClick)="replyingTo.set(null)"></ap-icon-button>
                                     </div>
                                 }
                                 <ap-segmented-control class="conv-composer-tabs" [fullWidth]="true"
@@ -134,15 +134,16 @@ import { ComposeStateService } from './compose-state';
                                     [value]="convTab()"
                                     (valueChange)="convTab.set($event === 'external' ? 'external' : 'internal')">
                                 </ap-segmented-control>
-                                <textarea class="conv-textarea" placeholder="Write a comment..." rows="3"></textarea>
+                                <div class="ap-textarea-field conv-composer-field">
+                                    <textarea placeholder="Write a comment..." rows="3"></textarea>
+                                </div>
                                 @if (pendingAttachments().length) {
                                     <div class="conv-pending-attachments">
                                         @for (att of pendingAttachments(); track att.name; let i = $index) {
-                                            <div class="conv-pending-chip">
+                                            <ap-tag color="grey" [clearable]="true" (clear)="removeAttachment(i)">
                                                 <ap-symbol symbolId="paper-clip" size="xs" color="basic-grey"></ap-symbol>
-                                                <span>{{ att.name }}</span>
-                                                <ap-icon-button type="flat" size="small" symbolId="close" ariaLabel="Remove" (onClick)="removeAttachment(i)"></ap-icon-button>
-                                            </div>
+                                                {{ att.name }}
+                                            </ap-tag>
                                         }
                                     </div>
                                 }
@@ -152,7 +153,7 @@ import { ComposeStateService } from './compose-state';
                                         <ap-icon-button symbolId="paper-clip" ariaLabel="Attach file" type="flat" (onClick)="attachFileInput.click()"></ap-icon-button>
                                         <input #attachFileInput type="file" multiple style="display:none" (change)="onAttachFiles($event)">
                                     </div>
-                                    <ap-button [config]="{ style: 'primary', color: 'blue' }" size="small">
+                                    <ap-button [config]="{ style: 'primary', color: 'blue' }">
                                         {{ convTab() === 'internal' ? 'Send internally' : 'Send externally' }}
                                     </ap-button>
                                 </div>
@@ -212,28 +213,27 @@ import { ComposeStateService } from './compose-state';
         }
         .modal-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 16px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-sm);
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0; background: var(--ref-color-white);
         }
         .modal-title { font-size: var(--sys-text-style-h2-size); font-weight: var(--sys-text-style-h2-weight); line-height: var(--sys-text-style-h2-line-height); color: var(--sys-text-color-default); margin: 0; }
-        .header-actions { display: flex; align-items: center; gap: 2px; }
-        .divider { width: 1px; height: 18px; background: var(--sys-border-color-default); margin: 0 4px; }
+        .header-actions { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); }
+        /* Hand-built on purpose: the DS .ap-divider helper is a HORIZONTAL rule
+           (height: 1px) and it paints with --sys-color-border-color-default, a token
+           that does not exist in the theme (the real one is --sys-border-color-default),
+           so it renders invisible. Two bugs to report to the DS team. */
+        .divider { width: 1px; height: var(--ref-spacing-sm); background: var(--sys-border-color-default); margin: 0 var(--ref-spacing-xxxs); }
 
-        /* Active state for panel toggle buttons */
-        .panel-btn-active {
-            ::ng-deep button { background: var(--ref-color-electric-blue-10) !important; color: var(--ref-color-electric-blue-100) !important; }
-        }
-
-.modal-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+        .modal-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
         .modal-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 16px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-sm);
             border-top: 1px solid var(--sys-border-color-default);
-            flex-shrink: 0; background: var(--ref-color-white); gap: 12px;
+            flex-shrink: 0; background: var(--ref-color-white); gap: var(--ref-spacing-xs);
         }
-        .footer-left { display: flex; align-items: center; gap: 6px; }
-        .footer-right { display: flex; align-items: center; gap: 8px; }
+        .footer-left { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); }
+        .footer-right { display: flex; align-items: center; gap: var(--ref-spacing-xxs); }
 
 
         /* ── Right panel ── */
@@ -250,22 +250,22 @@ import { ComposeStateService } from './compose-state';
         }
         .right-panel-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 14px; border-bottom: 1px solid var(--sys-border-color-default);
+            padding: var(--ref-spacing-xs); border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
         .right-panel-title { font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height); color: var(--sys-text-color-default); }
         .right-panel-body {
-            flex: 1; overflow-y: auto; padding: 12px 14px;
-            display: flex; flex-direction: column; gap: 16px;
+            flex: 1; overflow-y: auto; padding: var(--ref-spacing-xs);
+            display: flex; flex-direction: column; gap: var(--ref-spacing-sm);
         }
 
         /* History entries */
-        .history-entry { display: flex; gap: 8px; align-items: flex-start; }
+        .history-entry { display: flex; gap: var(--ref-spacing-xxs); align-items: flex-start; }
         .history-content { flex: 1; }
         .history-action { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-bold-line-height); }
-        .history-meta { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
+        .history-meta { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); }
         .history-diff {
-            margin-top: 6px; padding: 6px 8px; border-radius: var(--sys-border-radius-sm);
+            margin-top: var(--ref-spacing-xxxs); padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-radius: var(--sys-border-radius-sm);
             background: var(--ref-color-grey-bg); border: 1px solid var(--sys-border-color-default);
             font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-caption-line-height);
         }
@@ -273,40 +273,39 @@ import { ComposeStateService } from './compose-state';
         /* ── Conversation messages ── */
         .conv-body { gap: 0; padding: 0; }
         .conv-msg {
-            padding: 12px 14px;
+            padding: var(--ref-spacing-xs);
             border-bottom: 1px solid var(--ref-color-grey-05);
             &:last-child { border-bottom: none; }
             &:hover .conv-reply-btn { opacity: 1; }
         }
-        .conv-msg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .conv-msg-meta { display: flex; align-items: baseline; gap: 4px; flex: 1; min-width: 0; }
+        .conv-msg-row { display: flex; align-items: center; gap: var(--ref-spacing-xxs); margin-bottom: var(--ref-spacing-xxxs); }
+        .conv-msg-meta { display: flex; align-items: baseline; gap: var(--ref-spacing-xxxs); flex: 1; min-width: 0; }
         .conv-author { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); white-space: nowrap; }
-        .conv-time { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); white-space: nowrap; }
+        .conv-time { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); white-space: nowrap; }
         .conv-reply-btn { opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
-        .conv-msg-content { padding-left: 32px; }
+        .conv-msg-content { padding-left: var(--ref-spacing-lg); }
         .conv-text { font-size: var(--sys-text-style-body-size); color: var(--sys-text-color-default); line-height: var(--sys-text-style-body-line-height); }
         .conv-reply-quote {
-            margin-bottom: 6px; padding: 5px 8px;
-            border-left: 3px solid var(--ref-color-electric-blue-40);
+            margin-bottom: 6px; padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs);
+            border-left: 2px solid var(--ref-color-electric-blue-40);
             background: var(--ref-color-grey-bg); border-radius: 0 var(--sys-border-radius-sm) var(--sys-border-radius-sm) 0;
             font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); line-height: var(--sys-text-style-caption-line-height);
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
-        .conv-attachments { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+        .conv-attachments { display: flex; flex-direction: column; gap: var(--ref-spacing-xxxs); margin-top: var(--ref-spacing-xxs); }
         .conv-attachment {
-            display: flex; align-items: center; gap: 6px;
-            padding: 6px 8px; border-radius: var(--sys-border-radius-md);
+            display: flex; align-items: center; gap: var(--ref-spacing-xxxs);
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-radius: var(--sys-border-radius-md);
             background: var(--ref-color-grey-bg); border: 1px solid var(--sys-border-color-default);
         }
-        .conv-att-name { font-size: var(--sys-text-style-caption-bold-size); color: var(--sys-text-color-default); font-weight: var(--sys-text-style-caption-bold-weight); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .conv-att-size { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); white-space: nowrap; }
+        .conv-att-name { font-size: var(--sys-text-style-caption-bold-size); color: var(--sys-text-color-default); font-weight: var(--sys-text-style-caption-bold-weight); flex: 1; min-width: 0; }
+        .conv-att-size { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); white-space: nowrap; }
 
         /* ── Empty state ── */
         .conv-empty {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; padding: 24px;
+            gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-md);
         }
-        .conv-empty-text { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); text-align: center; margin: 0; line-height: var(--sys-text-style-caption-line-height); }
+        .conv-empty-text { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); text-align: center; margin: 0; line-height: var(--sys-text-style-caption-line-height); }
 
         /* ── Composer ── */
         .conv-composer {
@@ -315,30 +314,24 @@ import { ComposeStateService } from './compose-state';
         }
         .conv-reply-strip {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 6px 10px 6px 14px;
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs);
             background: var(--ref-color-electric-blue-10);
             border-bottom: 1px solid var(--ref-color-electric-blue-20);
             font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light);
             strong { color: var(--sys-text-color-default); }
         }
-        .conv-reply-strip-content { display: flex; align-items: center; gap: 6px; }
-        .conv-composer-tabs { display: block; padding: 8px 8px 0; }
-        .conv-textarea {
-            width: 100%; padding: var(--ref-spacing-xxs) var(--ref-spacing-sm); border: none; outline: none; resize: none;
-            font-size: var(--comp-input-text-size); font-family: var(--comp-input-text-font-family); font-weight: var(--comp-input-text-font-weight); background: var(--comp-input-fill-color);
-            color: var(--comp-input-text-default-color); box-sizing: border-box; line-height: var(--comp-input-text-line-height);
-            &::placeholder { color: var(--comp-input-text-placeholder-color); }
+        .conv-reply-strip-content { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); }
+        .conv-composer-tabs { display: block; padding: var(--ref-spacing-xxs) var(--ref-spacing-xxs) 0; }
+        /* DS textarea (css-ui .ap-textarea-field); the min-width is relaxed so it can
+           fill the 300px side panel. */
+        .conv-composer-field {
+            padding: var(--ref-spacing-xxs);
+            > textarea { min-width: 0; }
         }
-        .conv-pending-attachments { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 8px; }
-        .conv-pending-chip {
-            display: flex; align-items: center; gap: 4px;
-            padding: 3px 4px 3px 8px; border-radius: var(--sys-border-radius-md);
-            background: var(--ref-color-grey-05); border: 1px solid var(--ref-color-grey-20);
-            font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-default);
-        }
+        .conv-pending-attachments { display: flex; flex-wrap: wrap; gap: var(--ref-spacing-xxxs); padding: 0 var(--ref-spacing-xs) var(--ref-spacing-xxs); }
         .conv-composer-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 6px 10px; border-top: 1px solid var(--sys-border-color-default);
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-top: 1px solid var(--sys-border-color-default);
         }
         .conv-composer-actions { display: flex; align-items: center; }
     `],

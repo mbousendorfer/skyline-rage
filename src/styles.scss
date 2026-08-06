@@ -1,6 +1,25 @@
 @use 'ui-theme/assets/style/font-face';
 @use 'ui-theme/assets/style/variables';
 
+// DS CSS-UI component layer. `theme.scss` (wired in angular.json) only pulls in
+// css-ui/typography + css-ui/helpers, so .ap-card / .ap-accordion /
+// .ap-textarea-field / .ap-textarea-counter / .ap-native-select are missing
+// without these imports.
+//
+// NOTE: we cannot `@use 'css-ui/index'` — it pulls in css-ui/_input, _pagination
+// and _snackbar, which all `@use 'ui-symbol/icons/build/ap-icons-data'`, a file
+// that is NOT shipped in the published @agorapulse/ui-symbol package (monorepo
+// only). Packaging gap to report to the DS team. Until it is fixed we import the
+// partials we need individually, which is why .ap-form-field / .ap-input-group
+// are unavailable here (we use `[apInput]` + `.ap-textarea-field` instead).
+@use 'ui-theme/assets/style/css-ui/card';
+@use 'ui-theme/assets/style/css-ui/accordion';
+@use 'ui-theme/assets/style/css-ui/textarea';
+@use 'ui-theme/assets/style/css-ui/select';
+
+// Non-DS, deliberate: the social preview cards mimic each network's native chrome.
+@use 'network-chrome';
+
 html,
 body {
     height: 100%;
@@ -14,4 +33,16 @@ body {
 
 * {
     box-sizing: border-box;
+}
+
+// Shared panel chrome — the three panels rendered side by side in the modal body
+// all use the same header band.
+.panel-header {
+    padding: var(--ref-spacing-xxs) var(--ref-spacing-sm);
+    font-size: var(--sys-text-style-h3-size);
+    font-weight: var(--sys-text-style-h3-weight);
+    line-height: var(--sys-text-style-h3-line-height);
+    color: var(--sys-text-color-default);
+    border-bottom: 1px solid var(--sys-border-color-default);
+    flex-shrink: 0;
 }

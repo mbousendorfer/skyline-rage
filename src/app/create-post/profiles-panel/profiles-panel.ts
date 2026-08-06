@@ -51,7 +51,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                 </ap-checkbox>
                                 <div class="group-label" (click)="state.toggleGroup(group.id)">
                                     <ap-symbol symbolId="folder" size="xs" color="basic-grey"></ap-symbol>
-                                    <span class="group-name">{{ group.name }}</span>
+                                    <span class="group-name ap-truncate">{{ group.name }}</span>
                                     <ap-symbol
                                         [symbolId]="group.expanded ? 'chevron-up' : 'chevron-down'"
                                         size="xs"
@@ -73,7 +73,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                                 [network]="profile.network"
                                                 [size]="24">
                                             </ap-avatar>
-                                            <span class="profile-name">{{ profile.name }}</span>
+                                            <span class="profile-name ap-truncate">{{ profile.name }}</span>
                                         </div>
                                     }
                                 </div>
@@ -95,7 +95,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                         [network]="profile.network"
                                         [size]="24">
                                     </ap-avatar>
-                                    <span class="profile-name">{{ profile.name }}</span>
+                                    <span class="profile-name ap-truncate">{{ profile.name }}</span>
                                 </div>
                             }
                         </div>
@@ -129,18 +129,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             overflow: hidden;
         }
 
-        .panel-header {
-            padding: 8px 16px;
-            font-size: var(--sys-text-style-h3-size);
-            font-weight: var(--sys-text-style-h3-weight);
-            line-height: var(--sys-text-style-h3-line-height);
-            color: var(--sys-text-color-default);
-            border-bottom: 1px solid var(--sys-border-color-default);
-            flex-shrink: 0;
-        }
-
         .search-box {
-            padding: 8px 12px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
 
@@ -156,7 +146,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .select-all {
-            padding: 8px 12px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
@@ -171,7 +161,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             display: flex;
             align-items: center;
             gap: 0;
-            padding: 12px 12px 4px;
+            padding: var(--ref-spacing-xs) var(--ref-spacing-xs) var(--ref-spacing-xxxs);
 
             &:hover { background: var(--ref-color-grey-05); }
         }
@@ -179,9 +169,9 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         .group-label {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: var(--ref-spacing-xxxs);
             flex: 1;
-            padding: 4px 0 4px 8px;
+            padding: var(--ref-spacing-xxxs) 0 var(--ref-spacing-xxxs) var(--ref-spacing-xxs);
             cursor: pointer;
             min-width: 0;
 
@@ -190,22 +180,19 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                 font-size: var(--sys-text-style-caption-bold-size);
                 font-weight: var(--sys-text-style-caption-bold-weight);
                 line-height: var(--sys-text-style-caption-bold-line-height);
-                color: var(--ref-color-grey-60);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                color: var(--sys-text-color-light);
             }
         }
 
         .group-profiles {
-            padding-left: 4px;
+            padding-left: var(--ref-spacing-xxxs);
         }
 
         .profile-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 4px 12px;
+            gap: var(--ref-spacing-xxs);
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs);
             cursor: pointer;
             transition: background 0.1s;
 
@@ -215,23 +202,20 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
         }
 
         .ungrouped-profiles {
-            padding-top: 4px;
-            border-top: 1px solid var(--ref-color-grey-10);
-            margin-top: 4px;
+            padding-top: var(--ref-spacing-xxxs);
+            border-top: 1px solid var(--sys-border-color-default);
+            margin-top: var(--ref-spacing-xxxs);
         }
 
         .profile-name {
             font-size: var(--sys-text-style-body-size);
             font-weight: var(--sys-text-style-body-weight);
             color: var(--sys-text-color-default);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             flex: 1;
         }
 
         .selected-summary {
-            padding: 8px 12px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             border-top: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
         }
@@ -248,8 +232,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            color: var(--ref-color-grey-60);
+            gap: var(--ref-spacing-xxs);
+            color: var(--sys-text-color-light);
             font-size: var(--sys-text-style-caption-size);
         }
     `],

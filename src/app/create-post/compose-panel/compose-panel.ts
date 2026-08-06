@@ -3,9 +3,8 @@ import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { ToggleComponent } from '@agorapulse/ui-components/toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
-import { SelectComponent } from '@agorapulse/ui-components/legacy/select';
-import { InputComponent } from '@agorapulse/ui-components/legacy/input';
 import { ActionDropdownComponent, ActionDropdownTriggerDirective, ActionDropdownItem } from '@agorapulse/ui-components/action-dropdown';
+import { InputDirective } from '@agorapulse/ui-components/input';
 import { ModalComponent } from '@agorapulse/ui-components/modal';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabModalComponent } from './collab-modal.component';
@@ -26,7 +25,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, SelectComponent, InputComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe, SegmentedControlComponent],
+    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, InputDirective, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe, SegmentedControlComponent],
     template: `
         <div class="compose-panel" [class.is-draft]="state.isDraft()">
             <!-- Hidden file inputs for upload sources -->
@@ -49,7 +48,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
             <div class="compose-content" #composeContent>
             @if (activeTab() === 'base') {
-                <div class="panel-header">Compose your post</div>
+                <div class="section-heading">Compose your post</div>
 
                 <!-- ── Base post ─────────────────────────────────────────── -->
                 <div class="section">
@@ -77,38 +76,38 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                 <ap-icon-button symbolId="variable" ariaLabel="Variable" type="flat" [apTooltip]="'Insert a variable'" apTooltipPosition="bottom" [apTooltipShowDelay]="400"></ap-icon-button>
                             </div>
                             <div class="toolbar-right">
-                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left">Writing Assistant</ap-button>
                                 <ap-icon-button type="flat" [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" [ariaLabel]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400" (onClick)="baseEditorExpanded.set(!baseEditorExpanded())"></ap-icon-button>
                             </div>
                         </div>
                         <div class="editor-footer">
                             <div class="char-counts">
                                 @if (state.facebookProfiles().length > 0) {
-                                    <span class="char-count" [class.warning]="fbWarning()" [class.danger]="fbDanger()" [apTooltip]="'Facebook — ' + (state.fbCharsRemaining() | number) + ' chars remaining (limit 10,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                    <span class="ap-textarea-counter" [class.warning]="fbWarning()" [class.error]="fbDanger()" [apTooltip]="'Facebook — ' + (state.fbCharsRemaining() | number) + ' chars remaining (limit 10,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" [color]="fbDanger() ? 'red' : fbWarning() ? 'orange' : 'facebook'"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.linkedinProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.liCharsRemaining() < 0" [apTooltip]="'LinkedIn — ' + (state.liCharsRemaining() | number) + ' chars remaining (limit 3,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                    <span class="ap-textarea-counter" [class.error]="state.liCharsRemaining() < 0" [apTooltip]="'LinkedIn — ' + (state.liCharsRemaining() | number) + ' chars remaining (limit 3,000)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="linkedin" size="xs" [color]="state.liCharsRemaining() < 0 ? 'red' : 'linkedin'"></ap-symbol>
                                         {{ state.liCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.instagramProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.igCharsRemaining() < 0" [apTooltip]="'Instagram — ' + (state.igCharsRemaining() | number) + ' chars remaining (limit 2,200)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                    <span class="ap-textarea-counter" [class.error]="state.igCharsRemaining() < 0" [apTooltip]="'Instagram — ' + (state.igCharsRemaining() | number) + ' chars remaining (limit 2,200)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="instagram" size="xs" [color]="state.igCharsRemaining() < 0 ? 'red' : 'instagram'"></ap-symbol>
                                         {{ state.igCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.twitterProfiles().length > 0) {
-                                    <span class="char-count" [class.danger]="state.twitterCharsRemaining() < 0" [apTooltip]="'X (Twitter) — ' + (state.twitterCharsRemaining() | number) + ' chars remaining (limit 280)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                    <span class="ap-textarea-counter" [class.error]="state.twitterCharsRemaining() < 0" [apTooltip]="'X (Twitter) — ' + (state.twitterCharsRemaining() | number) + ' chars remaining (limit 280)'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="x-official" size="xs" [color]="state.twitterCharsRemaining() < 0 ? 'red' : 'twitter'"></ap-symbol>
                                         {{ state.twitterCharsRemaining() | number }}
                                     </span>
                                 }
                                 @if (state.selectedProfiles().length === 0) {
-                                    <span class="char-count grey" [apTooltip]="'Characters remaining'" apTooltipPosition="top" [apTooltipShowDelay]="400">
+                                    <span class="ap-textarea-counter grey" [apTooltip]="'Characters remaining'" apTooltipPosition="top" [apTooltipShowDelay]="400">
                                         <ap-symbol symbolId="facebook" size="xs" color="basic-grey"></ap-symbol>
                                         {{ state.fbCharsRemaining() | number }}
                                     </span>
@@ -151,9 +150,9 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                     <div class="media-thumb">
                                         <img [src]="item.url" alt="Media" />
                                         <div class="media-overlay">
-                                            <ap-icon-button class="media-overlay-btn" [apActionDropdownTrigger]="mediaMenu" type="flat" size="small" symbolId="more" ariaLabel="Media options"></ap-icon-button>
+                                            <ap-icon-button class="media-overlay-btn" [apActionDropdownTrigger]="mediaMenu" type="flat" symbolId="more" ariaLabel="Media options"></ap-icon-button>
                                             <ap-action-dropdown #mediaMenu [items]="mediaMenuItems" (itemClick)="onMediaMenuAction(item.id, $event)"></ap-action-dropdown>
-                                            <ap-icon-button class="media-overlay-btn" type="flat" size="small" symbolId="trash" ariaLabel="Remove media" (onClick)="removeMedia(item.id)"></ap-icon-button>
+                                            <ap-icon-button class="media-overlay-btn" type="flat" symbolId="trash" ariaLabel="Remove media" (onClick)="removeMedia(item.id)"></ap-icon-button>
                                         </div>
                                     </div>
                                 }
@@ -171,13 +170,11 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- Facebook -->
                     @if (state.facebookProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
-                                <div class="row-gap">
-                                    <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
-                                    <span class="network-label">Facebook options</span>
-                                </div>
-                                <ap-symbol [symbolId]="fbOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!fbOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
+                                <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
+                                    <span class="ap-accordion-title">Facebook options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -187,25 +184,25 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                         <div class="field-textarea-wrap">
                                             <textarea class="field-textarea" [value]="state.fbVideoTitle()" (input)="state.fbVideoTitle.set(asTextarea($event))" placeholder="This is the title of the video" rows="3"></textarea>
                                             <div class="field-textarea-footer">
-                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
-                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
+                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left">Writing Assistant</ap-button>
                                             </div>
                                         </div>
                                         <div class="char-counts" style="padding: var(--ref-spacing-xxxs) 0 0;">
-                                            <span class="char-count"><ap-symbol symbolId="facebook" size="xs" color="facebook"></ap-symbol> {{ state.fbCharsRemaining() | number }}</span>
+                                            <span class="ap-textarea-counter"><ap-symbol symbolId="facebook" size="xs" color="facebook"></ap-symbol> {{ state.fbCharsRemaining() | number }}</span>
                                         </div>
                                     </div>
                                     <div class="option-row">
                                         <div class="option-info"><span class="option-label">Boost this post</span><span class="option-hint">Text about what is post boosting</span></div>
-                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
+                                        <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">First comment</span><span class="option-hint">Publish a first comment with your post</span></div>
                                         <ap-toggle name="fbFirstComment" [checked]="state.fbFirstComment()" (change)="state.fbFirstComment.set($event)"></ap-toggle>
                                     </div>
                                     @if (state.fbFirstComment()) {
-                                        <div class="first-comment-editor">
-                                            <textarea class="post-textarea small" [value]="state.fbFirstCommentText()" (input)="state.fbFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                        <div class="first-comment-editor ap-textarea-field">
+                                            <textarea [value]="state.fbFirstCommentText()" (input)="state.fbFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
                                         </div>
                                     }
                                 </div>
@@ -215,13 +212,11 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- Instagram -->
                     @if (state.instagramProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
-                                <div class="row-gap">
-                                    <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
-                                    <span class="network-label">Instagram options</span>
-                                </div>
-                                <ap-symbol [symbolId]="igOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!igOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
+                                <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
+                                    <span class="ap-accordion-title">Instagram options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -242,8 +237,8 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             <ap-toggle name="igFirstComment" [checked]="state.igFirstComment()" (change)="state.igFirstComment.set($event)"></ap-toggle>
                                         </div>
                                         @if (state.igFirstComment()) {
-                                            <div class="first-comment-editor">
-                                                <textarea class="post-textarea small" [value]="state.igFirstCommentText()" (input)="state.igFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                            <div class="first-comment-editor ap-textarea-field">
+                                                <textarea [value]="state.igFirstCommentText()" (input)="state.igFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
                                             </div>
                                         }
                                         <div class="option-row toggle-row">
@@ -253,16 +248,16 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                         @if (igPostType() === 'post') {
                                             <div class="option-row action-row">
                                                 <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
-                                                <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
+                                                <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                             </div>
                                         }
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="product-tag" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
                                         </div>
                                     }
                                 </div>
@@ -272,10 +267,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- LinkedIn -->
                     @if (state.linkedinProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol><span class="network-label">LinkedIn options</span></div>
-                                <ap-symbol [symbolId]="liOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!liOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
+                                <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol><span class="ap-accordion-title">LinkedIn options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (liOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -284,15 +279,15 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                         <ap-toggle name="liFirstComment" [checked]="state.liFirstComment()" (change)="state.liFirstComment.set($event)"></ap-toggle>
                                     </div>
                                     @if (state.liFirstComment()) {
-                                        <div class="first-comment-editor">
-                                            <textarea class="post-textarea small" [value]="state.liFirstCommentText()" (input)="state.liFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
+                                        <div class="first-comment-editor ap-textarea-field">
+                                            <textarea [value]="state.liFirstCommentText()" (input)="state.liFirstCommentText.set(asTextarea($event))" placeholder="Write your first comment…" rows="2"></textarea>
                                         </div>
                                     }
                                     <div class="option-section-title">Target audience settings</div>
                                     <div class="option-section-desc">Define the audience to display your post to</div>
-                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add industry</ap-button>
-                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add job function</ap-button>
-                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add industry</ap-button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add job function</ap-button>
+                                    <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
                                 </div>
                             }
                         </div>
@@ -300,10 +295,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- X (Twitter) -->
                     @if (state.twitterProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol><span class="network-label">X (Twitter) options</span></div>
-                                <ap-symbol [symbolId]="xOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!xOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
+                                <ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol><span class="ap-accordion-title">X (Twitter) options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (xOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -322,10 +317,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- TikTok -->
                     @if (state.tiktokProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="tiktok-official" size="sm" color="tiktok"></ap-symbol><span class="network-label">TikTok options</span></div>
-                                <ap-symbol [symbolId]="ttOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!ttOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
+                                <ap-symbol symbolId="tiktok-official" size="sm" color="tiktok"></ap-symbol><span class="ap-accordion-title">TikTok options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (ttOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -352,10 +347,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                     <!-- YouTube -->
                     @if (state.youtubeProfiles().length > 0) {
-                        <div class="network-card">
-                            <div class="collapsible-header padded" [style.background]="networkHeaderBg('youtube')" (click)="ytOptionsExpanded.set(!ytOptionsExpanded())">
-                                <div class="row-gap"><ap-symbol symbolId="youtube" size="sm" color="youtube"></ap-symbol><span class="network-label">YouTube options</span></div>
-                                <ap-symbol [symbolId]="ytOptionsExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
+                        <div class="ap-accordion network-card" [class.collapsed]="!ytOptionsExpanded()">
+                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('youtube')" (click)="ytOptionsExpanded.set(!ytOptionsExpanded())">
+                                <ap-symbol symbolId="youtube" size="sm" color="youtube"></ap-symbol><span class="ap-accordion-title">YouTube options</span>
+                                <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
                             </div>
                             @if (ytOptionsExpanded()) {
                                 <div class="network-card-content">
@@ -364,12 +359,12 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                         <div class="field-textarea-wrap">
                                             <textarea class="field-textarea" [value]="state.ytTitle()" (input)="state.ytTitle.set(asTextarea($event))" placeholder="Write a description with text, links..." rows="3"></textarea>
                                             <div class="field-textarea-footer">
-                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat" size="small"></ap-icon-button>
-                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left" size="small">Writing Assistant</ap-button>
+                                                <ap-icon-button symbolId="emoji" ariaLabel="Add emoji" type="flat"></ap-icon-button>
+                                                <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left">Writing Assistant</ap-button>
                                             </div>
                                         </div>
                                         <div class="char-counts" style="padding: var(--ref-spacing-xxxs) 0 0;">
-                                            <span class="char-count" [class.danger]="state.ytTitle().length > 280"><ap-symbol symbolId="youtube" size="xs" [color]="state.ytTitle().length > 280 ? 'red' : 'youtube'"></ap-symbol> {{ 280 - state.ytTitle().length }}</span>
+                                            <span class="ap-textarea-counter" [class.error]="state.ytTitle().length > 280"><ap-symbol symbolId="youtube" size="xs" [color]="state.ytTitle().length > 280 ? 'red' : 'youtube'"></ap-symbol> {{ 280 - state.ytTitle().length }}</span>
                                         </div>
                                     </div>
                                     <div class="option-row">
@@ -382,19 +377,19 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">Category</label>
-                                        <ap-select placeholder="Select Category" [options]="[]"></ap-select>
+                                        <select class="ap-native-select"><option value="" disabled selected>Select Category</option></select>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">Playlist</label>
-                                        <ap-select placeholder="Select a playlist" [options]="[]"></ap-select>
+                                        <select class="ap-native-select"><option value="" disabled selected>Select a playlist</option></select>
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">YouTube Video tags <span class="optional-label">(optional)</span></label>
-                                        <ap-input name="ytVideoTags" placeholder="Type your video tags"></ap-input>
+                                        <input apInput class="full-width" name="ytVideoTags" placeholder="Type your video tags" />
                                     </div>
                                     <div class="field-group">
                                         <label class="field-label">License <span class="optional-label">(optional)</span></label>
-                                        <ap-select placeholder="Select a license" [options]="[]"></ap-select>
+                                        <select class="ap-native-select"><option value="" disabled selected>Select a license</option></select>
                                     </div>
                                     <div class="option-row toggle-row">
                                         <div class="option-info"><span class="option-label">Embeddable</span><span class="option-hint">Allow others to embed your video on their sites</span></div>
@@ -464,7 +459,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             symbolId="refresh"
                                             ariaLabel="Reset to base text"
                                             type="flat"
-                                            size="small"
+                                           
                                             [apTooltip]="'Reset to base post content'"
                                             apTooltipPosition="bottom"
                                             [apTooltipShowDelay]="400"
@@ -474,7 +469,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             symbolId="close"
                                             ariaLabel="Remove customization"
                                             type="flat"
-                                            size="small"
+                                           
                                             [apTooltip]="'Remove this override'"
                                             apTooltipPosition="bottom"
                                             [apTooltipShowDelay]="400"
@@ -507,8 +502,8 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                                 <!-- char count -->
                                 <div class="char-counts inner">
-                                    <span class="char-count"
-                                        [class.danger]="custom.text.length > networkCharLimit(profileNetwork(custom.profileId))"
+                                    <span class="ap-textarea-counter"
+                                        [class.error]="custom.text.length > networkCharLimit(profileNetwork(custom.profileId))"
                                         [class.warning]="isNearLimit(custom.profileId, custom.text)">
                                         <ap-symbol
                                             [symbolId]="networkSymbol(profileNetwork(custom.profileId))"
@@ -550,11 +545,11 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
-                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                            <div class="first-comment-editor ap-textarea-field"><textarea [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
                                         }
                                         <div class="option-row">
                                             <div class="option-info"><span class="option-label">Boost this post</span><span class="option-hint">Text about what is post boosting</span></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="ad" symbolPosition="left">Boost Post</ap-button>
                                         </div>
                                     }
                                     @case ('instagram') {
@@ -567,7 +562,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
-                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                            <div class="first-comment-editor ap-textarea-field"><textarea [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
                                         }
                                         <div class="option-row toggle-row">
                                             <div class="option-info"><span class="option-label">PulseLink in Bio</span><span class="option-hint">Add a link to your content on your PulseLink</span></div>
@@ -575,15 +570,15 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag users</span><span class="option-hint">No users</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="user--plus" symbolPosition="left" (click)="openTagModal()">{{ tagUsersLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="user" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Invite collaborator(s)</span><span class="option-hint">No collaborator(s)</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="user--plus" symbolPosition="left" (click)="openCollabModal()">{{ collabLabel() }}</ap-button>
                                         </div>
                                         <div class="option-row action-row">
                                             <div class="option-info-row"><ap-symbol symbolId="product-tag" size="md" color="basic-grey"></ap-symbol><div class="option-info"><span class="option-label">Tag products</span><span class="option-hint">No products</span></div></div>
-                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" size="small" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
+                                            <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="product-tag" symbolPosition="left">Tag products</ap-button>
                                         </div>
                                     }
                                     @case ('linkedin') {
@@ -592,13 +587,13 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             <ap-toggle name="firstComment" [checked]="custom.firstComment" (change)="state.updateCustomizationFirstComment(custom.profileId, $event)"></ap-toggle>
                                         </div>
                                         @if (custom.firstComment) {
-                                            <div class="first-comment-editor"><textarea class="post-textarea small" [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
+                                            <div class="first-comment-editor ap-textarea-field"><textarea [value]="custom.firstCommentText" (input)="onFirstCommentInput($event, custom.profileId)" placeholder="Write your first comment…" rows="2"></textarea></div>
                                         }
                                         <div class="option-section-title">Target audience settings</div>
                                         <div class="option-section-desc">Define the audience to display your post to</div>
-                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add industry</ap-button>
-                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add job function</ap-button>
-                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" size="small" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add industry</ap-button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add job function</ap-button>
+                                        <ap-button class="audience-btn" [config]="{style:'stroked',color:'grey'}" symbolId="plus" symbolPosition="left">Add seniority</ap-button>
                                     }
                                     @case ('twitter') {
                                         <div class="option-row toggle-row">
@@ -676,11 +671,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .compose-tab-nav {
             flex: 1; min-width: 0;
             ::ng-deep .ap-tabs__content { display: none; }
-            ::ng-deep .ap-tabs__nav { border-bottom: none; }
         }
         .draft-toggle-tab {
-            flex-shrink: 0; margin-left: auto; display: flex; align-items: center; gap: 7px;
-            cursor: pointer; padding: 0 16px 0 8px; border-radius: var(--comp-label-border-radius);
+            flex-shrink: 0; margin-left: auto; display: flex; align-items: center; gap: var(--ref-spacing-xxs);
+            cursor: pointer; padding: 0 var(--ref-spacing-sm) 0 var(--ref-spacing-xxs); border-radius: var(--sys-border-radius-md);
             transition: background 0.15s;
         }
         .draft-toggle-label {
@@ -691,15 +685,15 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .draft-toggle-tab.is-on .draft-toggle-label {
             color: var(--ref-color-yellow-150);
         }
-        .panel-header {
-            padding: 16px 0 12px; font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height);
+        .section-heading {
+            padding: var(--ref-spacing-sm) 0 var(--ref-spacing-xs); font-size: var(--sys-text-style-h3-size); font-weight: var(--sys-text-style-h3-weight); line-height: var(--sys-text-style-h3-line-height);
             color: var(--sys-text-color-default);
         }
-        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 24px; background: var(--ref-color-white); }
-        .section { padding: 16px 0; max-width: 640px; margin: 0 auto; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-        .section-title { display: flex; align-items: center; gap: 6px; font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
-        .section-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
+        .compose-content { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(--ref-spacing-sm) var(--ref-spacing-md); background: var(--ref-color-white); }
+        .section { padding: var(--ref-spacing-sm) 0; max-width: 640px; margin: 0 auto; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ref-spacing-xxxs); }
+        .section-title { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
+        .section-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); }
 
         .text-editor {
             border: 1px solid var(--comp-input-border-default-color); border-radius: var(--comp-input-border-radius); overflow: hidden;
@@ -720,34 +714,37 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         }
         .editor-toolbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 8px; border-top: 1px solid var(--sys-border-color-default);
+            padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-white);
         }
         .toolbar-icons { display: flex; }
-        .toolbar-right { display: flex; align-items: center; gap: 4px; }
+        .toolbar-right { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); }
         .editor-footer {
             display: flex; align-items: center;
-            padding: 8px 12px; border-top: 1px solid var(--sys-border-color-default);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-05);
         }
-        .char-counts { display: flex; gap: 12px; &.inner { padding: 4px 12px 8px; } }
-        .char-count {
-            display: flex; align-items: center; gap: 4px; font-size: var(--sys-text-style-caption-size);
-            color: var(--ref-color-electric-blue-100);
-            &.grey { color: var(--ref-color-grey-60); }
-            &.warning { color: var(--ref-color-orange-100); }
-            &.danger { color: var(--ref-color-red-100); font-weight: var(--sys-text-style-caption-bold-weight); }
+        /* Per-network counters. Typography + warning/error colours come from the DS
+           .ap-textarea-counter class (css-ui/_textarea); we only add the row layout
+           and the network icon, which that class does not cover. */
+        .char-counts { display: flex; gap: var(--ref-spacing-xs); &.inner { padding: var(--ref-spacing-xxxs) var(--ref-spacing-xs) var(--ref-spacing-xxs); } }
+        .ap-textarea-counter {
+            display: flex; align-items: center; gap: var(--ref-spacing-xxxs);
+            /* Scoped with :not() so the DS .warning / .error modifiers keep winning —
+               a bare color declaration here ties their specificity and, being a
+               component style, would be injected last and override them. */
+            &:not(.warning):not(.error) { color: var(--ref-color-electric-blue-100); }
+            &.grey { color: var(--sys-text-color-light); }
         }
 
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 0 12px; cursor: pointer; user-select: none;
-            &.padded { padding: 12px; }
+            padding: var(--ref-spacing-xxs) 0 var(--ref-spacing-xs); cursor: pointer; user-select: none;
         }
-        .collapsible-title { display: flex; align-items: center; gap: 8px; font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
-        .section-count { font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight); color: var(--ref-color-grey-60); }
+        .collapsible-title { display: flex; align-items: center; gap: var(--ref-spacing-xxs); font-size: var(--sys-text-style-h4-size); font-weight: var(--sys-text-style-h4-weight); line-height: var(--sys-text-style-h4-line-height); color: var(--sys-text-color-default); }
+        .section-count { font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight); color: var(--sys-text-color-light); }
 
-        .media-grid { display: flex; gap: 8px; flex-wrap: wrap; &.inner { padding: 0 12px 8px; } }
+        .media-grid { display: flex; gap: var(--ref-spacing-xxs); flex-wrap: wrap; &.inner { padding: 0 12px 8px; } }
         .add-media-btn {
             width: 96px; height: 96px; border: 2px dashed var(--ref-color-grey-40);
             border-radius: var(--sys-border-radius-md); background: transparent; cursor: pointer;
@@ -757,12 +754,14 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .media-thumb {
             position: relative; width: 96px; height: 96px; border-radius: var(--sys-border-radius-md); overflow: hidden;
             img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            /* The scrim lives on the container so the DS Icon Buttons keep their own
+               size and styling (previously forced to 24px + white via ::ng-deep). */
             .media-overlay {
-                position: absolute; top: 4px; right: 4px; display: flex; gap: 4px;
+                position: absolute; top: 0; right: 0; display: flex; gap: var(--ref-spacing-xxxs);
+                padding: var(--ref-spacing-xxxs);
+                border-bottom-left-radius: var(--sys-border-radius-md);
+                background: var(--ref-color-white);
                 opacity: 0; transition: opacity 0.15s;
-            }
-            .media-overlay-btn {
-                ::ng-deep button { width: 24px; min-width: 24px; height: 24px; min-height: 24px; padding: 0; border-radius: var(--sys-border-radius-sm); background: rgba(255,255,255,0.92) !important; }
             }
             &:hover .media-overlay { opacity: 1; }
         }
@@ -779,19 +778,19 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .drop-overlay {
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; background: var(--ref-color-electric-blue-05);
+            gap: var(--ref-spacing-xxs); background: var(--ref-color-electric-blue-05);
             border-radius: var(--sys-border-radius-lg); pointer-events: none;
             font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--ref-color-electric-blue-100);
         }
 
         /* Customizations section hint */
-        .customizations-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0 0 8px; }
+        .customizations-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); margin: 0 0 var(--ref-spacing-xxs); }
 
         /* Customization cards */
         .custom-card {
             border: 1px solid var(--sys-border-color-default);
             border-radius: var(--sys-border-radius-md);
-            overflow: hidden; margin-bottom: 8px; background: var(--ref-color-white);
+            overflow: hidden; margin-bottom: var(--ref-spacing-xxs); background: var(--ref-color-white);
             transition: box-shadow 0.2s, border-color 0.2s;
             &.has-error { border-color: var(--ref-color-red-60); }
         }
@@ -804,14 +803,14 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
         .custom-card-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 12px; background: var(--ref-color-grey-05);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); background: var(--ref-color-grey-05);
             border-bottom: 1px solid var(--sys-border-color-default);
             transition: background 0.15s;
         }
-        .profile-row { display: flex; align-items: center; gap: 8px; }
+        .profile-row { display: flex; align-items: center; gap: var(--ref-spacing-xxs); }
         .profile-label { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
-        .row-gap { display: flex; align-items: center; gap: 6px; }
-        .inner-pad { padding: 8px 12px; }
+        .row-gap { display: flex; align-items: center; gap: var(--ref-spacing-xxxs); }
+        .inner-pad { padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); }
 
         .option-row {
             display: flex; align-items: flex-start; justify-content: space-between;
@@ -822,21 +821,26 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .option-info { display: flex; flex-direction: column; gap: var(--ref-spacing-xxxs); flex: 1; }
         .option-info-row { display: flex; align-items: center; gap: var(--ref-spacing-xs); flex: 1; }
         .option-label { font-size: var(--sys-text-style-body-size); font-weight: var(--sys-text-style-body-weight); line-height: var(--sys-text-style-body-line-height); color: var(--sys-text-color-default); }
-        .option-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); line-height: var(--sys-text-style-caption-line-height); }
+        .option-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); line-height: var(--sys-text-style-caption-line-height); }
 
+        /* Padded band around a DS .ap-textarea-field (css-ui). The min-width is relaxed
+           so the field can shrink inside a customization card. */
         .first-comment-editor {
-            padding: 8px 12px 12px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs) var(--ref-spacing-xs);
             border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-grey-bg);
+            > textarea { min-width: 0; }
         }
 
-        .network-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 0 0 8px; line-height: var(--sys-text-style-caption-line-height); }
-        .network-card { border: 1px solid var(--sys-border-color-default); border-radius: var(--sys-border-radius-md); margin-top: 12px; overflow: hidden; background: var(--ref-color-white); }
-        .network-card-content { padding: 0 0 12px; }
+        .network-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); margin: 0 0 var(--ref-spacing-xxs); line-height: var(--sys-text-style-caption-line-height); }
+        /* Shell, border, radius and collapse come from the DS .ap-accordion; only the
+           outer rhythm and the full-bleed body are ours. */
+        .network-card { margin-top: var(--ref-spacing-xs); overflow: hidden; }
+        .network-card-content { padding: 0 0 var(--ref-spacing-xs); }
         .network-card-content > ap-segmented-control { display: block; padding: var(--ref-spacing-sm) var(--ref-spacing-sm) 0; }
-        .network-label { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
+        .ap-accordion-header .ap-accordion-title { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
         .field-group {
-            padding: 12px;
+            padding: var(--ref-spacing-xs);
             .field-label { display: block; font-family: var(--comp-forms-label-font-family); font-size: var(--comp-forms-label-size); font-weight: var(--comp-forms-label-font-weight); line-height: var(--comp-forms-label-line-height); color: var(--comp-forms-label-text-color); margin-bottom: var(--comp-forms-label-spacing-vertical); }
             .field-textarea {
                 width: 100%; padding: var(--ref-spacing-xxs) var(--comp-input-padding-horizontal); border: 1px solid var(--comp-input-border-default-color);
@@ -849,18 +853,18 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                 &:focus { border-color: var(--comp-input-border-focused-color); }
             }
         }
-        .empty-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); margin: 4px 0 0; }
+        .empty-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); margin: var(--ref-spacing-xxxs) 0 0; }
 
         /* Per-profile media override */
         .custom-media-section {
-            padding: 8px 12px 10px;
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
             border-top: 1px solid var(--sys-border-color-default);
         }
         .custom-media-header {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: var(--ref-spacing-xxs); margin-bottom: var(--ref-spacing-xxs);
         }
         .custom-media-label { font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); color: var(--sys-text-color-default); }
-        .custom-media-hint { font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); }
+        .custom-media-hint { font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); }
         .add-media-btn.small { width: 48px; height: 48px; }
         .media-thumb.small { width: 48px; height: 48px; border-radius: var(--sys-border-radius-md); }
 
@@ -868,11 +872,11 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
         /* LinkedIn audience targeting */
         .option-section-title {
-            padding: 10px 12px 2px; font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); line-height: var(--sys-text-style-caption-bold-line-height);
+            padding: var(--ref-spacing-xxs) var(--ref-spacing-xs) 0; font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight); line-height: var(--sys-text-style-caption-bold-line-height);
             color: var(--sys-text-color-default);
             border-top: 1px solid var(--sys-border-color-default);
         }
-        .option-section-desc { padding: 2px 12px 6px; font-size: var(--sys-text-style-caption-size); color: var(--ref-color-grey-60); line-height: var(--sys-text-style-caption-line-height); }
+        .option-section-desc { padding: 0 var(--ref-spacing-xs) var(--ref-spacing-xxxs); font-size: var(--sys-text-style-caption-size); color: var(--sys-text-color-light); line-height: var(--sys-text-style-caption-line-height); }
         .audience-btn {
             display: block;
             width: fit-content;
@@ -883,13 +887,13 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         .field-textarea-wrap { position: relative; }
         .field-textarea-footer {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 6px 4px 2px; border-top: 1px solid var(--sys-border-color-default);
+            padding: var(--ref-spacing-xxxs); border-top: 1px solid var(--sys-border-color-default);
             background: var(--ref-color-white);
         }
 
         /* Form fields for YouTube */
         .required-star { color: var(--ref-color-red-100); }
-        .optional-label { color: var(--ref-color-grey-60); font-weight: var(--sys-text-style-body-weight); }
+        .optional-label { color: var(--sys-text-color-light); font-weight: var(--sys-text-style-body-weight); }
 
 
     `],

@@ -1,0 +1,53 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// NETWORK CHROME — DELIBERATELY OUTSIDE THE AGORAPULSE DESIGN SYSTEM
+//
+// The social preview cards reproduce the real look of the Facebook / LinkedIn /
+// Instagram / X feeds so a user can judge how their post will actually appear.
+// These values are those networks' own colours and type stack — they are NOT
+// Agorapulse brand values and must NOT be replaced by `--ref-*` / `--sys-*`
+// tokens: tokenizing them would make every preview look like Agorapulse UI and
+// destroy the point of the feature.
+//
+// Rules for this file:
+//   • It is the ONLY place in the app allowed to hold colour literals.
+//   • Nothing outside the `.fb-card` / `.li-card` / `.ig-card` / `.x-card`
+//     subtrees may consume these variables.
+//   • Everything else in the prototype uses DS tokens.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root {
+    // Native feed type stack (not Averta — the networks don't use it)
+    --net-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    // Shared media overlay scrim (carousel arrows / dots sit on top of photos)
+    --net-scrim: rgba(0, 0, 0, 0.45);
+    --net-scrim-hover: rgba(0, 0, 0, 0.65);
+    --net-on-media: rgba(255, 255, 255, 0.55);
+    --net-on-media-active: #fff;
+
+    // Instagram-style user-tagging pins drawn over a photo
+    --net-pin-shadow: rgba(0, 0, 0, 0.3);
+    --net-pin-badge-bg: rgba(0, 0, 0, 0.7);
+
+    // ── Facebook ──
+    --fb-text: #050505;
+    --fb-text-muted: #65676b;
+    --fb-divider: #ced0d4;
+    --fb-action-hover: #f2f2f2;
+
+    // ── LinkedIn ──
+    --li-text: rgba(0, 0, 0, 0.9);
+    --li-text-muted: rgba(0, 0, 0, 0.6);
+    --li-divider: #e8e8e8;
+    --li-action-hover: rgba(0, 0, 0, 0.08);
+
+    // ── Instagram ──
+    --ig-text: #262626;
+    --ig-text-muted: #8e8e8e;
+    --ig-border: #dbdbdb;
+    --ig-avatar-ring: #fff;
+
+    // ── X (Twitter) ──
+    --x-text: #0f1419;
+    --x-text-muted: #536471;
+}
