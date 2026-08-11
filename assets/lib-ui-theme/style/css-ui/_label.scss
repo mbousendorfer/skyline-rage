@@ -1,0 +1,95 @@
+// Agorapulse Label Styles
+@use 'mixins' as m;
+
+.ap-label {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    background: var(--comp-label-background-color);
+    border-radius: var(--comp-label-border-radius);
+    padding: 0 var(--comp-label-padding-right) 0 var(--comp-label-padding-left);
+    height: var(--comp-label-height);
+    box-sizing: border-box;
+    border: none;
+
+    // Text styles on container (span optional)
+    color: var(--comp-label-text-color);
+    font-family: var(--comp-label-text-style-font-family);
+    font-size: var(--comp-label-text-style-size);
+    font-weight: var(--comp-label-text-style-font-weight);
+    line-height: var(--comp-label-text-style-line-height);
+    white-space: nowrap;
+    text-decoration: none;
+
+    // Auto-detect icon — add gap
+    &:has(> i) {
+        gap: var(--comp-label-closable-spacing);
+    }
+
+    // Auto-detect close button — tighter padding + gap
+    &:has(> button) {
+        gap: var(--comp-label-closable-spacing);
+        padding: 0 var(--comp-label-closable-padding-right) 0 var(--ref-spacing-xxs);
+    }
+
+    // Text truncation — use > span when combined with a close button
+    > span {
+        @include m.truncate;
+        max-width: 180px;
+    }
+
+    // Icon slot — implicit > i
+    > i {
+        width: 12px;
+        height: 12px;
+    }
+
+    // Close button with <i class="ap-icon-close"> inside
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: calc(var(--comp-label-height) - 4px);
+        height: calc(var(--comp-label-height) - 4px);
+        min-width: calc(var(--comp-label-height) - 4px);
+        border: none;
+        background: transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 0;
+        color: var(--comp-label-text-color);
+        transition: background-color 0.15s;
+
+        &:hover {
+            background: var(--ref-color-electric-blue-40);
+        }
+
+        &:active {
+            background: var(--ref-color-electric-blue-60);
+        }
+
+        > i {
+            width: 12px;
+            height: 12px;
+        }
+    }
+
+    // button.ap-label — focus ring for clickable labels
+    &:is(button) {
+        cursor: pointer;
+
+        @media (hover: hover) {
+            &:focus:not(:disabled):not(:active) {
+                @include m.focus-ring;
+            }
+        }
+    }
+}
+
+// Label list container
+.ap-label-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ref-spacing-xxs);
+}

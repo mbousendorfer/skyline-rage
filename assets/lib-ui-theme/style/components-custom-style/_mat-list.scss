@@ -1,0 +1,19 @@
+@use '../variables' as vars;
+
+.mat-mdc-list-option {
+    .mat-mdc-pseudo-checkbox {
+        border-color: vars.$color-silver;
+        border-radius: vars.$border-radius;
+        border-width: 1px;
+        &.mat-mdc-pseudo-checkbox-checked {
+            background: vars.$color-success;
+            &::after {
+                left: 2px;
+            }
+        }
+    }
+}
+
+.mat-mdc-list-base {
+    padding-top: 0 !important;
+}

@@ -1,0 +1,17 @@
+.ap-card {
+    background-color: var(--ref-color-white);
+    border: 1px solid var(--ref-color-grey-10);
+    border-radius: var(--ref-border-radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-spacing-sm);
+    padding: var(--ref-spacing-sm);
+}
+
+.ap-card-title {
+    font-size: var(--ref-font-size-md);
+    font-weight: var(--ref-font-weight-bold);
+    line-height: var(--ref-font-line-height-lg);
+    color: var(--ref-color-grey-100);
+    margin: 0;
+}

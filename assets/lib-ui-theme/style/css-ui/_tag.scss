@@ -1,0 +1,181 @@
+// Agorapulse Tag Styles
+@use 'mixins' as m;
+
+.ap-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--comp-tag-height);
+    max-height: var(--comp-tag-height);
+    box-sizing: border-box;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0 var(--comp-tag-padding-right) 0 var(--comp-tag-padding-left);
+    border-radius: var(--comp-tag-border-radius);
+    gap: var(--ref-spacing-xxxs);
+    vertical-align: middle;
+
+    // Text styles on container (span optional)
+    font-size: var(--comp-tag-text-style-size);
+    line-height: var(--comp-tag-text-style-line-height);
+    font-weight: var(--comp-tag-text-style-font-weight);
+    font-family: var(--comp-tag-text-style-font-family);
+    white-space: nowrap;
+    text-decoration: none;
+
+    // Auto-detect close button — tighter right padding
+    &:has(> button) {
+        padding: 0 calc(var(--comp-tag-closable-padding-right) - 1px) 0 var(--comp-tag-padding-left);
+    }
+
+    // Mini size
+    &.mini {
+        height: var(--comp-tag-mini-height);
+        padding: 0 var(--comp-tag-mini-padding-right) 0 var(--comp-tag-mini-padding-left);
+    }
+
+    // Text truncation — use > span when combined with a close button
+    > span {
+        max-width: 180px;
+        @include m.truncate;
+    }
+
+    // Icon slot — implicit > i (for add icon or any free icon)
+    > i {
+        width: 12px;
+        height: 12px;
+    }
+
+    // Close button with <i class="ap-icon-close"> inside
+    > button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        width: var(--comp-close-button-size);
+        max-width: var(--comp-close-button-size);
+        height: var(--comp-close-button-size);
+        max-height: var(--comp-close-button-size);
+        border-radius: 50%;
+        background: transparent;
+        border: none;
+        padding: var(--comp-close-button-padding);
+        outline: none;
+        cursor: pointer;
+        transition: background-color 0.25s;
+
+        > i {
+            width: 12px;
+            height: 12px;
+        }
+
+        @media (hover: hover) {
+            &:focus:not(:disabled):not(:active) {
+                @include m.focus-ring;
+            }
+        }
+
+        &:hover {
+            background: var(--comp-close-button-hover-background);
+        }
+
+        &:active {
+            background: var(--comp-close-button-active-background);
+            outline: none;
+        }
+    }
+
+    // button.ap-tag — focus ring for clickable tags
+    &:is(button) {
+        cursor: pointer;
+
+        @media (hover: hover) {
+            &:focus:not(:disabled):not(:active) {
+                @include m.focus-ring;
+            }
+        }
+    }
+
+    // Color variants
+    &.blue {
+        background-color: var(--comp-tag-blue-background-color);
+        border-color: var(--comp-tag-blue-border-color);
+        color: var(--comp-tag-blue-text-color);
+
+        > button {
+            color: var(--comp-tag-blue-icon-color);
+        }
+    }
+
+    &.grey {
+        background-color: var(--comp-tag-grey-background-color);
+        border-color: var(--comp-tag-grey-border-color);
+        color: var(--comp-tag-grey-text-color);
+
+        > button {
+            color: var(--comp-tag-grey-icon-color);
+        }
+    }
+
+    &.tagOrange {
+        background-color: var(--comp-tag-tag-orange-background-color);
+        border-color: var(--comp-tag-tag-orange-border-color);
+        color: var(--comp-tag-tag-orange-text-color);
+
+        > button {
+            color: var(--comp-tag-tag-orange-icon-color);
+        }
+    }
+
+    &.menthol {
+        background-color: var(--comp-tag-menthol-background-color);
+        border-color: var(--comp-tag-menthol-border-color);
+        color: var(--comp-tag-menthol-text-color);
+
+        > button {
+            color: var(--comp-tag-menthol-icon-color);
+        }
+    }
+
+    &.green {
+        background-color: var(--comp-tag-green-background-color);
+        border-color: var(--comp-tag-green-border-color);
+        color: var(--comp-tag-green-text-color);
+
+        > button {
+            color: var(--comp-tag-green-icon-color);
+        }
+    }
+
+    &.red {
+        background-color: var(--comp-tag-red-background-color);
+        border-color: var(--comp-tag-red-border-color);
+        color: var(--comp-tag-red-text-color);
+
+        > button {
+            color: var(--comp-tag-red-icon-color);
+        }
+    }
+}
+
+// Tag avatar
+.ap-tag-avatar {
+    --avatar-size: 16px;
+
+    @include m.fixed-size(var(--avatar-size));
+    border-radius: 100%;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+// Tag list container
+.ap-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ref-spacing-xxs);
+}

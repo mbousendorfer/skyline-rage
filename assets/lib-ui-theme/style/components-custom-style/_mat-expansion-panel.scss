@@ -1,0 +1,20 @@
+@use '../variables' as vars;
+
+.mat-accordion {
+    .mat-expansion-panel-spacing {
+        margin: 0;
+    }
+
+    .mat-action-row {
+        background-color: vars.$color-grey-white;
+        padding: vars.$padding-l;
+        &.ap-space-between {
+            justify-content: space-between;
+        }
+        div {
+            button {
+                margin: 0;
+            }
+        }
+    }
+}

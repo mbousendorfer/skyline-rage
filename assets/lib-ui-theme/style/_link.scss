@@ -1,0 +1,70 @@
+a {
+    display: inline-flex;
+    gap: var(--comp-link-spacing);
+    font-family: var(--comp-link-text-font-family);
+    font-weight: var(--comp-link-text-font-weight);
+    line-height: var(--comp-link-text-line-height);
+    font-size: var(--comp-link-text-size);
+    align-items: center;
+    text-decoration: underline;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+
+    &.small {
+        font-family: var(--comp-link-small-text-style-font-family);
+        font-weight: var(--comp-link-small-text-style-font-weight);
+        line-height: var(--comp-link-small-text-style-line-height);
+        font-size: var(--comp-link-small-text-style-size);
+    }
+
+    &.big {
+        font-family: var(--comp-link-big-text-style-font-family);
+        font-weight: var(--comp-link-big-text-style-font-weight);
+        line-height: var(--comp-link-big-text-style-line-height);
+        font-size: var(--comp-link-big-text-style-size);
+    }
+
+    &.standalone {
+        text-decoration: none;
+        font-family: var(--comp-link-standalone-default-text-style-font-family);
+        font-weight: var(--comp-link-standalone-default-text-style-font-weight);
+        line-height: var(--comp-link-standalone-default-text-style-line-height);
+        font-size: var(--comp-link-standalone-default-text-style-size);
+        color: var(--comp-link-default-color);
+
+        &.small {
+            font-family: var(--comp-link-standalone-small-text-style-font-family);
+            font-weight: var(--comp-link-standalone-small-text-style-font-weight);
+            line-height: var(--comp-link-standalone-small-text-style-line-height);
+            font-size: var(--comp-link-standalone-small-text-style-size);
+        }
+    }
+
+    &:not(:visited) {
+        color: var(--comp-link-default-color);
+    }
+
+    &:hover {
+        color: var(--comp-link-hover-color);
+    }
+
+    &:active:not(:visited):not([disabled='true']) {
+        color: var(--comp-link-clicked-color);
+    }
+
+    &:visited:not(.standalone) {
+        color: var(--comp-link-visited-color);
+    }
+
+    &[disabled='true'] {
+        color: var(--comp-link-disabled-color);
+        pointer-events: none;
+    }
+
+    ap-symbol {
+        min-width: var(--comp-link-icon-size);
+        min-height: var(--comp-link-icon-size);
+        max-width: var(--comp-link-icon-size);
+        max-height: var(--comp-link-icon-size);
+    }
+}

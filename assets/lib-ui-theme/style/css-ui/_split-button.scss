@@ -1,0 +1,74 @@
+// Agorapulse Split Button Styles
+@use 'mixins' as m;
+@use '../button-mixins' as btn;
+
+.ap-split-button {
+    display: inline-flex;
+    gap: 1px;
+    position: relative;
+
+    > button {
+        border: none;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--comp-split-button-spacing);
+        padding: var(--comp-split-button-padding-horizontal) var(--comp-split-button-padding-vertical);
+        max-height: var(--comp-button-height);
+        min-height: var(--comp-button-height);
+        font-size: var(--comp-split-button-text-size);
+        font-family: var(--comp-split-button-text-font-family);
+        line-height: var(--comp-split-button-text-line-height);
+        font-weight: var(--comp-split-button-text-weight);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+
+        &:disabled {
+            pointer-events: none;
+        }
+
+        &:focus:not(:disabled):not(:active) {
+            @include m.focus-ring;
+            z-index: 10;
+        }
+
+        > i {
+            @include m.fixed-size(16px);
+            flex-shrink: 0;
+        }
+
+        &:first-child {
+            border-radius: var(--comp-split-button-border-radius) 0 0 var(--comp-split-button-border-radius);
+        }
+
+        &:last-child {
+            border-radius: 0 var(--comp-split-button-border-radius) var(--comp-split-button-border-radius) 0;
+            padding: var(--comp-split-button-padding-horizontal) 10px;
+
+            > i {
+                will-change: transform;
+                transition: transform 0.2s ease-in-out;
+            }
+
+            &.open > i {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    // Primary color variants
+    &.primary > button {
+        color: var(--ref-color-white);
+    }
+
+    &.primary.orange > button {
+        @include btn.btn-primary-color('orange');
+    }
+
+    &.primary.blue > button {
+        @include btn.btn-primary-color('electric-blue');
+    }
+}

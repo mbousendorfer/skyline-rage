@@ -1,0 +1,117 @@
+// Agorapulse Textarea Styles
+@use 'mixins' as m;
+
+// Textarea field container
+.ap-textarea-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-spacing-xxs);
+
+    // Label — implicit > label
+    > label {
+        display: flex;
+        flex-direction: column;
+        gap: var(--comp-forms-label-spacing-vertical);
+        font-size: var(--comp-forms-label-size);
+        font-weight: var(--comp-forms-label-font-weight);
+        line-height: var(--comp-forms-label-line-height);
+        font-family: var(--comp-forms-label-font-family);
+        color: var(--comp-forms-label-text-color);
+
+        // Description — implicit > label > small
+        > small {
+            font-size: var(--comp-forms-label-description-text-size);
+            font-weight: var(--comp-forms-label-description-text-font-weight);
+            line-height: var(--comp-forms-label-description-text-line-height);
+            font-family: var(--comp-forms-label-description-text-font-family);
+            color: var(--comp-forms-label-description-text-color);
+        }
+    }
+
+    // Textarea — implicit > textarea
+    > textarea {
+        resize: none;
+        width: 100%;
+        min-width: 256px;
+        border: 1px solid var(--comp-input-border-default-color);
+        background-color: var(--ref-color-white);
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        border-radius: var(--ref-border-radius-sm);
+        font-family: var(--comp-input-text-font-family);
+        font-size: var(--comp-input-text-size);
+        font-weight: var(--comp-input-text-font-weight);
+        color: var(--comp-input-text-default-color);
+        box-sizing: border-box;
+        outline: none;
+
+        &::placeholder {
+            color: var(--comp-input-text-placeholder-color);
+        }
+
+        &:hover:not(:focus):not(:disabled) {
+            border-color: var(--comp-input-border-hover-color);
+        }
+
+        &:active:not(:disabled) {
+            border-color: var(--comp-input-border-focused-color);
+        }
+
+        &:disabled {
+            background-color: var(--comp-input-fill-disabled-color);
+            color: var(--comp-input-text-disabled-color);
+            cursor: default;
+        }
+    }
+
+    // Invalid state — on container
+    &.invalid > textarea {
+        border-color: var(--comp-input-border-error-color);
+
+        &:hover:not(:focus):not(:disabled) {
+            border-color: var(--comp-input-border-error-color);
+        }
+    }
+
+    // Valid state — on container
+    &.valid > textarea {
+        border-color: var(--comp-input-border-success-color);
+
+        &:hover:not(:focus):not(:disabled) {
+            border-color: var(--comp-input-border-success-color);
+        }
+    }
+
+    // Resize variants — on container
+    &.resizable > textarea {
+        resize: vertical;
+    }
+
+    &.resizable-horizontal > textarea {
+        resize: horizontal;
+    }
+
+    &.resizable-both > textarea {
+        resize: both;
+    }
+
+    &.autoresize > textarea {
+        overflow: hidden;
+    }
+}
+
+// Character count
+.ap-textarea-counter {
+    font-size: var(--sys-text-style-caption-size);
+    font-weight: var(--sys-text-style-caption-weight);
+    line-height: var(--sys-text-style-caption-line-height);
+    color: var(--ref-color-grey-80);
+    text-align: right;
+
+    &.warning {
+        color: var(--ref-color-orange-100);
+    }
+
+    &.error {
+        color: var(--ref-color-red-100);
+    }
+}

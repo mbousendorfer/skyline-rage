@@ -1,0 +1,28 @@
+// Agorapulse Badge Styles
+
+.ap-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--comp-badge-padding-right) 0 var(--comp-badge-padding-left);
+    font-weight: var(--comp-badge-text-style-font-weight);
+    font-family: var(--comp-badge-text-style-font-family);
+    line-height: var(--comp-badge-text-style-line-height);
+    font-size: var(--comp-badge-text-style-size);
+    height: var(--comp-badge-height);
+    max-height: var(--comp-badge-height);
+    border-radius: 2px;
+    white-space: nowrap;
+    box-sizing: border-box;
+
+    &.blue {
+        background-color: var(--comp-badge-blue-background-color);
+        color: var(--comp-badge-blue-color);
+    }
+
+    &.orange {
+        text-transform: uppercase;
+        background-color: var(--comp-badge-orange-background-color);
+        color: var(--comp-badge-orange-color);
+    }
+}

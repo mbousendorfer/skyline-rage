@@ -1,0 +1,40 @@
+// Import Averta Regular
+@font-face {
+    font-family: 'Averta';
+    font-weight: normal;
+    font-style: normal;
+    src: url('/assets/lib-ui-theme/fonts/averta/AvertaStd-Regular.otf') format('opentype');
+    font-display: swap;
+}
+
+// Import Averta Bold
+@font-face {
+    font-family: 'Averta';
+    src: url('/assets/lib-ui-theme/fonts/averta/AvertaStd-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-display: swap;
+}
+
+// Import Averta Semibold
+@font-face {
+    font-family: 'Averta';
+    src: url('/assets/lib-ui-theme/fonts/averta/AvertaStd-Semibold.otf') format('opentype');
+    font-weight: 600;
+    font-display: swap;
+}
+
+/* Import Averta extra bold */
+@font-face {
+    font-family: 'Averta';
+    src: url('/assets/lib-ui-theme/fonts/averta/AvertaStd-Extrabold.otf') format('opentype');
+    font-weight: 800;
+    font-display: swap;
+}
+
+// Import Averta Black
+@font-face {
+    font-family: 'Averta';
+    src: url('/assets/lib-ui-theme/fonts/averta/AvertaStd-Black.otf') format('opentype');
+    font-weight: 900;
+    font-display: swap;
+}

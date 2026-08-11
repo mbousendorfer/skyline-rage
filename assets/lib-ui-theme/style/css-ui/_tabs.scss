@@ -1,0 +1,189 @@
+// Agorapulse Tabs Styles
+
+.ap-tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    // Full width tabs
+    &.full-width .ap-tabs-tab {
+        flex: 1;
+    }
+
+    // Animated mode — use .ap-tabs-indicator instead of the static ::after underline.
+    // Add this class on .ap-tabs and include a <div class="ap-tabs-indicator"> inside .ap-tabs-nav.
+    // JS must set `width` and `transform: translateX(…)` on the indicator to match the active tab.
+    &.animated .ap-tabs-tab.active::after {
+        display: none;
+    }
+}
+
+// Tabs navigation bar
+.ap-tabs-nav {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--comp-tabs-border-color);
+    position: relative;
+
+    // Scrollable tabs
+    &.scrollable {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+// Individual tab button — flat structure, no wrappers needed
+.ap-tabs-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--comp-tabs-tab-header-gap);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--comp-tabs-text-font-family);
+    text-align: center;
+    position: relative;
+    white-space: nowrap;
+    padding: var(--comp-tabs-tab-padding);
+    font-size: var(--comp-tabs-tab-font-size);
+    line-height: var(--comp-tabs-tab-line-height);
+    min-height: var(--comp-tabs-tab-min-height);
+    color: var(--comp-tabs-tab-text-color-default);
+    font-weight: var(--ref-font-weight-regular);
+
+    // Icon — implicit > i
+    > i {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+
+    // Hover state
+    &:hover:not(:disabled):not(.active) {
+        background-color: var(--comp-tabs-tab-hover-background-color);
+    }
+
+    // Focus state
+    &:focus {
+        outline: none;
+    }
+
+    &:focus-visible:not(.active) {
+        outline: none;
+        box-shadow: inset 0 0 0 2px var(--comp-tabs-tab-focus-color);
+        border-radius: var(--comp-tabs-tab-focus-border-radius);
+        background-color: var(--comp-tabs-tab-focus-background-color);
+    }
+
+    // Active/pressed state
+    &:active:not(:disabled):not(.active) {
+        background-color: var(--comp-tabs-tab-active-background-color);
+    }
+
+    // Disabled state
+    &:disabled,
+    &.disabled {
+        cursor: not-allowed;
+        color: var(--comp-tabs-tab-text-color-disabled);
+        opacity: 0.5;
+    }
+
+    // Active tab
+    &.active {
+        color: var(--comp-tabs-tab-text-color-active);
+        text-shadow: 0.5px 0 0 currentColor;
+
+        // Blue underline — pure CSS, no JS positioning needed
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--comp-tabs-tab-active-indicator-color);
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: inset 0 0 0 2px var(--comp-tabs-tab-focus-color);
+            border-radius: var(--comp-tabs-tab-focus-border-radius);
+        }
+    }
+
+    // Feature locked tab
+    &.feature-locked {
+        // Only the lock icon (last <i>) gets feature-lock color;
+        // start icon inherits text color like in Angular
+        > i:last-of-type {
+            color: var(--comp-tabs-tab-feature-lock-color);
+        }
+
+        &:hover:not(:disabled):not(.active) {
+            background-color: var(--comp-tabs-tab-feature-locked-hover-background-color);
+        }
+
+        &:focus-visible:not(.active) {
+            color: var(--comp-tabs-tab-text-color-feature-locked-focus);
+            background-color: var(--comp-tabs-tab-feature-locked-focus-background-color);
+        }
+
+        &:active:not(:disabled):not(.active) {
+            background-color: var(--comp-tabs-tab-feature-locked-active-background-color);
+        }
+
+        &.active {
+            color: var(--comp-tabs-tab-text-color-feature-locked-active);
+            text-shadow: 0.5px 0 0 currentColor;
+
+            &::after {
+                background-color: var(--comp-tabs-tab-feature-locked-indicator-color);
+            }
+
+            &:focus-visible {
+                outline: none;
+                box-shadow: inset 0 0 0 2px var(--comp-tabs-tab-focus-color);
+                border-radius: var(--comp-tabs-tab-focus-border-radius);
+            }
+        }
+    }
+}
+
+// Active indicator (underline)
+.ap-tabs-indicator {
+    position: absolute;
+    bottom: -1px;
+    height: 4px;
+    background-color: var(--comp-tabs-tab-active-indicator-color);
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left;
+
+    &.feature-locked {
+        background-color: var(--comp-tabs-tab-feature-locked-indicator-color);
+    }
+}
+
+// Tab content panel
+.ap-tabs-content {
+    flex: 1;
+    width: 100%;
+}
+
+// Tab panel
+.ap-tabs-panel {
+    display: none;
+    padding: var(--ref-spacing-md) 0;
+
+    &.active {
+        display: block;
+    }
+}

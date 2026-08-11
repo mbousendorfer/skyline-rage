@@ -1,0 +1,52 @@
+.ap-input {
+    border: 1px solid var(--comp-input-border-default-color);
+    border-radius: var(--comp-input-border-radius);
+    color: var(--comp-input-text-default-color);
+    font-family: var(--comp-input-text-font-family);
+    font-size: var(--comp-input-text-size);
+    font-weight: var(--comp-input-text-font-weight);
+    padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+    &::placeholder {
+        color: var(--comp-input-text-placeholder-color);
+    }
+    &:disabled {
+        background-color: var(--comp-input-fill-disabled-color);
+        color: var(--comp-input-text-disabled-color);
+    }
+    &:focus {
+        border-color: var(--comp-input-border-focused-color);
+    }
+    // Invalid
+    &.invalid:not([disabled]):not(:focus):not(:hover),
+    &.ng-invalid.ng-dirty.ng-touched:not([disabled]):not(:focus):not(:hover) {
+        border: 1px solid var(--comp-input-border-error-color);
+    }
+    // Valid
+    &.valid:not([disabled]):not(:focus):not(:hover) {
+        border: 1px solid var(--comp-input-border-success-color);
+    }
+
+    // Hover
+    &:not(:focus):not([disabled]):hover {
+        border-color: var(--comp-input-border-hover-color);
+    }
+    &.ap-textarea.resizable {
+        resize: auto;
+    }
+    &.ap-textarea {
+        min-width: 256px;
+    }
+    &[type='search']::-webkit-search-decoration,
+    &[type='search']::-webkit-search-cancel-button,
+    &[type='search']::-webkit-search-results-button,
+    &[type='search']::-webkit-search-results-decoration {
+        display: none;
+    }
+    &.full-width {
+        width: 100%;
+    }
+}
+
+input:placeholder-shown {
+    text-overflow: ellipsis;
+}

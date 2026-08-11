@@ -1,0 +1,200 @@
+// Agorapulse Icon Button Styles
+@use 'mixins' as m;
+@use '../button-mixins' as btn;
+
+.ap-icon-button {
+    &.ap-icon-button {
+        display: flex;
+        width: var(--comp-icon-button-width);
+        height: var(--comp-icon-button-height);
+    }
+
+    justify-content: center;
+    align-items: center;
+    @include m.fixed-size(var(--comp-icon-button-width));
+    border-radius: var(--comp-icon-button-border-radius);
+    background: transparent;
+    border: none;
+    padding: var(--comp-icon-button-padding);
+    position: relative;
+    cursor: pointer;
+    transition:
+        border-color 0.25s,
+        background-color 0.25s;
+    box-sizing: border-box;
+
+    > i {
+        color: var(--ref-color-grey-60);
+        font-size: calc(var(--comp-icon-button-height) - (var(--comp-icon-button-padding) * 2));
+        flex-shrink: 0;
+        line-height: 1;
+    }
+
+    // Default hover/active (flat, no color)
+    &:hover:not(.stroked):not(.locked):not(:disabled) {
+        background: var(--ref-color-grey-05);
+    }
+
+    &:active:not(.stroked):not(.locked):not(:disabled) {
+        background: var(--ref-color-grey-10);
+    }
+
+    &:focus:not(:disabled):not(:active) {
+        @include m.focus-ring;
+    }
+
+    &:disabled {
+        pointer-events: none;
+
+        > i {
+            color: var(--ref-color-grey-20);
+        }
+    }
+
+    // Color variants — flat
+    &.blue {
+        > i {
+            color: var(--ref-color-electric-blue-100);
+        }
+
+        &:hover:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-electric-blue-05);
+        }
+
+        &:active:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-electric-blue-10);
+        }
+
+        &:disabled > i {
+            color: var(--ref-color-electric-blue-20);
+        }
+    }
+
+    &.green {
+        > i {
+            color: var(--ref-color-green-100);
+        }
+
+        &:hover:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-green-10);
+        }
+
+        &:active:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-green-20);
+        }
+
+        &:disabled > i {
+            color: var(--ref-color-green-20);
+        }
+    }
+
+    &.red {
+        > i {
+            color: var(--ref-color-red-100);
+        }
+
+        &:hover:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-red-10);
+        }
+
+        &:active:not(.stroked):not(.locked):not(:disabled) {
+            background: var(--ref-color-red-20);
+        }
+
+        &:disabled > i {
+            color: var(--ref-color-red-20);
+        }
+    }
+
+    // Stroked variant
+    &.stroked {
+        border: 1px solid var(--ref-color-grey-20);
+        background: var(--ref-color-white);
+
+        &:hover:not(.locked):not(:disabled) {
+            border-color: var(--ref-color-grey-40);
+        }
+
+        &:active:not(.locked):not(:disabled) {
+            border-color: var(--ref-color-grey-60);
+        }
+
+        &:disabled {
+            border-color: var(--ref-color-grey-20);
+        }
+
+        // Stroked color variants
+        &.blue:not(.loading):not(.locked) {
+            border-color: var(--ref-color-electric-blue-100);
+
+            &:hover:not(:disabled) {
+                border-color: var(--ref-color-electric-blue-60);
+            }
+            &:active:not(:disabled) {
+                border-color: var(--ref-color-electric-blue-100);
+            }
+            &:disabled {
+                border-color: var(--ref-color-electric-blue-20);
+            }
+        }
+
+        &.green:not(.loading):not(.locked) {
+            border-color: var(--ref-color-green-100);
+
+            &:hover:not(:disabled) {
+                border-color: var(--ref-color-green-60);
+            }
+            &:active:not(:disabled) {
+                border-color: var(--ref-color-green-100);
+            }
+            &:disabled {
+                border-color: var(--ref-color-green-20);
+            }
+        }
+
+        &.red:not(.loading):not(.locked) {
+            border-color: var(--ref-color-red-100);
+
+            &:hover:not(:disabled) {
+                border-color: var(--ref-color-red-60);
+            }
+            &:active:not(:disabled) {
+                border-color: var(--ref-color-red-100);
+            }
+            &:disabled {
+                border-color: var(--ref-color-red-20);
+            }
+        }
+    }
+
+    // Stroked transparent
+    &.stroked.transparent:not(.loading):not(.locked) {
+        background: transparent;
+    }
+
+    // Loading state
+    &.loading {
+        background: var(--ref-color-grey-20);
+        border: none;
+        pointer-events: none;
+    }
+
+    // Locked state — reuses .ap-locked-symbol from _button.scss
+    &.locked {
+        background: var(--ref-color-purple-10);
+        border: 1px solid var(--ref-color-purple-20);
+        overflow: visible;
+
+        > i {
+            color: var(--ref-color-purple-100);
+        }
+
+        &:hover {
+            border-color: var(--ref-color-purple-40);
+        }
+
+        &:active {
+            border-color: var(--ref-color-purple-60);
+        }
+    }
+}

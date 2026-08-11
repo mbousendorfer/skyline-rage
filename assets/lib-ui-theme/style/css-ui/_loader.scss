@@ -1,0 +1,228 @@
+// Agorapulse Loader Styles
+// SVG-based loader with CSS-driven geometry and animation
+// Usage: <div class="ap-loader orange size-48"><svg><circle/><circle/></svg></div>
+//
+// Zero attributes on SVG elements — all geometry, stroke, and animation in CSS.
+// Reproduces the Angular loader exactly: round caps, per-size dasharray, dual easing.
+
+.ap-loader {
+    --_track: var(--ref-color-orange-40);
+    --_color: var(--ref-color-orange-100);
+
+    display: inline-block;
+    position: relative;
+    line-height: 0;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    circle {
+        cx: 50%;
+        cy: 50%;
+        fill: transparent;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: center;
+    }
+
+    circle:first-child {
+        stroke: var(--_track);
+    }
+
+    circle:last-child {
+        stroke: var(--_color);
+    }
+
+    // Color variants
+    &.blue {
+        --_track: var(--ref-color-electric-blue-10);
+        --_color: var(--ref-color-electric-blue-100);
+    }
+
+    &.orange {
+        --_track: var(--ref-color-orange-40);
+        --_color: var(--ref-color-orange-100);
+    }
+
+    &.grey {
+        --_track: var(--ref-color-grey-20);
+        --_color: var(--ref-color-grey-80);
+    }
+
+    // Size variants — r, stroke-width, dasharray from Angular source
+    &.size-16 {
+        width: 16px;
+        height: 16px;
+        circle {
+            r: 6.5px;
+            stroke-width: 3;
+            stroke-dasharray: 40;
+            stroke-dashoffset: 47;
+        }
+        circle:first-child {
+            animation: ap-loader-16 1.5s cubic-bezier(0.42, 0, 0.78, 1) infinite;
+        }
+        circle:last-child {
+            animation: ap-loader-16 1.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+    }
+
+    &.size-24 {
+        width: 24px;
+        height: 24px;
+        circle {
+            r: 10px;
+            stroke-width: 4;
+            stroke-dasharray: 62;
+            stroke-dashoffset: 69;
+        }
+        circle:first-child {
+            animation: ap-loader-24 1.5s cubic-bezier(0.42, 0, 0.78, 1) infinite;
+        }
+        circle:last-child {
+            animation: ap-loader-24 1.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+    }
+
+    &.size-30 {
+        width: 30px;
+        height: 30px;
+        circle {
+            r: 12.5px;
+            stroke-width: 5;
+            stroke-dasharray: 78;
+            stroke-dashoffset: 84;
+        }
+        circle:first-child {
+            animation: ap-loader-30 1.5s cubic-bezier(0.42, 0, 0.78, 1) infinite;
+        }
+        circle:last-child {
+            animation: ap-loader-30 1.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+    }
+
+    &.size-48 {
+        width: 48px;
+        height: 48px;
+        circle {
+            r: 20.5px;
+            stroke-width: 7;
+            stroke-dasharray: 128;
+            stroke-dashoffset: 131;
+        }
+        circle:first-child {
+            animation: ap-loader-48 1.5s cubic-bezier(0.42, 0, 0.78, 1) infinite;
+        }
+        circle:last-child {
+            animation: ap-loader-48 1.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+    }
+
+    &.size-60 {
+        width: 60px;
+        height: 60px;
+        circle {
+            r: 26px;
+            stroke-width: 8;
+            stroke-dasharray: 163;
+            stroke-dashoffset: 166;
+        }
+        circle:first-child {
+            animation: ap-loader-60 1.5s cubic-bezier(0.42, 0, 0.78, 1) infinite;
+        }
+        circle:last-child {
+            animation: ap-loader-60 1.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+    }
+}
+
+// Keyframes per size — exact Angular stroke-dashoffset values
+// 0%: full dashoffset (invisible) → 50%: ~55% mark (arc visible) → 100%: back to full + 630deg rotation
+
+@keyframes ap-loader-16 {
+    0% {
+        stroke-dashoffset: 47;
+    }
+    50% {
+        stroke-dashoffset: 25;
+    }
+    100% {
+        stroke-dashoffset: 47;
+        transform: rotate(630deg);
+    }
+}
+
+@keyframes ap-loader-24 {
+    0% {
+        stroke-dashoffset: 69;
+    }
+    50% {
+        stroke-dashoffset: 37;
+    }
+    100% {
+        stroke-dashoffset: 69;
+        transform: rotate(630deg);
+    }
+}
+
+@keyframes ap-loader-30 {
+    0% {
+        stroke-dashoffset: 84;
+    }
+    50% {
+        stroke-dashoffset: 46;
+    }
+    100% {
+        stroke-dashoffset: 84;
+        transform: rotate(630deg);
+    }
+}
+
+@keyframes ap-loader-48 {
+    0% {
+        stroke-dashoffset: 131;
+    }
+    50% {
+        stroke-dashoffset: 72;
+    }
+    100% {
+        stroke-dashoffset: 131;
+        transform: rotate(630deg);
+    }
+}
+
+@keyframes ap-loader-60 {
+    0% {
+        stroke-dashoffset: 166;
+    }
+    50% {
+        stroke-dashoffset: 91;
+    }
+    100% {
+        stroke-dashoffset: 166;
+        transform: rotate(630deg);
+    }
+}
+
+// Loader container for centered display
+.ap-loader-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// Full page loader overlay
+.ap-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+}

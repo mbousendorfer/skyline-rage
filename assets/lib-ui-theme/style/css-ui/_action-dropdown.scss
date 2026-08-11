@@ -1,0 +1,163 @@
+// Agorapulse Action Dropdown Styles
+@use 'mixins' as m;
+
+// Container
+.ap-action-dropdown {
+    background-color: var(--comp-action-dropdown-background-color, var(--ref-color-white));
+    border-radius: var(--comp-action-dropdown-border-radius, var(--ref-border-radius-md));
+    box-shadow: var(--comp-action-dropdown-box-shadow, 0 4px 25px -2px rgba(52, 69, 99, 0.15), 0 4px 6px -2px rgba(52, 69, 99, 0.15));
+    padding: var(--comp-action-dropdown-padding, var(--ref-spacing-xxs));
+    outline: none;
+    overflow: hidden;
+    z-index: 1000;
+    width: 250px;
+
+    &.large {
+        width: 340px;
+    }
+
+    &:focus {
+        outline: 2px solid var(--comp-action-dropdown-item-background-color-focused, var(--ref-color-electric-blue-10));
+        outline-offset: 2px;
+    }
+}
+
+// Item
+.ap-action-dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: var(--comp-action-dropdown-item-padding, var(--ref-spacing-xxs) var(--ref-spacing-xs));
+    border: none;
+    background: transparent;
+    color: var(--comp-action-dropdown-item-text-color, var(--ref-color-grey-100));
+    cursor: pointer;
+    font-family: var(--ref-font-family);
+    font-size: var(--comp-action-dropdown-item-text-size, var(--ref-font-size-sm));
+    line-height: var(--comp-action-dropdown-item-text-line-height, var(--ref-line-height-sm));
+    text-align: left;
+    box-sizing: border-box;
+
+    // Implicit icon styling via > i
+    > i {
+        @include m.fixed-size(16px);
+        flex-shrink: 0;
+        color: var(--ref-color-grey-100);
+
+        // Start icon = first child
+        &:first-child {
+            margin-right: var(--comp-action-dropdown-item-icon-spacing, var(--ref-spacing-xs));
+        }
+
+        // End icon = last child (but not the only child)
+        &:last-child:not(:first-child) {
+            margin-left: var(--comp-action-dropdown-item-icon-spacing, var(--ref-spacing-xs));
+            color: var(--ref-color-grey-60);
+        }
+    }
+
+    &:hover {
+        background-color: var(--comp-action-dropdown-item-background-color-hover, var(--ref-color-grey-05));
+    }
+
+    &:focus,
+    &.focused {
+        outline: none;
+        background-color: var(--comp-action-dropdown-item-background-color-focused, var(--ref-color-electric-blue-10));
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
+
+    // Item with description
+    &.has-description {
+        height: auto;
+        min-height: 50px;
+    }
+
+    // Red mode (destructive action)
+    &.red-mode {
+        color: var(--comp-action-dropdown-item-text-color-red-mode, var(--ref-color-red-100));
+
+        > i {
+            color: inherit;
+        }
+
+        &:hover {
+            background-color: var(--comp-action-dropdown-item-background-color-red-mode-hover, var(--ref-color-red-10));
+        }
+
+        &:focus,
+        &.focused {
+            background-color: var(--comp-action-dropdown-item-background-color-red-mode-focused, var(--ref-color-red-10));
+        }
+    }
+
+    // Feature lock
+    &.feature-lock {
+        > i:last-child {
+            color: var(--ref-color-purple-100);
+        }
+
+        &:hover {
+            background-color: var(--comp-action-dropdown-item-background-color-feature-lock-hover, var(--ref-color-purple-10));
+        }
+
+        &:focus,
+        &.focused {
+            background-color: var(--comp-action-dropdown-item-background-color-feature-lock-focused, var(--ref-color-purple-10));
+        }
+    }
+
+    // Badge within dropdown item
+    .ap-badge {
+        flex-shrink: 0;
+    }
+}
+
+// Text container
+.ap-action-dropdown-item-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: var(--ref-spacing-xxxs);
+}
+
+// Label container
+.ap-action-dropdown-item-label-container {
+    display: flex;
+    align-items: center;
+    gap: var(--comp-action-dropdown-item-label-spacing, var(--ref-spacing-xs));
+    @include m.truncate;
+}
+
+// Label
+.ap-action-dropdown-item-label {
+    @include m.truncate;
+
+    &.bold {
+        font-weight: var(--ref-font-weight-bold);
+    }
+}
+
+// Description
+.ap-action-dropdown-item-description {
+    color: var(--comp-action-dropdown-item-description-color, var(--ref-color-grey-60));
+    font-size: var(--comp-action-dropdown-item-description-size, var(--ref-font-size-xs));
+    line-height: var(--comp-action-dropdown-item-description-line-height, var(--ref-line-height-xs));
+}
+
+// Divider
+.ap-action-dropdown-divider {
+    height: 1px;
+    background-color: var(--comp-action-dropdown-divider-color, var(--ref-color-grey-10));
+    margin: var(--comp-action-dropdown-divider-margin, var(--ref-spacing-xxs) 0);
+}

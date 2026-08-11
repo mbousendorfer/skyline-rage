@@ -1,0 +1,86 @@
+// Agorapulse Link Styles
+@use 'mixins' as m;
+
+// Base link styling
+.ap-link {
+    display: inline-flex;
+    gap: var(--comp-link-spacing);
+    font-family: var(--comp-link-text-font-family);
+    font-weight: var(--comp-link-text-font-weight);
+    line-height: var(--comp-link-text-line-height);
+    font-size: var(--comp-link-text-size);
+    align-items: center;
+    text-decoration: underline;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    color: var(--comp-link-default-color);
+
+    // Size variants
+    &.small {
+        font-family: var(--comp-link-small-text-style-font-family);
+        font-weight: var(--comp-link-small-text-style-font-weight);
+        line-height: var(--comp-link-small-text-style-line-height);
+        font-size: var(--comp-link-small-text-style-size);
+    }
+
+    &.big {
+        font-family: var(--comp-link-big-text-style-font-family);
+        font-weight: var(--comp-link-big-text-style-font-weight);
+        line-height: var(--comp-link-big-text-style-line-height);
+        font-size: var(--comp-link-big-text-style-size);
+    }
+
+    // Standalone variant (no underline)
+    &.standalone {
+        text-decoration: none;
+        font-family: var(--comp-link-standalone-default-text-style-font-family);
+        font-weight: var(--comp-link-standalone-default-text-style-font-weight);
+        line-height: var(--comp-link-standalone-default-text-style-line-height);
+        font-size: var(--comp-link-standalone-default-text-style-size);
+        color: var(--comp-link-default-color);
+
+        &.small {
+            font-family: var(--comp-link-standalone-small-text-style-font-family);
+            font-weight: var(--comp-link-standalone-small-text-style-font-weight);
+            line-height: var(--comp-link-standalone-small-text-style-line-height);
+            font-size: var(--comp-link-standalone-small-text-style-size);
+        }
+    }
+
+    // States
+    &:hover {
+        color: var(--comp-link-hover-color);
+    }
+
+    &:active:not(:visited):not(.disabled) {
+        color: var(--comp-link-clicked-color);
+    }
+
+    &:visited:not(.standalone) {
+        color: var(--comp-link-visited-color);
+    }
+
+    // Disabled state
+    &.disabled,
+    &[aria-disabled='true'] {
+        color: var(--comp-link-disabled-color);
+        pointer-events: none;
+        cursor: default;
+    }
+
+    // Focus state for accessibility
+    &:focus-visible {
+        @include m.focus-ring;
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    // Icon sizing — implicit > i
+    > i {
+        min-width: var(--comp-link-icon-size);
+        min-height: var(--comp-link-icon-size);
+        max-width: var(--comp-link-icon-size);
+        max-height: var(--comp-link-icon-size);
+        flex-shrink: 0;
+    }
+}

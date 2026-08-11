@@ -1,0 +1,323 @@
+// Agorapulse Table Styles
+// Uses semantic HTML selectors — no classes needed on <th>, <td>, <tr>
+
+.ap-table {
+    --ap-table-cell-height: 52px;
+    --ap-table-cell-height-small: 40px;
+
+    width: 100%;
+    overflow-x: auto;
+    font-family: var(--ref-font-family);
+    border-radius: var(--ref-border-radius-md);
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: var(--ref-color-white);
+
+    tbody {
+        height: calc(100% - var(--ap-table-cell-height));
+        max-height: calc(100% - var(--ap-table-cell-height));
+        width: 100%;
+        overflow-y: auto;
+        border-radius: var(--ref-border-radius-md);
+    }
+
+    // Scrollable table
+    &.scrollable {
+        display: block;
+        table-layout: fixed;
+
+        tbody {
+            display: block;
+        }
+
+        thead,
+        tbody tr,
+        tfoot {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    }
+
+    // Outer border variant
+    &.outer-border {
+        border: 1px solid var(--ref-color-grey-20);
+    }
+
+    // Header background variant
+    &.header-background th {
+        background-color: var(--ref-color-grey-05);
+    }
+
+    // Striped variant
+    &.striped tbody {
+        tr:nth-child(even) {
+            background-color: var(--ref-color-grey-bg);
+        }
+
+        tr.selected {
+            background-color: var(--ref-color-soft-blue-10);
+        }
+    }
+
+    // Small variant
+    &.small {
+        th,
+        td {
+            height: var(--ap-table-cell-height-small);
+        }
+
+        tbody {
+            height: calc(100% - var(--ap-table-cell-height-small));
+            max-height: calc(100% - var(--ap-table-cell-height-small));
+        }
+
+        th.checkbox,
+        td.checkbox {
+            width: 36px;
+        }
+
+        th.drag,
+        td.drag {
+            width: 36px;
+        }
+    }
+
+    // Border radius for last row when no footer
+    &:not(:has(tfoot)) tbody tr:last-child {
+        td:first-child {
+            border-bottom-left-radius: var(--ref-border-radius-md);
+        }
+
+        td:last-child {
+            border-bottom-right-radius: var(--ref-border-radius-md);
+        }
+    }
+
+    // === Row styles — implicit tr ===
+    tbody tr {
+        background-color: var(--ref-color-white);
+
+        &.selected {
+            background-color: var(--ref-color-soft-blue-10);
+        }
+
+        &:last-child td {
+            border-bottom: none;
+        }
+    }
+
+    // === Header cells — implicit th ===
+    th {
+        height: var(--ap-table-cell-height);
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        text-align: left;
+        font-size: var(--ref-font-size-xs);
+        font-weight: var(--ref-font-weight-bold);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-bottom: 1px solid var(--ref-color-grey-10);
+        background-color: var(--ref-color-white);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        &:first-child {
+            border-top-left-radius: var(--ref-border-radius-md);
+        }
+
+        &:last-child {
+            border-top-right-radius: var(--ref-border-radius-md);
+        }
+
+        &.right {
+            text-align: right;
+        }
+
+        &.sortable {
+            cursor: pointer;
+
+            > i {
+                opacity: 0;
+                transition: opacity 0.15s ease;
+            }
+
+            &:hover > i {
+                opacity: 1;
+            }
+        }
+
+        &.sorted {
+            color: var(--ref-color-electric-blue-150);
+
+            > i {
+                opacity: 1;
+            }
+        }
+
+        &.checkbox {
+            width: 40px;
+            text-align: center;
+        }
+
+        &.drag {
+            width: 40px;
+            padding: 0;
+            text-align: center;
+        }
+
+        // Header content — implicit > div
+        > div {
+            display: flex;
+            align-items: center;
+            gap: var(--ref-spacing-xxxs);
+        }
+
+        // Sort icon — implicit > i
+        > i {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+    }
+
+    // === Body cells — implicit td ===
+    td {
+        padding: 0 var(--ref-spacing-xs);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-bottom: 1px solid var(--ref-color-grey-10);
+        height: var(--ap-table-cell-height);
+        vertical-align: middle;
+        font-family: var(--ref-font-family);
+
+        &.right {
+            text-align: right;
+
+            .ap-table-cell-content {
+                justify-content: flex-end;
+            }
+        }
+
+        &.checkbox {
+            width: 40px;
+            text-align: center;
+        }
+
+        &.drag {
+            width: 40px;
+            padding: 0;
+            text-align: center;
+        }
+    }
+
+    // === Footer cells — implicit tfoot td ===
+    tfoot td {
+        padding: 0 var(--ref-spacing-xs);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-100);
+        border: none;
+        border-top: 1px solid var(--ref-color-grey-10);
+        height: var(--ap-table-cell-height);
+        vertical-align: middle;
+        font-family: var(--ref-font-family);
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+        background-color: var(--ref-color-white);
+
+        &.right {
+            text-align: right;
+
+            .ap-table-cell-content {
+                justify-content: flex-end;
+            }
+        }
+
+        &:first-child {
+            border-bottom-left-radius: var(--ref-border-radius-md);
+        }
+
+        &:last-child {
+            border-bottom-right-radius: var(--ref-border-radius-md);
+        }
+    }
+}
+
+// Cell content
+.ap-table-cell-content {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xxs);
+
+    &.items {
+        flex-wrap: wrap;
+        gap: var(--ref-spacing-xxxs);
+        padding: var(--ref-spacing-xxs) 0;
+    }
+}
+
+// Cell text container
+.ap-table-cell-text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+// Cell text
+.ap-table-cell-text {
+    color: var(--ref-color-grey-100);
+    font-size: var(--ref-font-size-sm);
+    line-height: var(--ref-line-height-sm);
+
+    &.bold {
+        font-weight: var(--ref-font-weight-bold);
+    }
+}
+
+// Cell description
+.ap-table-cell-description {
+    color: var(--ref-color-grey-80);
+    font-size: var(--ref-font-size-xs);
+    line-height: var(--ref-line-height-xs);
+}
+
+// Cell actions
+.ap-table-cell-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--ref-spacing-xxxs);
+}
+
+// Drag handle
+.ap-table-drag-handle {
+    cursor: move;
+    color: var(--ref-color-grey-40);
+}
+
+// Empty state
+.ap-table-empty {
+    padding: var(--ref-spacing-xl);
+    text-align: center;
+    color: var(--ref-color-grey-60);
+    font-size: var(--ref-font-size-sm);
+}
+
+// Loading state
+.ap-table-loading {
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

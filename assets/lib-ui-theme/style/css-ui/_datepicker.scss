@@ -1,0 +1,309 @@
+// Agorapulse Datepicker Styles
+
+.ap-datepicker {
+    background-color: var(--ref-color-white);
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--ref-border-radius-md);
+    box-shadow: none;
+    font-family: var(--ref-font-family);
+    width: fit-content;
+    overflow: hidden;
+
+    // Single calendar mode
+    &.single .ap-datepicker-calendars {
+        justify-content: center;
+    }
+
+    // Range mode
+    &.range .ap-datepicker-calendars {
+        display: flex;
+    }
+
+    // Inline variant
+    &.inline {
+        box-shadow: none;
+        border: 1px solid var(--ref-color-grey-20);
+    }
+
+    // Compact variant
+    &.compact {
+        .ap-datepicker-calendar {
+            padding: var(--ref-spacing-xs);
+        }
+
+        .ap-datepicker-header {
+            padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+        }
+    }
+}
+
+// Header with month navigation
+.ap-datepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    padding: 0 var(--ref-spacing-md);
+}
+
+// Month navigation group (contains nav buttons + month label)
+.ap-datepicker-month-nav {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    // Nav buttons — implicit > button
+    > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        color: var(--ref-color-grey-60);
+        transition: background-color 0.15s ease;
+        padding: 0;
+        flex-shrink: 0;
+
+        &:hover {
+            background-color: var(--ref-color-grey-10);
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+
+        // Nav icon — implicit > i
+        > i {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    // Month label — implicit > span
+    > span {
+        flex: 1;
+        font-size: var(--ref-font-size-xs);
+        font-weight: var(--ref-font-weight-bold);
+        color: var(--ref-color-grey-100);
+        text-transform: capitalize;
+        text-align: center;
+    }
+}
+
+// Calendar container
+.ap-datepicker-calendars {
+    display: flex;
+}
+
+// Individual calendar panel
+.ap-datepicker-calendar {
+    padding: 0 var(--ref-spacing-md) var(--ref-spacing-md);
+
+    & + & {
+        border-left: 1px solid var(--ref-color-grey-10);
+    }
+
+    // Calendar table — implicit > table
+    > table {
+        border-collapse: separate;
+        border-spacing: 0 5px;
+    }
+
+    // Weekday headers — implicit th
+    th {
+        width: 33px;
+        height: 24px;
+        font-size: var(--ref-font-size-xs);
+        font-weight: var(--ref-font-weight-bold);
+        color: var(--ref-color-grey-40);
+        text-transform: capitalize;
+        text-align: center;
+    }
+
+    // Day cells — implicit td
+    td {
+        width: 33px;
+        height: 27px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+
+        &:hover > span {
+            background-color: var(--ref-color-electric-blue-20);
+        }
+
+        // Day inner — implicit > span
+        > span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 27px;
+            height: 27px;
+            margin: 0 3px;
+            border-radius: 50%;
+            font-size: var(--ref-font-size-sm);
+            color: var(--ref-color-grey-100);
+            transition: background-color 0.15s ease;
+        }
+
+        // Today
+        &.today > span {
+            border: 1px solid var(--ref-color-electric-blue-100);
+            width: 25px;
+            height: 25px;
+        }
+
+        // Selected day
+        &.selected > span {
+            background-color: var(--ref-color-electric-blue-100);
+            color: var(--ref-color-white);
+        }
+
+        &.selected:hover > span {
+            background-color: var(--ref-color-electric-blue-85);
+        }
+
+        // In range (for range picker)
+        &.in-range {
+            background-color: var(--ref-color-electric-blue-10);
+
+            &:first-child,
+            &.range-start {
+                border-radius: 2em 0 0 2em;
+            }
+
+            &:last-child,
+            &.range-end {
+                border-radius: 0 2em 2em 0;
+            }
+        }
+
+        &.range-start.range-end {
+            border-radius: 2em;
+            background-color: transparent;
+        }
+
+        // Start and end of range
+        &.range-start > span,
+        &.range-end > span {
+            background-color: var(--ref-color-electric-blue-100);
+            color: var(--ref-color-white);
+        }
+
+        // Disabled/off days
+        &.off,
+        &:disabled {
+            > span {
+                color: var(--ref-color-grey-20);
+                cursor: default;
+            }
+
+            &:hover > span {
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+// Preset ranges sidebar
+.ap-datepicker-ranges {
+    border-left: 1px solid var(--ref-color-grey-10);
+    padding: var(--ref-spacing-sm);
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-spacing-xxxs);
+
+    // Range buttons — implicit > button
+    > button {
+        display: block;
+        width: 100%;
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        border: none;
+        background: transparent;
+        border-radius: var(--ref-border-radius-sm);
+        font-family: var(--ref-font-family);
+        font-size: var(--ref-font-size-sm);
+        color: var(--ref-color-grey-80);
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+
+        &:hover:not(.active):not(:disabled) {
+            color: var(--ref-color-electric-blue-100);
+            background-color: var(--ref-color-electric-blue-10);
+        }
+
+        &.active {
+            color: var(--ref-color-white);
+            background-color: var(--ref-color-electric-blue-100);
+
+            &:hover {
+                background-color: var(--ref-color-electric-blue-85);
+            }
+        }
+
+        &:disabled {
+            color: var(--ref-color-grey-20);
+            cursor: default;
+        }
+    }
+}
+
+// Footer with actions
+.ap-datepicker-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--ref-spacing-sm);
+    padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+    border-top: 1px solid var(--ref-color-grey-10);
+}
+
+// Time picker addon
+.ap-datepicker-time {
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xs);
+    padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+    border-top: 1px solid var(--ref-color-grey-10);
+
+    // Time inputs — implicit > input
+    > input {
+        width: 60px;
+        padding: var(--ref-spacing-xxs) var(--ref-spacing-xs);
+        border: 1px solid var(--ref-color-grey-20);
+        border-radius: var(--ref-border-radius-sm);
+        font-family: var(--ref-font-family);
+        font-size: var(--ref-font-size-sm);
+        text-align: center;
+
+        &:focus {
+            outline: none;
+            border-color: var(--ref-color-electric-blue-100);
+        }
+    }
+}
+
+.ap-datepicker-time-label {
+    font-size: var(--ref-font-size-sm);
+    color: var(--ref-color-grey-60);
+}
+
+.ap-datepicker-time-separator {
+    color: var(--ref-color-grey-60);
+}

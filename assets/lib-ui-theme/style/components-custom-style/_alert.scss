@@ -1,0 +1,36 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+.alert {
+    font-weight: bold;
+    padding: vars.$padding-m vars.$padding-m;
+    position: relative;
+
+    a {
+        color: #fff;
+        text-decoration: underline;
+        &.alert-close {
+            position: absolute;
+            right: 16px;
+            top: 22px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &.error {
+        background-color: vars.$color-error;
+        color: vars.$color-white;
+    }
+
+    &.success {
+        background-color: vars.$color-success;
+        color: vars.$color-white;
+    }
+
+    &.warning {
+        background-color: map.get(vars.$colors-orange, 100);
+        color: vars.$color-white;
+    }
+}

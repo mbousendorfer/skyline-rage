@@ -1,0 +1,83 @@
+// Agorapulse Status Styles
+@use 'mixins' as m;
+
+.ap-status {
+    --dot-size: 8px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--comp-status-padding-horizontal);
+    gap: var(--comp-status-spacing);
+    width: fit-content;
+    height: var(--comp-status-height);
+    border-radius: var(--comp-status-height);
+    color: var(--comp-status-color);
+    font-family: var(--comp-status-font-family);
+    font-size: var(--comp-status-font-size);
+    line-height: var(--comp-status-line-height);
+    box-sizing: border-box;
+    white-space: nowrap;
+
+    // Dot — shown by default via ::before (matches Angular where dot=true is default)
+    // Add .no-dot to hide it
+    &::before {
+        content: '';
+        display: flex;
+        @include m.fixed-size(var(--dot-size));
+        border-radius: 100%;
+        flex-shrink: 0;
+    }
+
+    &.no-dot::before {
+        display: none;
+    }
+
+    &.blue {
+        background-color: var(--comp-status-blue-background-color);
+
+        &::before {
+            background-color: var(--comp-status-blue-dot-background-color);
+        }
+    }
+
+    &.green {
+        background-color: var(--comp-status-green-background-color);
+
+        &::before {
+            background-color: var(--comp-status-green-dot-background-color);
+        }
+    }
+
+    &.orange {
+        background-color: var(--comp-status-orange-background-color);
+
+        &::before {
+            background-color: var(--comp-status-orange-dot-background-color);
+        }
+    }
+
+    &.tagOrange {
+        background-color: var(--comp-status-tag-orange-background-color);
+
+        &::before {
+            background-color: var(--comp-status-tag-orange-dot-background-color);
+        }
+    }
+
+    &.grey {
+        background-color: var(--comp-status-grey-background-color);
+
+        &::before {
+            background-color: var(--comp-status-grey-dot-background-color);
+        }
+    }
+
+    &.red {
+        background-color: var(--comp-status-red-background-color);
+
+        &::before {
+            background-color: var(--comp-status-red-dot-background-color);
+        }
+    }
+}

@@ -1,0 +1,629 @@
+@use '../variables' as vars;
+@use 'sass:map';
+
+%ap-button {
+    color: map.get(vars.$colors-grey, 80);
+    font-weight: bold;
+    min-width: 100px;
+    line-height: 16px;
+    padding: 10px vars.$padding-m;
+    height: 36px;
+    &.active {
+        color: map.get(vars.$colors-electric-blue, 100);
+    }
+
+    .mat-button-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        ap-symbol {
+            display: inline-block;
+            &.left-symbol {
+                margin-right: vars.$padding-s;
+            }
+            &.right-symbol {
+                margin-left: vars.$padding-s;
+            }
+            height: 16px;
+            width: 16px;
+        }
+    }
+    .mat-button-focus-overlay {
+        display: none;
+    }
+    .mat-ripple-element {
+        display: none;
+    }
+    // Width
+    &.full-width {
+        width: 100%;
+    }
+
+    &.drop-down {
+        ap-symbol {
+            height: 12px;
+            width: 12px;
+            padding-left: 2px;
+            padding-top: 2px;
+        }
+    }
+    // Size
+    &.small {
+        font-size: 12px;
+        line-height: 12px;
+        height: 28px;
+        padding: vars.$padding-s;
+        ap-symbol {
+            height: 12px;
+            width: 12px;
+            &.left-symbol {
+                margin-right: vars.$padding-sl;
+            }
+            &.right-symbol {
+                margin-left: vars.$padding-sl;
+            }
+        }
+    }
+    &.medium {
+        font-size: 14px;
+        line-height: 14px;
+        height: 32px;
+        padding: 9px vars.$padding-ml;
+        ap-symbol {
+            height: 14px;
+            width: 14px;
+            &.left-symbol {
+                margin-right: 7px;
+            }
+            &.right-symbol {
+                margin-left: 7px;
+            }
+        }
+    }
+    &.large {
+        font-size: 16px;
+        line-height: 16px;
+        height: 44px;
+        padding: 14px vars.$padding-l;
+        ap-symbol {
+            height: 16px;
+            width: 16px;
+            &.left-symbol {
+                margin-right: vars.$padding-s;
+            }
+            &.right-symbol {
+                margin-left: vars.$padding-s;
+            }
+        }
+    }
+    // Shape
+    &.circle {
+        border-radius: 30px;
+        min-width: 36px;
+        padding: 0;
+        &.small {
+            border-radius: 28px;
+            min-width: 28px;
+            max-height: 28px;
+        }
+        &.medium {
+            border-radius: 32px;
+            min-width: 32px;
+            max-height: 32px;
+        }
+        &.large {
+            border-radius: 44px;
+            min-width: 44px;
+            max-height: 44px;
+        }
+        &.active {
+            ap-symbol {
+                color: map.get(vars.$colors-electric-blue, 100);
+            }
+        }
+        &:not(.mat-accent):not(.mat-primary):not(.mat-success):not(.mat-warn):not(.mat-secondary):not(.mat-facebook):not(
+                .mat-instagram
+            ):not(.mat-linkedin):not(.mat-twitter):not(.mat-youtube):not(.active):not(.locked) {
+            ap-symbol {
+                color: map.get(vars.$colors-grey, 60);
+            }
+            &.animated ap-symbol {
+                color: map.get(vars.$colors-electric-blue, 100);
+            }
+        }
+    }
+    &.square,
+    &.square-rounded {
+        min-width: 36px;
+        padding: 0;
+        &.small {
+            min-width: 28px;
+        }
+        &.medium {
+            min-width: 32px;
+        }
+        &.large {
+            min-width: 44px;
+        }
+    }
+
+    &.square-rounded {
+        border-radius: 8px;
+    }
+
+    //loading
+    &.animated {
+        overflow: hidden;
+        opacity: 1;
+
+        &.circle,
+        &.square {
+            ap-symbol {
+                animation: fadeout 0.4s linear 1 forwards;
+            }
+
+            .animation {
+                position: absolute;
+                border: 2px solid transparent;
+                width: 16px;
+                height: 16px;
+                box-sizing: border-box;
+                border-radius: 50%;
+                border-top: 2px solid map.get(vars.$colors-electric-blue, 100);
+                border-right: 2px solid map.get(vars.$colors-electric-blue, 100);
+                animation:
+                    spin 1s linear infinite,
+                    fadein 0.4s linear 1 forwards;
+            }
+
+            &.animation-fade-out {
+                ap-symbol {
+                    animation: fadein 0.4s linear 1 forwards;
+                }
+
+                .animation {
+                    animation:
+                        spin 1s linear infinite,
+                        fadeout 0.4s linear 1 forwards;
+                }
+            }
+        }
+
+        &:not(.circle):not(.square) .animation {
+            position: absolute;
+            bottom: 0;
+            background-color: map.get(vars.$colors-orange, 100);
+            height: 5px;
+            width: 50%;
+            border-radius: 6px;
+            animation: slide 1.2s linear infinite;
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes slide {
+        0% {
+            left: -70px;
+        }
+        100% {
+            left: calc(100%);
+        }
+    }
+
+    @keyframes fadein {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeout {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+}
+
+@mixin flat-button-color($background-color, $hover-background-color, $active-background-color) {
+    &:not([disabled]) {
+        background-color: $background-color;
+        color: #fff;
+
+        ap-symbol {
+            color: #fff !important;
+        }
+
+        &:hover,
+        &.force-hover {
+            background-color: $hover-background-color;
+        }
+
+        &:active {
+            background-color: $active-background-color;
+        }
+    }
+    &.animated {
+        background-color: $active-background-color;
+        &:not(.circle):not(.square) .animation {
+            background-color: $background-color;
+        }
+        &.circle .animation,
+        &.square .animation {
+            border-top-color: white;
+            border-right-color: white;
+        }
+    }
+}
+
+button.mat-flat-button {
+    @extend %ap-button;
+    background-color: transparent;
+    &:not([disabled]):hover,
+    &.force-hover {
+        background-color: map.get(vars.$colors-grey, 5);
+        &.active {
+            background-color: map.get(vars.$colors-electric-blue, 10);
+        }
+    }
+    &:not([disabled]):active {
+        background-color: map.get(vars.$colors-grey, 10);
+        &.active {
+            background-color: map.get(vars.$colors-electric-blue, 20);
+        }
+    }
+    &[disabled],
+    &[disabled][disabled] {
+        background: none;
+        color: map.get(vars.$colors-grey, 20);
+    }
+    &.mat-accent[disabled],
+    &.mat-primary[disabled],
+    &.mat-success[disabled],
+    &.mat-warn[disabled],
+    &.mat-secondary[disabled],
+    &.mat-facebook[disabled],
+    &.mat-instagram[disabled],
+    &.mat-linkedin[disabled],
+    &.mat-twitter[disabled],
+    &.mat-youtube[disabled],
+    &.mat-google[disabled] {
+        background-color: map.get(vars.$colors-grey, 20);
+        color: #fff;
+    }
+    &.mat-accent {
+        @include flat-button-color(
+            map.get(vars.$colors-electric-blue, 100),
+            map.get(vars.$colors-electric-blue, 85),
+            map.get(vars.$colors-electric-blue, 60)
+        );
+    }
+    &.mat-primary {
+        @include flat-button-color(map.get(vars.$colors-orange, 100), map.get(vars.$colors-orange, 85), map.get(vars.$colors-orange, 60));
+    }
+    &.mat-success {
+        @include flat-button-color(map.get(vars.$colors-green, 100), map.get(vars.$colors-green, 85), map.get(vars.$colors-green, 60));
+    }
+    &.mat-warn {
+        @include flat-button-color(map.get(vars.$colors-red, 100), map.get(vars.$colors-red, 85), map.get(vars.$colors-red, 60));
+    }
+    // Social networks
+    &.mat-facebook {
+        @include flat-button-color(vars.$color-facebook, vars.$color-facebook, vars.$color-facebook);
+    }
+    &.mat-instagram {
+        @include flat-button-color(vars.$color-instagram, vars.$color-instagram, vars.$color-instagram);
+    }
+    &.mat-linkedin {
+        @include flat-button-color(vars.$color-linkedin, vars.$color-linkedin, vars.$color-linkedin);
+    }
+    &.mat-twitter {
+        @include flat-button-color(vars.$color-twitter, vars.$color-twitter, vars.$color-twitter);
+    }
+    &.mat-youtube {
+        @include flat-button-color(vars.$color-youtube, vars.$color-youtube, vars.$color-youtube);
+    }
+    &.mat-google {
+        @include flat-button-color(vars.$color-google, vars.$color-google, vars.$color-google);
+    }
+}
+
+@mixin stroked-button-color($color, $border-color, $hover-border-color) {
+    &:not([disabled]) {
+        color: $color;
+        border-color: $border-color;
+
+        &:hover,
+        &.force-hover {
+            border-color: $hover-border-color;
+        }
+
+        &:active {
+            border-color: $color;
+        }
+    }
+    &.animated {
+        color: $color;
+        border-color: $color;
+        &:not(.circle):not(.square) .animation {
+            bottom: -1px;
+            background-color: $color;
+        }
+        &.circle,
+        &.square {
+            border: none;
+            .animation {
+                border-top-color: $color;
+                border-right-color: $color;
+            }
+        }
+    }
+}
+@mixin ghost-button-color($color, $hover-background-color, $active-background-color) {
+    background-color: transparent;
+    border: none;
+    color: $color;
+    ap-symbol {
+        color: $color;
+    }
+    &:hover,
+    &.force-hover {
+        background-color: $hover-background-color;
+    }
+    &:active {
+        background-color: $active-background-color;
+    }
+    &[disabled] {
+        background-color: transparent;
+        color: $active-background-color;
+    }
+}
+
+button.mat-stroked-button {
+    &.ghost {
+        border: none;
+        color: map.get(vars.$colors-grey, 80);
+        ap-symbol {
+            color: map.get(vars.$colors-grey, 60);
+        }
+        &:hover,
+        &.force-hover {
+            background-color: map.get(vars.$colors-grey, 10);
+        }
+        &:active {
+            background-color: map.get(vars.$colors-grey, 20);
+        }
+        &[disabled] {
+            background-color: transparent;
+            color: map.get(vars.$colors-grey, 20);
+        }
+    }
+    &.locked {
+        background-color: map.get(vars.$colors-purple, 10);
+        border: 1px solid map.get(vars.$colors-purple, 20);
+        color: map.get(vars.$colors-purple, 100);
+        position: relative;
+
+        &:after {
+            display: block;
+            position: absolute;
+            right: -6px;
+            top: -6px;
+            height: 16px;
+            width: 16px;
+            background-color: white;
+            border-radius: 200px;
+            content: url("data:image/svg+xml;charset=UTF-8, <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 0a12 12 0 1 0 12 12A12.015 12.014 0 0 0 12 0Zm5.34 17.693a.912.912 0 0 1-1.297 1.14l-3.852-2.168a.386.387 0 0 0-.38 0L7.96 18.833a.911.911 0 0 1-1.298-1.14l1.567-3.603a.384.384 0 0 0-.083-.43l-2.83-2.787a.85.84 0 0 1 .598-1.487h3.232a.385.385 0 0 0 .351-.223l1.685-3.628a.92.92 0 0 1 1.637 0l1.684 3.628a.386.386 0 0 0 .352.223h3.23a.851.851 0 0 1 .602 1.487l-2.829 2.787a.384.384 0 0 0-.084.43l1.567 3.603Z' fill='%236554C0'/></svg>");
+        }
+        &:hover {
+            background-color: map.get(vars.$colors-purple, 20);
+            border: 1px solid map.get(vars.$colors-purple, 40);
+        }
+        &:focus-visible {
+            background-color: map.get(vars.$colors-purple, 20);
+            border: 1px solid map.get(vars.$colors-purple, 20);
+            box-shadow:
+                0 0 0 1px vars.$color-white,
+                0 0 0 3px map.get(vars.$colors-electric-blue, 100);
+        }
+        &:active {
+            background: map.get(vars.$colors-purple, 40);
+            border: 1px solid map.get(vars.$colors-purple, 60);
+        }
+    }
+
+    @extend %ap-button;
+    &.background-grey {
+        background-color: vars.$color-grey-background;
+    }
+    &.background-white {
+        background-color: vars.$color-white;
+    }
+    &:not([disabled]),
+    &:not(.locked) {
+        border-color: map.get(vars.$colors-grey, 20);
+        &.active {
+            border-color: map.get(vars.$colors-electric-blue, 100);
+        }
+    }
+    &:not([disabled]):hover,
+    &.force-hover {
+        border-color: map.get(vars.$colors-grey, 40);
+        &.active {
+            border-color: map.get(vars.$colors-electric-blue, 85);
+        }
+    }
+    &:not([disabled]):active {
+        border-color: map.get(vars.$colors-grey, 60);
+        &.active {
+            border-color: map.get(vars.$colors-electric-blue, 100);
+        }
+    }
+    &[disabled],
+    &[disabled][disabled] {
+        border-color: map.get(vars.$colors-grey, 20);
+        color: map.get(vars.$colors-grey, 20);
+    }
+
+    &.mat-accent {
+        @include stroked-button-color(
+            map.get(vars.$colors-electric-blue, 100),
+            map.get(vars.$colors-electric-blue, 60),
+            map.get(vars.$colors-electric-blue, 85)
+        );
+    }
+    &.mat-primary {
+        @include stroked-button-color(map.get(vars.$colors-orange, 100), map.get(vars.$colors-orange, 60), map.get(vars.$colors-orange, 85));
+    }
+    &.mat-success {
+        @include stroked-button-color(map.get(vars.$colors-green, 100), map.get(vars.$colors-green, 60), map.get(vars.$colors-green, 85));
+    }
+    &.mat-warn {
+        @include stroked-button-color(map.get(vars.$colors-red, 100), map.get(vars.$colors-red, 60), map.get(vars.$colors-red, 85));
+    }
+    &.mat-warn.ghost {
+        @include ghost-button-color(map.get(vars.$colors-red, 100), map.get(vars.$colors-red, 10), map.get(vars.$colors-red, 20));
+        &[disabled] {
+            background-color: transparent;
+            color: map.get(vars.$colors-red, 20);
+            ap-symbol {
+                color: map.get(vars.$colors-red, 20);
+            }
+        }
+    }
+    &.mat-primary.ghost {
+        @include ghost-button-color(map.get(vars.$colors-orange, 100), map.get(vars.$colors-orange, 60), map.get(vars.$colors-orange, 85));
+        &[disabled] {
+            background-color: transparent;
+            color: map.get(vars.$colors-orange, 85);
+            ap-symbol {
+                color: map.get(vars.$colors-orange, 85);
+            }
+        }
+    }
+    &.mat-accent.ghost {
+        @include ghost-button-color(
+            map.get(vars.$colors-electric-blue, 100),
+            map.get(vars.$colors-electric-blue, 60),
+            map.get(vars.$colors-electric-blue, 85)
+        );
+        &[disabled] {
+            background-color: transparent;
+            color: map.get(vars.$colors-electric-blue, 85);
+            ap-symbol {
+                color: map.get(vars.$colors-electric-blue, 85);
+            }
+        }
+    }
+    &.mat-success.ghost {
+        @include ghost-button-color(map.get(vars.$colors-green, 100), map.get(vars.$colors-green, 60), map.get(vars.$colors-green, 85));
+        &[disabled] {
+            background-color: transparent;
+            color: map.get(vars.$colors-green, 85);
+            ap-symbol {
+                color: map.get(vars.$colors-green, 85);
+            }
+        }
+    }
+    &.mat-facebook {
+        @include stroked-button-color(vars.$color-facebook, vars.$color-facebook, 'none');
+    }
+    &.mat-instagram {
+        @include stroked-button-color(vars.$color-instagram, vars.$color-instagram, 'none');
+    }
+    &.mat-linkedin {
+        @include stroked-button-color(vars.$color-linkedin, vars.$color-linkedin, 'none');
+    }
+    &.mat-twitter {
+        @include stroked-button-color(vars.$color-twitter, vars.$color-twitter, 'none');
+    }
+    &.mat-youtube {
+        @include stroked-button-color(vars.$color-youtube, vars.$color-youtube, 'none');
+    }
+    &.mat-google {
+        @include stroked-button-color(vars.$color-google, vars.$color-google, 'none');
+    }
+}
+
+.split-button-dropdown {
+    display: flex;
+    %ap-button {
+        &.main-button {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+            margin-right: 1px !important;
+        }
+        &.drop-down-append {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            width: 40px;
+        }
+    }
+}
+
+@mixin flat-secondary-button-color($text-color, $background-color, $hover-background-color, $active-background-color) {
+    background-color: $background-color;
+    color: $text-color;
+    border: none;
+    border-radius: vars.$border-radius;
+    padding: 10px 16px;
+    font-family: vars.$font-family;
+    font-size: vars.$font-size;
+    font-weight: vars.$font-weight-bold;
+
+    ap-symbol {
+        color: $text-color !important;
+    }
+    &:hover,
+    &.force-hover {
+        cursor: pointer;
+        background-color: $hover-background-color;
+    }
+    &:active {
+        background-color: $active-background-color;
+    }
+}
+
+@mixin crop-text() {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+button.ap-button-secondary-orange {
+    @include flat-secondary-button-color(
+        map.get(vars.$colors-orange, 100),
+        map.get(vars.$colors-orange, 10),
+        map.get(vars.$colors-orange, 20),
+        map.get(vars.$colors-orange, 40)
+    );
+
+    &.ap-one-line {
+        @include crop-text();
+    }
+}
+
+button.ap-button-secondary-blue {
+    @include flat-secondary-button-color(
+        map.get(vars.$colors-electric-blue, 100),
+        map.get(vars.$colors-electric-blue, 10),
+        map.get(vars.$colors-electric-blue, 20),
+        map.get(vars.$colors-electric-blue, 40)
+    );
+
+    &.ap-one-line {
+        @include crop-text();
+    }
+}

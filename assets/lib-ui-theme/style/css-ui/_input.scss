@@ -1,0 +1,128 @@
+// Agorapulse Input Styles
+@use 'mixins' as m;
+@use 'ui-symbol/icons/build/ap-icons-data' as icons;
+
+// Form field container
+.ap-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ref-spacing-xxs);
+
+    // Label — implicit > label
+    > label {
+        @include m.text-style('body');
+        color: var(--ref-color-grey-100);
+    }
+}
+
+// Input group container
+.ap-input-group {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    height: var(--comp-input-height);
+    border: 1px solid var(--comp-input-border-default-color);
+    box-sizing: border-box;
+    border-radius: var(--comp-input-border-radius);
+    overflow: hidden;
+    background-color: var(--comp-input-fill-color);
+    gap: var(--ref-spacing-xxs);
+    padding: 0 var(--ref-spacing-xs);
+
+    // Disabled input
+    &:has(input:disabled) {
+        background-color: var(--comp-input-fill-disabled-color);
+        color: var(--comp-input-text-disabled-color);
+    }
+
+    // Hover state
+    &:hover:not(:has(input:disabled)) {
+        border-color: var(--comp-input-border-hover-color);
+    }
+
+    // Focus state
+    &:focus-within:not(:has(input:disabled)) {
+        border-color: var(--comp-input-border-focused-color);
+    }
+
+    // Invalid state
+    &.invalid,
+    &:has(input.invalid) {
+        border-color: var(--comp-input-border-error-color);
+    }
+
+    // Valid state
+    &.valid,
+    &:has(input.valid) {
+        border-color: var(--comp-input-border-success-color);
+    }
+
+    // Input — implicit > input
+    > input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--comp-input-text-default-color);
+        font-family: var(--comp-input-text-font-family);
+        font-size: var(--comp-input-text-size);
+        font-weight: var(--comp-input-text-font-weight);
+        padding: 0;
+        min-width: 0;
+
+        &::placeholder {
+            color: var(--comp-input-text-placeholder-color);
+        }
+
+        &:disabled {
+            color: var(--comp-input-text-disabled-color);
+        }
+    }
+
+    // Icon — implicit > i
+    > i {
+        flex-shrink: 0;
+        width: var(--comp-input-icon-size);
+        height: var(--comp-input-icon-size);
+        color: var(--comp-input-icon-color);
+        pointer-events: none;
+    }
+}
+
+// Form message (error/success)
+.ap-form-message {
+    font-size: var(--comp-forms-status-text-size);
+    font-weight: var(--comp-forms-status-text-font-weight);
+    line-height: var(--comp-forms-status-text-line-height);
+    font-family: var(--comp-forms-status-text-font-family);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--ref-spacing-xxxs);
+
+    // Icon injected via ::before (no <i> needed in HTML)
+    &::before {
+        @include icons.icon-base;
+        width: var(--comp-forms-status-icon-size);
+        height: var(--comp-forms-status-icon-size);
+        flex-shrink: 0;
+    }
+
+    &.error {
+        color: var(--comp-forms-status-text-error-color);
+
+        &::before {
+            @include icons.icon('error_fill');
+            color: var(--comp-forms-status-icon-error-color);
+        }
+    }
+
+    &.success {
+        color: var(--comp-forms-status-text-success-color);
+
+        &::before {
+            @include icons.icon('rounded-check_fill');
+            color: var(--comp-forms-status-icon-success-color);
+        }
+    }
+}

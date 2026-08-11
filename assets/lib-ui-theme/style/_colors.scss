@@ -1,0 +1,331 @@
+
+$black-87-opacity: rgba(black, 0.87);
+$white-87-opacity: rgba(white, 0.87);
+
+$colors-grey: (
+    100: #344563,
+    80: #5d6a82,
+    60: #858fa1,
+    40: #aeb5c1,
+    20: #d6dae0,
+    10: #eaecef,
+    5: #f5f5f7,
+);
+
+$colors-orange: (
+    110: #ff4d00,
+    105: #ff560d,
+    100: #ff6726,
+    85: #ff7e46,
+    60: #ffa47d,
+    40: #ffc2a8,
+    20: #ffe1d4,
+    10: #ffefe9,
+);
+
+$colors-soft-orange: (
+    150: #a66200,
+    100: #fbb500,
+    85: #fcc026,
+    60: #fdd366,
+    40: #fde199,
+    20: #fef0cc,
+    10: #fff8e6,
+    5: #fffef2,
+);
+
+$colors-electric-blue: (
+    150: #0e72d6,
+    100: #178dfe,
+    85: #3a9efe,
+    60: #74bbfe,
+    40: #a2d1ff,
+    20: #d1e8ff,
+    10: #e8f4ff,
+    5: #f3f9ff,
+);
+
+$colors-soft-blue: (
+    100: #61a4e4,
+    85: #78b1e8,
+    60: #a0c8ef,
+    40: #c0dbf4,
+    20: #dfedfa,
+    10: #eff5fc,
+);
+
+$colors-menthol: (
+    150: #057e7a,
+    40: #9fd9d6,
+    10: #f1f9f8,
+);
+
+$colors-purple: (
+    100: #6554c0,
+    85: #7c6dc9,
+    60: #a398d9,
+    40: #c1bbe6,
+    20: #e0ddf2,
+    10: #efedf8,
+);
+
+$colors-green: (
+    100: #45b854,
+    85: #61c26d,
+    60: #8fd498,
+    40: #b5e3bb,
+    20: #daf1dd,
+    10: #ecf7ed,
+    5: #f2f7f3,
+);
+
+$colors-primary: (
+    50: #fff7f3,
+    100: #ffeae0,
+    200: #ffcab3,
+    300: #ffa680,
+    400: #ff824d,
+    500: #ff6726,
+    600: #ff4600,
+    700: #ff3d00,
+    800: #ff3400,
+    900: #ff2500,
+    A100: #ffffff,
+    A200: #fff3f2,
+    A400: #ffc5bf,
+    A700: #ffaea6,
+    contrast: (
+        50: black,
+        100: black,
+        200: black,
+        300: black,
+        400: black,
+        500: $white-87-opacity,
+        600: $white-87-opacity,
+        700: $white-87-opacity,
+        800: $white-87-opacity,
+        900: $white-87-opacity,
+        A100: black,
+        A200: black,
+        A400: black,
+        A700: black,
+    ),
+);
+
+$colors-accent: (
+    50: #e8f4ff,
+    100: #d1e8ff,
+    200: #a2d1ff,
+    300: #74bbfe,
+    400: #3a9efe,
+    500: #178dfe,
+    600: #008fe0,
+    700: #007bc2,
+    800: #0068a3,
+    900: #005485,
+    A100: #ffffff,
+    A200: #bde7ff,
+    A400: #1fadff,
+    A700: #007bc2,
+    contrast: (
+        50: black,
+        100: black,
+        200: black,
+        300: black,
+        400: black,
+        500: $white-87-opacity,
+        600: $white-87-opacity,
+        700: $white-87-opacity,
+        800: $white-87-opacity,
+        900: $white-87-opacity,
+        A100: black,
+        A200: black,
+        A400: black,
+        A700: $white-87-opacity,
+    ),
+);
+
+$colors-red: (
+    100: #e81313,
+    85: #eb3636,
+    60: #f17171,
+    40: #f6a1a1,
+    20: #fad0d0,
+    10: #fde7e7,
+    5: #fdf5f5,
+);
+
+$colors-soft-red: (
+    100: #ff5353,
+    85: #ff6d6d,
+    60: #ff9898,
+    10: #fff9f9,
+);
+
+$colors-yellow: (
+    100: #ffe91f,
+    85: #ffec41,
+    60: #fff279,
+    40: #fff6a5,
+    20: #fffbd2,
+    10: #fffde9,
+);
+
+$colors-warn: (
+    50: #ffffff,
+    100: #f6bebe,
+    200: #ef8c8c,
+    300: #e64e4e,
+    400: #e33333,
+    500: #d91e1e,
+    600: #be1a1a,
+    700: #a31717,
+    800: #881313,
+    900: #6d0f0f,
+    A100: #ffffff,
+    A200: #f6bebe,
+    A400: #e33333,
+    A700: #a31717,
+    contrast: (
+        50: black,
+        100: black,
+        200: black,
+        300: $white-87-opacity,
+        400: $white-87-opacity,
+        500: $white-87-opacity,
+        600: $white-87-opacity,
+        700: $white-87-opacity,
+        800: $white-87-opacity,
+        900: $white-87-opacity,
+        A100: black,
+        A200: black,
+        A400: $white-87-opacity,
+        A700: $white-87-opacity,
+    ),
+);
+
+// Primary colors
+$color-blood-orange: #ff4d00;
+$color-pinkish-orange: #ff7b49;
+$color-charcoal-grey: #2a2f34;
+
+// Secondary colors
+$color-azure: #00aeef;
+$color-light-azure: #eaf5fd;
+$color-cool-green: #33c15d;
+$color-light-green: #ebfaef;
+$color-strawberry: #f4282d;
+$color-light-strawberry: #f8eded;
+$color-blue-grey: #8d98a9;
+$color-silver: #ced0da;
+$color-pale-grey: #dfe3e9;
+$color-grey-white: #f5f7f8;
+$color-queued: #8c50cf;
+$color-approve: #f4bd49;
+$color-alice-blue: #f3f9ff;
+
+// Colors of 2021 Agorapulse Website
+$color-peach: #fff9f4;
+$color-blue-sky: #f5fdff;
+$color-very-light-blue: #f6f8ff;
+$color-very-light-orange: #fff7f3;
+$color-very-light-green: #f3faff;
+
+// Grey dark max
+$color-grey-dark-max: #212e44;
+
+$state-light-orange: #ffe2b3;
+//$state-light-transparent-orange: #fff1da;
+// Text colors
+$color-black: #344563;
+$color-cool-grey: #b4bbc6;
+$color-grey-blue: #68768c;
+$color-blue-link: #499eff;
+
+$color-white: #ffffff;
+
+$color-grey-background: #f9f9fa;
+
+// Social networks colors
+$color-facebook: #0866ff;
+$color-google: #4e85e8;
+$color-instagram: #e1306c;
+$color-instagrammagenta: #c13584;
+$color-instagramblue: #5851db;
+$color-instagrampurple: #833ab4;
+$color-instagramorange: #f56040;
+$color-instagramyellow: #ffdc80;
+$color-linkedin: #2c67bc;
+$color-twitter: #55acee;
+$color-youtube: #ff0000;
+$color-instagramlink: #00376b;
+$color-web: #178dfe;
+$color-reddit: #ff4500;
+
+// Others
+//$state-tag: #5EA9FF;
+//$state-error: #DB1E1E;
+//$state-warning: #ff4d00;
+//$state-info: #00a2ff;
+//$state-success: #8DDE57;
+
+$ap-colors: (
+    'facebook': $color-facebook,
+    'google': $color-google,
+    'instagram': $color-instagram,
+    'instagrammagenta': $color-instagrammagenta,
+    'instagramblue': $color-instagramblue,
+    'instagrampurple': $color-instagrampurple,
+    'instagramorange': $color-instagramorange,
+    'instagramyellow': $color-instagramyellow,
+    'linkedin': $color-linkedin,
+    'twitter': $color-twitter,
+    'youtube': $color-youtube,
+    'reddit': $color-reddit,
+    'blood-orange': $color-blood-orange,
+    'pinkish-orange': $color-pinkish-orange,
+    'charcoal-grey': $color-charcoal-grey,
+    'azure': $color-azure,
+    'light-azure': $color-light-azure,
+    'blue-grey': $color-blue-grey,
+    'silver': $color-silver,
+    //'middle-grey':$state-disabled,
+    'pale-grey': $color-pale-grey,
+    'grey-white': $color-grey-white,
+    'cool-grey': $color-cool-grey,
+    'black': $color-black,
+    'grey-blue': $color-grey-blue,
+    'strawberry': $color-strawberry,
+    'light-strawberry': $color-light-strawberry,
+    'white': $color-white,
+    'cool-green': $color-cool-green,
+    'light-green': $color-light-green,
+    'transparent': transparent,
+
+    'c0': #a566a5,
+    'c1': #c7ab82,
+    'c2': #f2713c,
+    'c3': #ffd006,
+    'c4': #94c5aa,
+    'c5': #2a9d8f,
+    'c6': #78acd8,
+    'c7': #525a9e,
+    'c8': #6a2459,
+    'c9': #74729e,
+);
+
+// Utility class for colors
+@each $key, $value in $ap-colors {
+    [color='#{$key}'] {
+        color: $value;
+    }
+    [bgcolor='#{$key}'] {
+        background-color: $value;
+    }
+    [hcolor='#{$key}']:hover {
+        background-color: $value;
+    }
+    [border='#{$key}'] {
+        border: 1px solid $value;
+    }
+}
