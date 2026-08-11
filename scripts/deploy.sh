@@ -3,7 +3,7 @@
 #
 # Usage: ./scripts/deploy.sh
 #
-# Requires: ../design checkout available, node_modules symlink resolved, gh CLI authed.
+# Requires: npm dependencies installed, git push access to the repo.
 
 set -euo pipefail
 
@@ -14,8 +14,10 @@ BASE_HREF="/${REPO_NAME}/"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-if [ ! -d "../design" ]; then
-  echo "error: ../design checkout is required for SCSS includes and assets" >&2
+# The design system comes from the public npm packages (SCSS include paths and
+# assets are wired in angular.json), so no ../design checkout is needed.
+if [ ! -d "node_modules/@agorapulse/ui-theme" ]; then
+  echo "error: design-system packages missing — run 'npm install' first" >&2
   exit 1
 fi
 
