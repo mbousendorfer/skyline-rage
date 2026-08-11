@@ -6,7 +6,7 @@ import { InfoboxComponent } from '@agorapulse/ui-components/infobox';
 import { TagComponent } from '@agorapulse/ui-components/tag';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal } from '@angular/core';
 import { ComposeStateService } from '../compose-state';
 
 interface Validation {
@@ -24,11 +24,13 @@ interface Validation {
     selector: 'app-preview-panel',
     imports: [AvatarComponent, ButtonComponent, DotStepperComponent, IconButtonComponent, InfoboxComponent, TagComponent, TooltipDirective, SymbolComponent],
     template: `
-        <div class="preview-panel">
-            <div class="panel-header">Social Media Previews</div>
+        <aside class="preview-panel" aria-label="Social media previews">
+            <h3 class="panel-header">Social Media Previews</h3>
 
-            <!-- Status bar — errors are clickable and scroll to first error -->
-            <div class="status-bar">
+            <!-- Status bar — the spine of this panel: it summarises every card's state and
+                 is the only way to jump straight to a problem. All three counts behave the
+                 same way (button + jump), so the row reads as one control, not three things. -->
+            <div class="status-bar" role="group" aria-label="Preview validation summary">
                 @if (okCount() > 0) {
                     <span class="status ready">
                         <ap-symbol symbolId="rounded-check" size="xs" color="basic-grey"></ap-symbol>
@@ -36,17 +38,23 @@ interface Validation {
                     </span>
                 }
                 @if (warnCount() > 0) {
-                    <button class="status warn clickable" (click)="scrollToFirstWarning()" [apTooltip]="'Jump to first warning'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
+                    <button type="button" class="status warn clickable" (click)="scrollToFirstWarning()" [apTooltip]="'Jump to the first warning'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
                         <ap-symbol symbolId="warning" size="xs" color="orange"></ap-symbol>
                         {{ warnCount() }} warning{{ warnCount() !== 1 ? 's' : '' }}
                         <ap-symbol symbolId="arrow-down" size="xs" color="orange"></ap-symbol>
                     </button>
                 }
                 @if (errCount() > 0) {
-                    <button class="status err clickable" (click)="scrollToFirstError()" [apTooltip]="'Jump to first error'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
+                    <button type="button" class="status err clickable" (click)="scrollToFirstError()" [apTooltip]="'Jump to the first error'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
                         <ap-symbol symbolId="error" size="xs" color="red"></ap-symbol>
                         {{ errCount() }} error{{ errCount() !== 1 ? 's' : '' }}
                         <ap-symbol symbolId="arrow-down" size="xs" color="red"></ap-symbol>
+                    </button>
+                }
+                @if (dismissedCount() > 0) {
+                    <button type="button" class="status hidden-count clickable" (click)="restoreDismissed()" [apTooltip]="'Show the warnings you dismissed'" apTooltipPosition="bottom" [apTooltipShowDelay]="400">
+                        <ap-symbol symbolId="eye-off" size="xs" color="basic-grey"></ap-symbol>
+                        {{ dismissedCount() }} hidden
                     </button>
                 }
             </div>
@@ -62,7 +70,7 @@ interface Validation {
                     <!-- ── Facebook ─────────────────────────────────────── -->
                     @if (state.facebookProfiles().length > 0) {
                         <div class="network-section">
-                            <div class="network-header" (click)="fbExpanded.set(!fbExpanded())">
+                            <button type="button" class="network-header" [attr.aria-expanded]="fbExpanded()" (click)="fbExpanded.set(!fbExpanded())">
                                 <div class="network-title">
                                     @if (hasFbErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
@@ -72,13 +80,13 @@ interface Validation {
                                     <span class="posts-count">{{ state.facebookProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="fbExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
-                            </div>
+                            </button>
                             @if (fbExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.facebookProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the customized post for this profile' : 'Write a different post for this profile'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit customization' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -153,7 +161,7 @@ interface Validation {
                     <!-- ── LinkedIn ─────────────────────────────────────── -->
                     @if (state.linkedinProfiles().length > 0) {
                         <div class="network-section">
-                            <div class="network-header" (click)="liExpanded.set(!liExpanded())">
+                            <button type="button" class="network-header" [attr.aria-expanded]="liExpanded()" (click)="liExpanded.set(!liExpanded())">
                                 <div class="network-title">
                                     @if (hasLiErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol>
@@ -163,13 +171,13 @@ interface Validation {
                                     <span class="posts-count">{{ state.linkedinProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="liExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
-                            </div>
+                            </button>
                             @if (liExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.linkedinProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the customized post for this profile' : 'Write a different post for this profile'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit customization' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -245,7 +253,7 @@ interface Validation {
                     <!-- ── Instagram ────────────────────────────────────── -->
                     @if (state.instagramProfiles().length > 0) {
                         <div class="network-section">
-                            <div class="network-header" (click)="igExpanded.set(!igExpanded())">
+                            <button type="button" class="network-header" [attr.aria-expanded]="igExpanded()" (click)="igExpanded.set(!igExpanded())">
                                 <div class="network-title">
                                     @if (hasIgErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
@@ -255,13 +263,13 @@ interface Validation {
                                     <span class="posts-count">{{ state.instagramProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="igExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
-                            </div>
+                            </button>
                             @if (igExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.instagramProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the customized post for this profile' : 'Write a different post for this profile'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit customization' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -347,7 +355,7 @@ interface Validation {
                     <!-- ── X / Twitter ──────────────────────────────────── -->
                     @if (state.twitterProfiles().length > 0) {
                         <div class="network-section">
-                            <div class="network-header" (click)="xExpanded.set(!xExpanded())">
+                            <button type="button" class="network-header" [attr.aria-expanded]="xExpanded()" (click)="xExpanded.set(!xExpanded())">
                                 <div class="network-title">
                                     @if (hasXErrors()) { <span class="net-error-dot" [apTooltip]="'This network has validation errors'" apTooltipPosition="right" [apTooltipShowDelay]="200"></span> }
                                     <ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol>
@@ -357,13 +365,13 @@ interface Validation {
                                     <span class="posts-count">{{ state.twitterProfiles().length }} post(s)</span>
                                     <ap-icon-button [symbolId]="xExpanded() ? 'chevron-up' : 'chevron-down'" ariaLabel="Toggle" type="flat"></ap-icon-button>
                                 </div>
-                            </div>
+                            </button>
                             @if (xExpanded()) {
                                 <div class="preview-cards">
                                     @for (profile of state.twitterProfiles(); track profile.id) {
                                         <div class="preview-card-wrapper" [id]="'pcard-' + profile.id" [class.is-customized]="state.isCustomized(profile.id)">
                                             <div class="customize-bar" [class.is-customized]="state.isCustomized(profile.id)">
-                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the override for this profile' : 'Add a network-specific text override for this post'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit override' : 'Customize' }}</ap-button>
+                                                <ap-button [config]="{style:'ghost',color:'blue'}" (click)="state.openCustomization(profile.id)" [apTooltip]="state.isCustomized(profile.id) ? 'Edit the customized post for this profile' : 'Write a different post for this profile'" apTooltipPosition="left" [apTooltipShowDelay]="600">{{ state.isCustomized(profile.id) ? 'Edit customization' : 'Customize' }}</ap-button>
                                                 @if (state.isCustomized(profile.id)) {
                                                     <ap-tag color="blue">Customized</ap-tag>
                                                 }
@@ -414,7 +422,7 @@ interface Validation {
                     <div style="height: 24px; flex-shrink: 0;"></div>
                 </div>
             }
-        </div>
+        </aside>
     `,
     styles: [`
         :host { display: flex; flex-direction: column; min-height: 0; flex: 1; }
@@ -427,6 +435,8 @@ interface Validation {
             display: flex; gap: var(--ref-spacing-sm); padding: var(--ref-spacing-xxs) var(--ref-spacing-sm); align-items: center;
             background: var(--ref-color-grey-bg); border-bottom: 1px solid var(--sys-border-color-default);
             flex-shrink: 0;
+            /* Stays put while the preview list scrolls — it is the only way back to a problem. */
+            position: sticky; top: 0; z-index: 3;
         }
         .status {
             display: flex; align-items: center; gap: var(--ref-spacing-xxxs); font-size: var(--sys-text-style-caption-size); font-weight: var(--sys-text-style-caption-weight);
@@ -439,8 +449,16 @@ interface Validation {
             padding: var(--ref-spacing-xxxs) var(--ref-spacing-xxs); border-radius: var(--sys-border-radius-sm);
             font-family: var(--ref-font-family); font-size: var(--sys-text-style-caption-bold-size); font-weight: var(--sys-text-style-caption-bold-weight);
             transition: background 0.15s;
-            &.err { color: var(--ref-color-red-100);    &:hover { background: var(--ref-color-red-10); } }
-            &.warn { color: var(--ref-color-orange-100); &:hover { background: var(--ref-color-orange-10); } }
+            &.err { color: var(--ref-color-red-100);    &:hover, &:focus-visible { background: var(--ref-color-red-10); } }
+            &.warn { color: var(--ref-color-orange-100); &:hover, &:focus-visible { background: var(--ref-color-orange-10); } }
+            &.hidden-count { color: var(--sys-text-color-light); &:hover, &:focus-visible { background: var(--ref-color-grey-05); } }
+        }
+
+        /* The one high-impact moment on this screen: the post breaking a network rule.
+           One shared entrance, applied to every validation the same way. */
+        @keyframes validationIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: none; }
         }
         .empty-state {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -453,9 +471,12 @@ interface Validation {
             scroll-behavior: smooth;
         }
         .network-section { width: 100%; max-width: 500px; padding: var(--ref-spacing-sm) var(--ref-spacing-sm) 0; }
-        .network-header {
+        button.network-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 0 var(--ref-spacing-xs); cursor: pointer;
+            width: 100%; padding: 0 0 var(--ref-spacing-xs);
+            background: none; border: none; cursor: pointer; font-family: var(--ref-font-family);
+            border-radius: var(--sys-border-radius-sm);
+            &:focus-visible { outline: 2px solid var(--ref-color-electric-blue-60); outline-offset: 2px; }
         }
         .network-title { display: flex; align-items: center; gap: var(--ref-spacing-xxs); font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); line-height: var(--sys-text-style-body-bold-line-height); color: var(--sys-text-color-default); }
         .network-right { display: flex; align-items: center; gap: var(--ref-spacing-xxs); }
@@ -490,7 +511,10 @@ interface Validation {
         }
 
         /* Infoboxes */
-        .validation-item { margin-bottom: var(--ref-spacing-xxxs); }
+        .validation-item {
+            margin-bottom: var(--ref-spacing-xxxs);
+            animation: validationIn var(--ref-animation-short, 150ms) ease-out both;
+        }
 
         /* ─────────────────────────────────────────────────────────────────────
            Post cards — faux social feed. Deliberately OUTSIDE the Agorapulse DS:
@@ -503,9 +527,11 @@ interface Validation {
             border: 1px solid var(--sys-border-color-default);
             border-radius: var(--sys-border-radius-md); overflow: hidden; background: var(--ref-color-white);
             font-family: var(--net-font-family);
+            transition: border-color var(--ref-animation-short, 150ms) ease-out;
             &.has-error { border-color: var(--ref-color-red-60); }
         }
-        .net-more { margin-left: auto; cursor: pointer; flex-shrink: 0; }
+        /* Not interactive yet — do not fake the affordance. */
+        .net-more { margin-left: auto; flex-shrink: 0; }
 
         .post-header { display: flex; align-items: center; gap: var(--ref-spacing-xxs); padding: var(--ref-spacing-xxs) var(--ref-spacing-xs); }
         .post-meta { flex: 1; }
@@ -640,6 +666,29 @@ export class PreviewPanelComponent {
 
     isDismissed(key: string): boolean { return this.dismissed().has(key); }
     dismiss(key: string): void { this.dismissed.update(s => new Set([...s, key])); }
+
+    /** Dismissing a warning used to be a dead end. Count them so the status bar can offer them back. */
+    dismissedCount = computed(() => {
+        const d = this.dismissed();
+        if (d.size === 0) return 0;
+        const keys = [
+            ...this.state.facebookProfiles().flatMap(p => this.fbValidations(p.id)),
+            ...this.state.linkedinProfiles().flatMap(p => this.liValidations(p.id)),
+            ...this.state.instagramProfiles().flatMap(p => this.igValidations(p.id)),
+            ...this.state.twitterProfiles().flatMap(p => this.xValidations(p.id)),
+        ];
+        return keys.filter(v => d.has(v.key)).length;
+    });
+
+    restoreDismissed(): void { this.dismissed.set(new Set()); }
+
+    constructor() {
+        // The footer CTA asks us to walk the user to the first blocking error.
+        effect(() => {
+            if (this.state.reviewErrorsRequested() === 0) return;
+            this.scrollToFirstError();
+        });
+    }
 
     /** Open customization in compose panel and scroll preview to that card (after DOM update). */
     openCustomization(profileId: string): void {
@@ -780,24 +829,19 @@ export class PreviewPanelComponent {
 
     // ── Error checks ─────────────────────────────────────────────────────────
 
-    fbProfileHasError(profileId: string) { return this.state.getDisplayText(profileId).length > 10000; }
-    liProfileHasError(profileId: string) { return this.state.getDisplayText(profileId).length > 3000; }
-    igProfileHasError(profileId: string) { return this.state.getDisplayText(profileId).length > 2200; }
-    xProfileHasError(profileId: string)  { return this.state.getDisplayText(profileId).length > 280; }
+    /** All four delegate to the shared state so the footer CTA, the compose panel and
+     *  this panel can never disagree about what is publishable. */
+    fbProfileHasError(profileId: string) { return this.state.profileHasError(profileId); }
+    liProfileHasError(profileId: string) { return this.state.profileHasError(profileId); }
+    igProfileHasError(profileId: string) { return this.state.profileHasError(profileId); }
+    xProfileHasError(profileId: string)  { return this.state.profileHasError(profileId); }
 
-    hasFbErrors = computed(() => this.state.facebookProfiles().some(p => this.fbProfileHasError(p.id)));
-    hasLiErrors = computed(() => this.state.linkedinProfiles().some(p => this.liProfileHasError(p.id)));
-    hasIgErrors = computed(() => this.state.instagramProfiles().some(p => this.igProfileHasError(p.id)));
-    hasXErrors  = computed(() => this.state.twitterProfiles().some(p => this.xProfileHasError(p.id)));
+    hasFbErrors = computed(() => this.state.facebookProfiles().some(p => this.state.profileHasError(p.id)));
+    hasLiErrors = computed(() => this.state.linkedinProfiles().some(p => this.state.profileHasError(p.id)));
+    hasIgErrors = computed(() => this.state.instagramProfiles().some(p => this.state.profileHasError(p.id)));
+    hasXErrors  = computed(() => this.state.twitterProfiles().some(p => this.state.profileHasError(p.id)));
 
-    errCount = computed(() => {
-        let n = 0;
-        n += this.state.facebookProfiles().filter(p => this.fbProfileHasError(p.id)).length;
-        n += this.state.linkedinProfiles().filter(p => this.liProfileHasError(p.id)).length;
-        n += this.state.instagramProfiles().filter(p => this.igProfileHasError(p.id)).length;
-        n += this.state.twitterProfiles().filter(p => this.xProfileHasError(p.id)).length;
-        return n;
-    });
+    errCount = computed(() => this.state.blockingErrors().length);
 
     warnCount = computed(() => {
         const d = this.dismissed();

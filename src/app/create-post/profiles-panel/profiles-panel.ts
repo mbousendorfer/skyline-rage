@@ -13,8 +13,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
     selector: 'app-profiles-panel',
     imports: [CheckboxComponent, AvatarComponent, TabsComponent, TabComponent, InputSearchComponent, TooltipDirective, SymbolComponent, FormsModule],
     template: `
-        <div class="profiles-panel">
-            <div class="panel-header">Social Profiles</div>
+        <aside class="profiles-panel" aria-label="Social profiles">
+            <h3 class="panel-header">Social Profiles</h3>
 
             <div class="search-box">
                 <ap-input-search
@@ -49,15 +49,15 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                     [indeterminate]="isGroupIndeterminate(group)"
                                     (change)="toggleGroupProfiles(group, $event)">
                                 </ap-checkbox>
-                                <div class="group-label" (click)="state.toggleGroup(group.id)">
+                                <button type="button" class="group-label" [attr.aria-expanded]="group.expanded" (click)="state.toggleGroup(group.id)">
                                     <ap-symbol symbolId="folder" size="xs" color="basic-grey"></ap-symbol>
-                                    <span class="group-name ap-truncate">{{ group.name }}</span>
+                                    <span class="group-name ap-truncate" [apTooltip]="group.name" apTooltipPosition="right" [apTooltipShowDelay]="400">{{ group.name }}</span>
                                     <ap-symbol
                                         [symbolId]="group.expanded ? 'chevron-up' : 'chevron-down'"
                                         size="xs"
                                         color="basic-grey">
                                     </ap-symbol>
-                                </div>
+                                </button>
                             </div>
                             @if (group.expanded) {
                                 <div class="group-profiles">
@@ -73,7 +73,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                                 [network]="profile.network"
                                                 [size]="24">
                                             </ap-avatar>
-                                            <span class="profile-name ap-truncate">{{ profile.name }}</span>
+                                            <span class="profile-name ap-truncate" [apTooltip]="profile.name" apTooltipPosition="right" [apTooltipShowDelay]="400">{{ profile.name }}</span>
                                         </div>
                                     }
                                 </div>
@@ -95,7 +95,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                                         [network]="profile.network"
                                         [size]="24">
                                     </ap-avatar>
-                                    <span class="profile-name ap-truncate">{{ profile.name }}</span>
+                                    <span class="profile-name ap-truncate" [apTooltip]="profile.name" apTooltipPosition="right" [apTooltipShowDelay]="400">{{ profile.name }}</span>
                                 </div>
                             }
                         </div>
@@ -113,7 +113,7 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
                     <span>No queues configured</span>
                 </div>
             }
-        </div>
+        </aside>
     `,
     styles: [`
         :host { display: flex; flex-direction: column; min-height: 0; flex: 0 0 220px; }
@@ -166,7 +166,8 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             &:hover { background: var(--ref-color-grey-05); }
         }
 
-        .group-label {
+        button.group-label {
+            background: none; border: none; font-family: var(--ref-font-family);
             display: flex;
             align-items: center;
             gap: var(--ref-spacing-xxxs);
@@ -174,6 +175,9 @@ import { ComposeStateService, Profile, ProfileGroup } from '../compose-state';
             padding: var(--ref-spacing-xxxs) 0 var(--ref-spacing-xxxs) var(--ref-spacing-xxs);
             cursor: pointer;
             min-width: 0;
+            border-radius: var(--sys-border-radius-sm);
+
+            &:focus-visible { outline: 2px solid var(--ref-color-electric-blue-60); outline-offset: 2px; }
 
             .group-name {
                 flex: 1;

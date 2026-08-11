@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { SnackbarsThreadService } from '@agorapulse/ui-components/snackbars-thread';
+import { Injectable, signal, computed, inject } from '@angular/core';
 
 export interface Profile {
     id: string;
@@ -41,6 +42,21 @@ export interface MediaItem {
 
 @Injectable({ providedIn: 'root' })
 export class ComposeStateService {
+    private readonly snackbars = inject(SnackbarsThreadService);
+
+    /**
+     * Offers an Undo for an action that just destroyed user content.
+     * Preferred over a confirm dialog: people read a snackbar, they click through
+     * "Are you sure?" without reading it.
+     */
+    private offerUndo(message: string, restore: () => void): void {
+        this.snackbars.add({ snackbarText: message, snackbarType: 0, actionName: 'Undo', callback: restore }, 8000);
+    }
+
+    private nameOf(profileId: string): string {
+        return this.allProfiles().find(p => p.id === profileId)?.name ?? 'this profile';
+    }
+
     // ── Collaborators ────────────────────────────────────────────────────────
     collaborators = signal<Collaborator[]>([]);
 
@@ -64,7 +80,14 @@ export class ComposeStateService {
     }
 
     removeMediaItem(id: number): void {
-        this.mediaItems.update(list => list.filter(m => m.id !== id));
+        const list = this.mediaItems();
+        const index = list.findIndex(m => m.id === id);
+        if (index === -1) return;
+        const removed = list[index];
+        this.mediaItems.update(l => l.filter(m => m.id !== id));
+        this.offerUndo('Media removed', () =>
+            this.mediaItems.update(l => [...l.slice(0, index), removed, ...l.slice(index)])
+        );
     }
 
     // ── Base text ────────────────────────────────────────────────────────────
@@ -117,7 +140,14 @@ export class ComposeStateService {
     }
 
     removeCustomization(profileId: string): void {
-        this.customizations.update(list => list.filter(c => c.profileId !== profileId));
+        const list = this.customizations();
+        const index = list.findIndex(c => c.profileId === profileId);
+        if (index === -1) return;
+        const removed = list[index];
+        this.customizations.update(l => l.filter(c => c.profileId !== profileId));
+        this.offerUndo(`Customization for ${this.nameOf(profileId)} removed`, () =>
+            this.customizations.update(l => [...l.slice(0, index), removed, ...l.slice(index)])
+        );
     }
 
     updateCustomizationText(profileId: string, text: string): void {
@@ -139,8 +169,15 @@ export class ComposeStateService {
     }
 
     resetCustomization(profileId: string): void {
+        const previous = this.getCustomization(profileId)?.text;
+        if (previous === undefined) return;
         this.customizations.update(list =>
             list.map(c => (c.profileId === profileId ? { ...c, text: this.baseText() } : c))
+        );
+        this.offerUndo(`${this.nameOf(profileId)} reset to the base post`, () =>
+            this.customizations.update(list =>
+                list.map(c => (c.profileId === profileId ? { ...c, text: previous } : c))
+            )
         );
     }
 
@@ -151,8 +188,19 @@ export class ComposeStateService {
     }
 
     removeCustomizationMedia(profileId: string, id: number): void {
+        const items = this.getCustomization(profileId)?.mediaItems ?? [];
+        const index = items.findIndex(m => m.id === id);
+        if (index === -1) return;
+        const removed = items[index];
         this.customizations.update(list =>
             list.map(c => c.profileId === profileId ? { ...c, mediaItems: c.mediaItems.filter(m => m.id !== id) } : c)
+        );
+        this.offerUndo('Media removed', () =>
+            this.customizations.update(list =>
+                list.map(c => c.profileId === profileId
+                    ? { ...c, mediaItems: [...c.mediaItems.slice(0, index), removed, ...c.mediaItems.slice(index)] }
+                    : c)
+            )
         );
     }
 
@@ -251,6 +299,32 @@ export class ComposeStateService {
             this.selectedProfiles().some(p => p.id === c.profileId)
         )
     );
+
+    // ── Validation ───────────────────────────────────────────────────────────
+    /**
+     * Canonical per-network character limits — single source of truth. The compose
+     * panel, the preview panel and the footer CTA all read validation from here so
+     * they can never disagree about whether the post is publishable.
+     */
+    networkCharLimit(network: string): number {
+        const limits: Record<string, number> = { facebook: 10000, linkedin: 3000, instagram: 2200, twitter: 280, youtube: 5000, tiktok: 2200 };
+        return limits[network] ?? 10000;
+    }
+
+    profileNetwork(profileId: string): Profile['network'] {
+        return this.allProfiles().find(p => p.id === profileId)?.network ?? 'facebook';
+    }
+
+    /** True when the text that would actually publish for this profile exceeds its network limit. */
+    profileHasError(profileId: string): boolean {
+        return this.getDisplayText(profileId).length > this.networkCharLimit(this.profileNetwork(profileId));
+    }
+
+    /** Bumped when the footer asks the preview panel to walk the user to the first error. */
+    reviewErrorsRequested = signal(0);
+
+    /** Selected profiles whose post the network would reject as-is. */
+    blockingErrors = computed(() => this.selectedProfiles().filter(p => this.profileHasError(p.id)));
 
     // ── Char counts ──────────────────────────────────────────────────────────
     fbCharLimit = 10000;

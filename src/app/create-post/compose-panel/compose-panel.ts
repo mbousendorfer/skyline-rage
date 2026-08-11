@@ -4,6 +4,7 @@ import { ToggleComponent } from '@agorapulse/ui-components/toggle';
 import { TabsComponent, TabComponent } from '@agorapulse/ui-components/tabs';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
 import { ActionDropdownComponent, ActionDropdownTriggerDirective, ActionDropdownItem } from '@agorapulse/ui-components/action-dropdown';
+import { AutosizeTextareaDirective } from '@agorapulse/ui-components/directives';
 import { InputDirective } from '@agorapulse/ui-components/input';
 import { ModalComponent } from '@agorapulse/ui-components/modal';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,9 +26,9 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-compose-panel',
-    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, InputDirective, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe, SegmentedControlComponent],
+    imports: [ButtonComponent, IconButtonComponent, ToggleComponent, TabsComponent, TabComponent, AvatarComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, AutosizeTextareaDirective, InputDirective, TooltipDirective, SymbolComponent, FormsModule, DecimalPipe, SegmentedControlComponent],
     template: `
-        <div class="compose-panel" [class.is-draft]="state.isDraft()">
+        <main class="compose-panel" [class.is-draft]="state.isDraft()">
             <!-- Hidden file inputs for upload sources -->
             <input #fileInput type="file" accept="image/*,video/*" multiple style="display:none" (change)="onFilesSelected($event)">
             <input #replaceInput type="file" accept="image/*,video/*" style="display:none" (change)="onReplaceSelected($event)">
@@ -48,19 +49,20 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
             <div class="compose-content" #composeContent>
             @if (activeTab() === 'base') {
-                <div class="section-heading">Compose your post</div>
+                <h3 class="section-heading">Compose your post</h3>
 
                 <!-- ── Base post ─────────────────────────────────────────── -->
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title">
                             <ap-symbol symbolId="star" size="xs" color="blood-orange"></ap-symbol>
-                            <span>Base post</span>
+                            <h4>Base post</h4>
                         </div>
                         <span class="section-hint">Shared across all unless customized</span>
                     </div>
-                    <div class="text-editor" [class.focused]="baseTextFocused()" [class.expanded]="baseEditorExpanded()">
+                    <div class="text-editor" [class.focused]="baseTextFocused()">
                         <textarea
+                            apAutosize
                             class="post-textarea"
                             [value]="state.baseText()"
                             (input)="onBaseTextInput($event)"
@@ -77,8 +79,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                             </div>
                             <div class="toolbar-right">
                                 <ap-button [config]="{ style: 'mermaid' }" symbolId="sparkles" symbolPosition="left">Writing Assistant</ap-button>
-                                <ap-icon-button type="flat" [symbolId]="baseEditorExpanded() ? 'chevron-up' : 'chevron-down'" [ariaLabel]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" [apTooltip]="baseEditorExpanded() ? 'Collapse editor' : 'Expand editor'" apTooltipPosition="bottom" [apTooltipShowDelay]="400" (onClick)="baseEditorExpanded.set(!baseEditorExpanded())"></ap-icon-button>
-                            </div>
+                                </div>
                         </div>
                         <div class="editor-footer">
                             <div class="char-counts">
@@ -119,17 +120,18 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
                 <!-- ── Media ─────────────────────────────────────────────── -->
                 <div class="section">
-                    <div class="collapsible-header" (click)="mediaExpanded.set(!mediaExpanded())">
-                        <span class="collapsible-title">
+                  <div class="ap-accordion" [class.collapsed]="!mediaExpanded()">
+                    <button type="button" class="ap-accordion-header" [attr.aria-expanded]="mediaExpanded()" (click)="mediaExpanded.set(!mediaExpanded())">
+                        <h4 class="ap-accordion-title">
                             Media
                             @if (!mediaExpanded() && state.mediaItems().length > 0) {
                                 <span class="section-count">({{ state.mediaItems().length }})</span>
                             }
-                        </span>
-                        <ap-symbol [symbolId]="mediaExpanded() ? 'chevron-up' : 'chevron-down'" size="xs" color="basic-grey"></ap-symbol>
-                    </div>
+                        </h4>
+                        <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
+                    </button>
                     @if (mediaExpanded()) {
-                        <div class="media-drop-zone"
+                        <div class="ap-accordion-content media-drop-zone"
                              [class.drag-over]="isDraggingOver()"
                              (dragover)="onDragOver($event)"
                              (dragleave)="onDragLeave($event)"
@@ -159,6 +161,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                             </div>
                         </div>
                     }
+                  </div>
                 </div>
 
                 <!-- ── Network options ────────────────────────────────────── -->
@@ -166,16 +169,16 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <div class="section-header">
                         <span class="collapsible-title">Network options</span>
                     </div>
-                    <p class="network-hint">Defaults applied to all profiles per network. Customize a profile to override individually.</p>
+                    <p class="network-hint">Defaults applied to all profiles per network. Customize a profile to change it individually.</p>
 
                     <!-- Facebook -->
                     @if (state.facebookProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!fbOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="fbOptionsExpanded()" [style.background]="networkHeaderBg('facebook')" (click)="fbOptionsExpanded.set(!fbOptionsExpanded())">
                                 <ap-symbol symbolId="facebook" size="sm" color="facebook"></ap-symbol>
-                                    <span class="ap-accordion-title">Facebook options</span>
+                                    <h4 class="ap-accordion-title">Facebook options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (fbOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <ap-segmented-control [options]="postTypeOptions" [value]="fbPostType()" (valueChange)="setFbPostType($event)"></ap-segmented-control>
@@ -213,11 +216,11 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <!-- Instagram -->
                     @if (state.instagramProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!igOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="igOptionsExpanded()" [style.background]="networkHeaderBg('instagram')" (click)="igOptionsExpanded.set(!igOptionsExpanded())">
                                 <ap-symbol symbolId="instagram" size="sm" color="instagram"></ap-symbol>
-                                    <span class="ap-accordion-title">Instagram options</span>
+                                    <h4 class="ap-accordion-title">Instagram options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (igOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <ap-segmented-control [options]="postTypeOptions" [value]="igPostType()" (valueChange)="setIgPostType($event)"></ap-segmented-control>
@@ -268,10 +271,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <!-- LinkedIn -->
                     @if (state.linkedinProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!liOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
-                                <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol><span class="ap-accordion-title">LinkedIn options</span>
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="liOptionsExpanded()" [style.background]="networkHeaderBg('linkedin')" (click)="liOptionsExpanded.set(!liOptionsExpanded())">
+                                <ap-symbol symbolId="linkedin" size="sm" color="linkedin"></ap-symbol><h4 class="ap-accordion-title">LinkedIn options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (liOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
@@ -296,10 +299,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <!-- X (Twitter) -->
                     @if (state.twitterProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!xOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
-                                <ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol><span class="ap-accordion-title">X (Twitter) options</span>
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="xOptionsExpanded()" [style.background]="networkHeaderBg('twitter')" (click)="xOptionsExpanded.set(!xOptionsExpanded())">
+                                <ap-symbol symbolId="x-official" size="sm" color="twitter"></ap-symbol><h4 class="ap-accordion-title">X (Twitter) options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (xOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
@@ -318,10 +321,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <!-- TikTok -->
                     @if (state.tiktokProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!ttOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
-                                <ap-symbol symbolId="tiktok-official" size="sm" color="tiktok"></ap-symbol><span class="ap-accordion-title">TikTok options</span>
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="ttOptionsExpanded()" [style.background]="networkHeaderBg('tiktok')" (click)="ttOptionsExpanded.set(!ttOptionsExpanded())">
+                                <ap-symbol symbolId="tiktok-official" size="sm" color="tiktok"></ap-symbol><h4 class="ap-accordion-title">TikTok options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (ttOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="option-row toggle-row">
@@ -348,10 +351,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     <!-- YouTube -->
                     @if (state.youtubeProfiles().length > 0) {
                         <div class="ap-accordion network-card" [class.collapsed]="!ytOptionsExpanded()">
-                            <div class="ap-accordion-header" [style.background]="networkHeaderBg('youtube')" (click)="ytOptionsExpanded.set(!ytOptionsExpanded())">
-                                <ap-symbol symbolId="youtube" size="sm" color="youtube"></ap-symbol><span class="ap-accordion-title">YouTube options</span>
+                            <button type="button" class="ap-accordion-header" [attr.aria-expanded]="ytOptionsExpanded()" [style.background]="networkHeaderBg('youtube')" (click)="ytOptionsExpanded.set(!ytOptionsExpanded())">
+                                <ap-symbol symbolId="youtube" size="sm" color="youtube"></ap-symbol><h4 class="ap-accordion-title">YouTube options</h4>
                                 <ap-symbol class="ap-accordion-toggle" symbolId="chevron-up" size="xs" color="basic-grey"></ap-symbol>
-                            </div>
+                            </button>
                             @if (ytOptionsExpanded()) {
                                 <div class="network-card-content">
                                     <div class="field-group">
@@ -429,10 +432,10 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                     @if (customizationsExpanded()) {
                         @if (state.activeCustomizations().length === 0) {
                             <p class="empty-hint">
-                                Click <strong>Customize</strong> on any preview card to add a per‑profile override.
+                                Click <strong>Customize</strong> on any preview card to write a different post for that profile.
                             </p>
                         } @else {
-                            <p class="customizations-hint">Each card below overrides the base post for that profile.</p>
+                            <p class="customizations-hint">Each card below replaces the base post for that profile.</p>
                         }
 
                         @for (custom of state.activeCustomizations(); track custom.profileId) {
@@ -470,7 +473,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                                             ariaLabel="Remove customization"
                                             type="flat"
                                            
-                                            [apTooltip]="'Remove this override'"
+                                            [apTooltip]="'Remove this customization'"
                                             apTooltipPosition="bottom"
                                             [apTooltipShowDelay]="400"
                                             (onClick)="state.removeCustomization(custom.profileId)">
@@ -645,7 +648,7 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
 
             } <!-- end @if customized -->
             </div>
-        </div>
+        </main>
 
 
     `,
@@ -701,8 +704,8 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
             &.inner { border-radius: var(--comp-input-border-radius); margin: 8px 0; }
             &:hover:not(.focused) { border-color: var(--comp-input-border-hover-color); }
             &.focused { border-color: var(--comp-input-border-focused-color); }
-            textarea { min-height: 96px; transition: min-height 0.25s ease; }
-            &.expanded textarea { min-height: 280px; }
+            /* apAutosize grows the field with its content; 96px is just the floor. */
+            textarea { min-height: 96px; }
         }
         .post-textarea {
             width: 100%; padding: var(--ref-spacing-xxs) var(--comp-input-padding-horizontal); border: none; outline: none; resize: none;
@@ -733,7 +736,8 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
             /* Scoped with :not() so the DS .warning / .error modifiers keep winning —
                a bare color declaration here ties their specificity and, being a
                component style, would be injected last and override them. */
-            &:not(.warning):not(.error) { color: var(--ref-color-electric-blue-100); }
+            /* Was electric-blue-100 = 3.07:1 on grey-05, under AA. Colour now only signals. */
+            &:not(.warning):not(.error) { color: var(--sys-text-color-light); }
             &.grey { color: var(--sys-text-color-light); }
         }
 
@@ -763,12 +767,17 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
                 background: var(--ref-color-white);
                 opacity: 0; transition: opacity 0.15s;
             }
-            &:hover .media-overlay { opacity: 1; }
+            &:hover .media-overlay, &:focus-within .media-overlay { opacity: 1; }
+            /* Touch and narrow viewports have no hover at all. */
+            @media (hover: none), (max-width: 1024px) {
+                .media-overlay { opacity: 1; }
+            }
         }
 
         /* Drag & drop zone */
+        /* Doubles as .ap-accordion-content, so the DS owns padding + gap. */
         .media-drop-zone {
-            position: relative; border-radius: var(--sys-border-radius-lg);
+            position: relative;
             transition: background 0.15s, border-color 0.15s;
             &.drag-over {
                 background: var(--ref-color-electric-blue-05);
@@ -836,6 +845,12 @@ interface TaggedUser { id: string; x: number; y: number; username: string; }
         /* Shell, border, radius and collapse come from the DS .ap-accordion; only the
            outer rhythm and the full-bleed body are ours. */
         .network-card { margin-top: var(--ref-spacing-xs); overflow: hidden; }
+        /* The DS header is a <button> here so it is reachable and announces state. */
+        button.ap-accordion-header {
+            width: 100%; text-align: left; cursor: pointer;
+            border: none; font-family: var(--ref-font-family);
+            &:focus-visible { outline: 2px solid var(--ref-color-electric-blue-60); outline-offset: -2px; }
+        }
         .network-card-content { padding: 0 0 var(--ref-spacing-xs); }
         .network-card-content > ap-segmented-control { display: block; padding: var(--ref-spacing-sm) var(--ref-spacing-sm) 0; }
         .ap-accordion-header .ap-accordion-title { font-size: var(--sys-text-style-body-bold-size); font-weight: var(--sys-text-style-body-bold-weight); color: var(--sys-text-color-default); }
@@ -907,7 +922,6 @@ export class ComposePanelComponent {
 
     activeTab = signal<'base' | 'customized'>('base');
     baseTextFocused = signal(false);
-    baseEditorExpanded = signal(false);
     focusedEditorId = signal<string | null>(null);
     flashingId = signal<string | null>(null);
     mediaExpanded = signal(this.state.mediaItems().length === 0);

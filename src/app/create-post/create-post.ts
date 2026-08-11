@@ -1,5 +1,7 @@
 import { ButtonComponent } from '@agorapulse/ui-components/button';
 import { CloseButtonComponent } from '@agorapulse/ui-components/close-button';
+import { SnackbarsThreadComponent } from '@agorapulse/ui-components/snackbars-thread';
+import { StatusComponent } from '@agorapulse/ui-components/status';
 import { IconButtonComponent } from '@agorapulse/ui-components/icon-button';
 import { SegmentedControlComponent } from '@agorapulse/ui-components/segmented-control';
 import { AvatarComponent } from '@agorapulse/ui-components/avatar';
@@ -7,7 +9,7 @@ import { TagComponent } from '@agorapulse/ui-components/tag';
 import { ActionDropdownComponent, ActionDropdownTriggerDirective, ActionDropdownItem } from '@agorapulse/ui-components/action-dropdown';
 import { TooltipDirective } from '@agorapulse/ui-components/tooltip';
 import { SymbolComponent } from '@agorapulse/ui-symbol';
-import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
 import { ProfilesPanelComponent } from './profiles-panel/profiles-panel';
 import { ComposePanelComponent } from './compose-panel/compose-panel';
 import { PreviewPanelComponent } from './preview-panel/preview-panel';
@@ -16,10 +18,10 @@ import { ComposeStateService } from './compose-state';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-create-post',
-    imports: [ButtonComponent, CloseButtonComponent, IconButtonComponent, SegmentedControlComponent, AvatarComponent, TagComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, TooltipDirective, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
+    imports: [ButtonComponent, CloseButtonComponent, IconButtonComponent, SegmentedControlComponent, AvatarComponent, TagComponent, ActionDropdownComponent, ActionDropdownTriggerDirective, SnackbarsThreadComponent, StatusComponent, TooltipDirective, SymbolComponent, ProfilesPanelComponent, ComposePanelComponent, PreviewPanelComponent],
     template: `
         <div class="modal-container">
-            <div class="modal-header">
+            <header class="modal-header">
                 <h2 class="modal-title">Create post</h2>
                 <div class="header-actions">
                     <ap-icon-button
@@ -45,7 +47,7 @@ import { ComposeStateService } from './compose-state';
                     <div class="divider"></div>
                     <ap-icon-button symbolId="close" ariaLabel="Close" type="flat" (onClick)="close.emit()"></ap-icon-button>
                 </div>
-            </div>
+            </header>
 
             <div class="modal-body">
                 <app-profiles-panel></app-profiles-panel>
@@ -54,9 +56,9 @@ import { ComposeStateService } from './compose-state';
 
                 <!-- ── Right panel (history / conversation) ── -->
                 @if (rightPanel() !== null) {
-                    <div class="right-panel">
+                    <aside class="right-panel">
                         <div class="right-panel-header">
-                            <span class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : 'Post conversation' }}</span>
+                            <h3 class="right-panel-title">{{ rightPanel() === 'history' ? 'Post history' : 'Post conversation' }}</h3>
                             <ap-close-button (closed)="rightPanel.set(null)"></ap-close-button>
                         </div>
 
@@ -159,11 +161,11 @@ import { ComposeStateService } from './compose-state';
                                 </div>
                             </div>
                         }
-                    </div>
+                    </aside>
                 }
             </div>
 
-            <div class="modal-footer">
+            <footer class="modal-footer">
                 <div class="footer-left">
                     <ap-button
                         [config]="{ style: 'stroked', color: state.activeCampaign() ? 'blue' : 'grey' }"
@@ -192,6 +194,25 @@ import { ComposeStateService } from './compose-state';
                     <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="check" symbolPosition="left" [apTooltip]="'Require approval before publishing'" apTooltipPosition="top" [apTooltipShowDelay]="400">Select approval type</ap-button>
                 </div>
                 <div class="footer-right">
+                    <!-- Draft is a document-level mode; surface it where its consequence lives. -->
+                    @if (state.isDraft()) {
+                        <ap-status color="orange">Draft</ap-status>
+                    }
+
+                    <!-- The CTA stays enabled with blocking errors: a disabled button explains
+                         nothing. Clicking it surfaces what to fix and jumps to the first offender. -->
+                    @if (blockingCount() > 0) {
+                        <ap-button
+                            [config]="{ style: 'stroked', color: 'red' }"
+                            symbolId="error"
+                            symbolPosition="left"
+                            [apTooltip]="blockingSummary()"
+                            apTooltipPosition="top"
+                            (click)="reviewErrors()">
+                            {{ blockingCount() }} to fix
+                        </ap-button>
+                    }
+
                     @if (!state.isDraft()) {
                         <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="calendar" symbolPosition="left">Date &amp; Time</ap-button>
                         <ap-button [config]="{ style: 'primary', color: 'orange' }" [apActionDropdownTrigger]="scheduleMenu" symbolId="chevron-down" symbolPosition="right">Schedule</ap-button>
@@ -200,11 +221,22 @@ import { ComposeStateService } from './compose-state';
                         <ap-button [config]="{ style: 'stroked', color: 'grey' }" symbolId="bookmark" symbolPosition="left" class="save-draft-btn">Save draft</ap-button>
                     }
                 </div>
-            </div>
+            </footer>
+
+            <ap-snackbars-thread></ap-snackbars-thread>
         </div>
     `,
     styles: [`
         :host { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* The DS thread positions itself absolute (top 68 / right 32), which our
+           overflow:hidden modal shell clips away — the snackbar was being created but
+           never seen. Pinning the host to the viewport at zero height gives the thread
+           a containing block outside the clip, without intercepting any clicks. */
+        ap-snackbars-thread {
+            position: fixed;
+            top: 0; left: 0; right: 0; height: 0;
+        }
         .modal-container {
             display: flex; flex-direction: column;
             width: 100%; height: 100%;
@@ -276,7 +308,7 @@ import { ComposeStateService } from './compose-state';
             padding: var(--ref-spacing-xs);
             border-bottom: 1px solid var(--ref-color-grey-05);
             &:last-child { border-bottom: none; }
-            &:hover .conv-reply-btn { opacity: 1; }
+            &:hover .conv-reply-btn, &:focus-within .conv-reply-btn { opacity: 1; }
         }
         .conv-msg-row { display: flex; align-items: center; gap: var(--ref-spacing-xxs); margin-bottom: var(--ref-spacing-xxxs); }
         .conv-msg-meta { display: flex; align-items: baseline; gap: var(--ref-spacing-xxxs); flex: 1; min-width: 0; }
@@ -345,6 +377,22 @@ export class CreatePostComponent {
         { name: 'optimal', label: 'Schedule at optimal time', startSymbolId: 'sparkles' },
         { name: 'queue', label: 'Add to queue', startSymbolId: 'calendar' },
     ];
+
+    /** Blocking validation errors, read from the shared state so the footer can never
+     *  disagree with what the preview panel is showing. */
+    blockingCount = computed(() => this.state.blockingErrors().length);
+
+    blockingSummary = computed(() => {
+        const names = this.state.blockingErrors().map(p => p.name);
+        return names.length === 1
+            ? `${names[0]} exceeds its character limit — fix it before scheduling`
+            : `${names.length} profiles exceed their character limit: ${names.join(', ')}`;
+    });
+
+    /** Hands off to the preview panel, which owns the per-card scroll + highlight. */
+    reviewErrors(): void {
+        this.state.reviewErrorsRequested.update(n => n + 1);
+    }
 
     rightPanel = signal<'history' | 'conversation' | null>(null);
     convTab = signal<'internal' | 'external'>('internal');

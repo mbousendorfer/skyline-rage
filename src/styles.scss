@@ -35,6 +35,16 @@ body {
     box-sizing: border-box;
 }
 
+// The DS typography layer sets heading sizes but leaves the browser's default
+// margins (16px / 18.6px). In an app shell headings are UI labels, not prose —
+// their container owns the spacing, so zero the margins and let flex gaps work.
+h1,
+h2,
+h3,
+h4 {
+    margin: 0;
+}
+
 // Shared panel chrome — the three panels rendered side by side in the modal body
 // all use the same header band.
 .panel-header {
